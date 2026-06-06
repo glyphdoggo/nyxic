@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nyxic Transcriber</title>
+    <style>
+      :root {
+        --bg-body: #eee;
+        --bg-container: #ddd;
+        --bg-canvas: #eee;
+        --text-main: #222;
+        --text-muted: #333;
+        --border: #bbb;
+        --slider-thumb: #222;
+      }
+
+      [data-theme="dark"] {
+        --bg-body: #222;
+        --bg-container: #333;
+        --bg-canvas: #222;
+        --text-main: #ddd;
+        --text-muted: #eee;
+        --border: #444;
+        --slider-thumb: #ddd;
+      }
+
+      body {
+        font-family: sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+        background-color: var(--bg-body);
+        transition: background-color 0.3s ease;
+      }
+
+      .container {
+        position: relative;
+        background: var(--bg-container);
+        color: var(--text-main);
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+        text-align: center;
+        width: 80%;
+        height: 80%;
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+        transition:
+          background-color 0.3s ease,
+          color 0.3s ease;
+      }
+
+      h2 {
+        margin-top: 0;
+        margin-bottom: 15px;
+      }
+
+      .controls {
+        margin-bottom: 0px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .control-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      input[type="text"] {
+        padding: 8.325px;
+        font-size: 16px;
+        border: 2px solid var(--border);
+        background-color: var(--bg-container);
+        color: var(--text-main);
+        border-radius: 20px;
+        /*width: 70%;*/
+        position: absolute;
+        right: 155px;
+        left: 30px;
+        text-align: center;
+        transition: all 0.3s ease;
+      }
+
+      .vfill {
+        flex-grow: 1;
+      }
+
+      .canvas-frame {
+        width: 100%;
+        height: 70%;
+        margin: 0;
+        background: var(--bg-canvas);
+        border-radius: 10px;
+        overflow: hidden;
+        transition: background-color 0.3s ease;
+      }
+
+      svg {
+        width: 100%;
+        height: 100%;
+      }
+
+      #glyph-group path {
+        stroke: var(--text-main) !important;
+        transition: stroke 0.3s ease;
+      }
+
+      /* Minimal alignment mechanics */
+      .control-group > label:first-child,
+      .control-group .label-mock {
+        display: inline-block;
+        width: 130px;
+        text-align: right;
+        font-weight: bold;
+        font-size: 14px;
+      }
+
+      .control-group input[type="range"] {
+        width: 70%;
+      }
+
+      /* --- Shared Minimalist Icon Button Design --- */
+      .icon-btn {
+        background: none;
+        border: 2px solid var(--border);
+        color: var(--text-muted);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        transition: all 0.2s ease;
+      }
+
+      .icon-btn:hover {
+        background: var(--bg-body);
+        color: var(--text-main);
+        border-color: var(--text-main);
+      }
+
+      .icon-btn svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      /* Top-right placement rule specific to the Theme Toggle */
+      #theme-toggle {
+        position: absolute;
+        top: 30px;
+        right: 30px;
+        z-index: 10;
+      }
+
+      /* Top-left placement rule specific to the Style Toggle */
+      #style-toggle {
+        position: absolute;
+        top: 30px;
+        right: 90px;
+        z-index: 10;
+      }
+
+      /* --- Dark/Light Mode Icon Visibility Logic --- */
+      .sun-icon {
+        display: none;
+      }
+      .moon-icon {
+        display: block;
+      }
+      [data-theme="dark"] .sun-icon {
+        display: block;
+      }
+      [data-theme="dark"] .moon-icon {
+        display: none;
+      }
+
+      /* --- Angular/Rounded Nib Icon Visibility Logic --- */
+      .diamond-icon {
+        display: block;
+      }
+      .circle-icon {
+        display: none;
+      }
+      #style-toggle.rounded .diamond-icon {
+        display: none;
+      }
+      #style-toggle.rounded .circle-icon {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- <h2>Nyxic Transcriber</h2> -->
+
+      <button id="theme-toggle" class="icon-btn" type="button" title="Toggle Theme">
+        <svg
+          class="sun-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg
+          class="moon-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+
+      <!-- <span class="label-mock">Style:</span> -->
+      <button id="style-toggle" class="icon-btn" type="button" title="Toggle Nib Style">
+        <!-- Diamond Icon (Angular) -->
+        <svg
+          class="diamond-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M2 12L12 2l10 10-10 10Z"></path>
+        </svg>
+        <!-- Circle Icon (Rounded) -->
+        <svg
+          class="circle-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="12" cy="12" r="10"></circle>
+        </svg>
+      </button>
+
+      <input type="text" id="transcriber-input" placeholder="type here" />
+
+      <div class="vfill"></div>
+      <div class="vfill"></div>
+      <div class="vfill"></div>
+      <div class="vfill"></div>
+
+      <input type="range" id="thickness" min="1" max="9" value="5" />
+
+      <div class="vfill"></div>
+
+      <input type="range" id="line-ceiling" min="1" max="49" value="25" />
+
+      <div class="vfill"></div>
+      <div class="vfill"></div>
+
+      <div class="canvas-frame">
+        <svg id="script-canvas" viewBox="-60 -60 1320 520">
+          <g id="glyph-group"></g>
+        </svg>
+      </div>
+    </div>
+
+    <script>
+      let currentStyle = "angular";
+
+      const inputElement = document.getElementById("transcriber-input");
+      const thicknessSlider = document.getElementById("thickness");
+      const ceilingSlider = document.getElementById("line-ceiling");
+      const glyphGroup = document.getElementById("glyph-group");
+      const svgCanvas = document.getElementById("script-canvas");
+      const themeToggle = document.getElementById("theme-toggle");
+      const styleToggle = document.getElementById("style-toggle");
+
+      const baseCanvasHeight = 300;
+      const padding = 120;
+
+      const halfWidth = 100;
+      const blockWidth = halfWidth * 2;
+      const blockHeight = 300;
+      const blockSpacingVertical = 60;
+      const wordSpacing = 140;
+
+      let currentThickness = thicknessSlider.value;
+      let maxBlocksCeiling = parseInt(ceilingSlider.value, 10);
+      let activeStrokeWidth = 1.0;
+
+      const CONSONANTS = new Set([
+        "m",
+        "n",
+        "v",
+        "th",
+        "l",
+        "r",
+        "y",
+        "w",
+        "p",
+        "t",
+        "f",
+        "s",
+        "sh",
+        "ch",
+        "k",
+        "b",
+        "d",
+        "z",
+        "h",
+        "j",
+        "g",
+      ]);
+
+      const VOWELS = new Set([
+        "u",
+        "a",
+        "i",
+        "e",
+        "aa",
+        "au",
+        "aw",
+        "oo",
+        "o",
+        "ou",
+        "ow",
+        "ei",
+        "ey",
+        "ai",
+        "ay",
+        "ea",
+        "ee",
+        "oi",
+        "oy",
+        "uu",
+        "uw",
+        "oa",
+        "er",
+        "air",
+        "ear",
+        "eer",
+        "ar",
+        "ur",
+        "or",
+        "oor",
+      ]);
+
+      const nyxicAlphabet = {
+        zero: ["slash", "slash", "slash"],
+        m: ["backslash", "backslash", "backslash"],
+        n: ["backslash", "slash", "backslash"],
+        v: ["backslash", "cross", "backslash"],
+        th: ["backslash", "backslash", "slash"],
+        l: ["backslash", "slash", "slash"],
+        r: ["backslash", "cross", "slash"],
+        y: ["backslash", "backslash", "cross"],
+        w: ["backslash", "slash", "cross"],
+        p: ["slash", "backslash", "backslash"],
+        t: ["slash", "slash", "backslash"],
+        f: ["slash", "cross", "backslash"],
+        s: ["slash", "backslash", "slash"],
+        sh: ["slash", "cross", "slash"],
+        ch: ["slash", "backslash", "cross"],
+        k: ["slash", "slash", "cross"],
+        b: ["cross", "backslash", "backslash"],
+        d: ["cross", "slash", "backslash"],
+        z: ["cross", "backslash", "slash"],
+        h: ["cross", "slash", "slash"],
+        j: ["cross", "backslash", "cross"],
+        g: ["cross", "slash", "cross"],
+
+        u: ["backslash", "backslash", "backslash"],
+        a: ["backslash", "slash", "backslash"],
+        i: ["backslash", "cross", "backslash"],
+        e: ["backslash", "backslash", "slash"],
+        aa: ["backslash", "slash", "slash"],
+        au: ["backslash", "cross", "slash"],
+        aw: ["backslash", "cross", "slash"],
+        oo: ["backslash", "backslash", "cross"],
+        o: ["backslash", "slash", "cross"],
+        ou: ["slash", "backslash", "backslash"],
+        ow: ["slash", "backslash", "backslash"],
+        ei: ["slash", "slash", "backslash"],
+        ey: ["slash", "slash", "backslash"],
+        ai: ["slash", "cross", "backslash"],
+        ay: ["slash", "cross", "backslash"],
+        ea: ["slash", "backslash", "slash"],
+        ee: ["slash", "backslash", "slash"],
+        oi: ["slash", "cross", "slash"],
+        oy: ["slash", "cross", "slash"],
+        uu: ["slash", "backslash", "cross"],
+        uw: ["slash", "backslash", "cross"],
+        oa: ["slash", "slash", "cross"],
+        er: ["cross", "backslash", "backslash"],
+        air: ["cross", "slash", "backslash"],
+        ear: ["cross", "backslash", "slash"],
+        eer: ["cross", "backslash", "slash"],
+        ar: ["cross", "slash", "slash"],
+        ur: ["cross", "backslash", "cross"],
+        or: ["cross", "slash", "cross"],
+        oor: ["cross", "slash", "cross"],
+      };
+
+      function tokenizeText(text) {
+        let rawTokens = [];
+        let i = 0;
+        const cleanText = text.toLowerCase();
+
+        const phonemeKeys = [
+          "air",
+          "eer",
+          "ear",
+          "oor",
+          "th",
+          "sh",
+          "ch",
+          "qu",
+          "aa",
+          "aw",
+          "uu",
+          "oo",
+          "uw",
+          "ow",
+          "ey",
+          "ay",
+          "ai",
+          "ea",
+          "ee",
+          "oy",
+          "oa",
+          "er",
+          "ar",
+          "ur",
+          "or",
+          "au",
+          "ou",
+          "ei",
+          "oi",
+          "m",
+          "n",
+          "v",
+          "l",
+          "r",
+          "p",
+          "t",
+          "f",
+          "s",
+          "x",
+          "k",
+          "c",
+          "b",
+          "d",
+          "z",
+          "h",
+          "j",
+          "g",
+          "y",
+          "w",
+          "a",
+          "e",
+          "i",
+          "o",
+          "u",
+        ];
+
+        while (i < cleanText.length) {
+          if (cleanText[i] === " ") {
+            rawTokens.push(" ");
+            i++;
+            continue;
+          }
+
+          let matchFound = false;
+          for (const key of phonemeKeys) {
+            if (cleanText.substring(i, i + key.length) === key) {
+              if ((key.startsWith("y") || key.startsWith("w")) && key.length > 1) {
+                const isAtWordStart = i === 0 || cleanText[i - 1] === " ";
+                if (isAtWordStart) {
+                  continue;
+                }
+              }
+
+              if (key === "x") {
+                rawTokens.push("k", "s");
+              } else if (key === "qu") {
+                rawTokens.push("k", "w");
+              } else if (key === "c") {
+                rawTokens.push("k");
+              } else {
+                rawTokens.push(key);
+              }
+              i += key.length;
+              matchFound = true;
+              break;
+            }
+          }
+          if (!matchFound) {
+            i++;
+          }
+        }
+
+        const filteredTokens = [];
+        for (let j = 0; j < rawTokens.length; j++) {
+          const current = rawTokens[j];
+          const previous = filteredTokens[filteredTokens.length - 1];
+
+          if (CONSONANTS.has(current) && current === previous) {
+            continue;
+          }
+          filteredTokens.push(current);
+        }
+
+        return filteredTokens;
+      }
+
+      function generateSyllabicBlocks(tokens) {
+        const blocks = [];
+        let currentBlock = null;
+
+        for (let i = 0; i < tokens.length; i++) {
+          const token = tokens[i];
+
+          if (token === " ") {
+            if (currentBlock) {
+              currentBlock.right = "zero";
+              blocks.push(currentBlock);
+              currentBlock = null;
+            }
+            blocks.push({ type: "space" });
+          } else if (CONSONANTS.has(token)) {
+            if (currentBlock) {
+              currentBlock.right = "zero";
+              blocks.push(currentBlock);
+            }
+            currentBlock = { type: "glyph", left: token, right: null };
+          } else if (VOWELS.has(token)) {
+            if (currentBlock) {
+              currentBlock.right = token;
+              blocks.push(currentBlock);
+              currentBlock = null;
+            } else {
+              blocks.push({ type: "glyph", left: "zero", right: token });
+            }
+          }
+        }
+
+        if (currentBlock) {
+          currentBlock.right = "zero";
+          blocks.push(currentBlock);
+        }
+
+        return blocks;
+      }
+
+      function createPathElement(dAttribute, style) {
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", dAttribute);
+        path.setAttribute("stroke", "#2c3e50");
+        path.setAttribute("stroke-width", activeStrokeWidth);
+        path.setAttribute("stroke-linecap", style === "angular" ? "square" : "round");
+        path.setAttribute("fill", "none");
+        return path;
+      }
+
+      function drawCellPrimitive(type, x, y, isLeftColumn, style) {
+        if (type === "backslash" || type === "cross") {
+          let d;
+          if (style === "angular") {
+            d = `M ${x} ${y} L ${x + 100} ${y + 100}`;
+          } else {
+            const sweepFlag = isLeftColumn ? 0 : 1;
+            d = `M ${x} ${y} A 100 100 0 0 ${sweepFlag} ${x + 100} ${y + 100}`;
+          }
+          glyphGroup.appendChild(createPathElement(d, style));
+        }
+
+        if (type === "slash" || type === "cross") {
+          let d;
+          if (style === "angular") {
+            d = `M ${x + 100} ${y} L ${x} ${y + 100}`;
+          } else {
+            const sweepFlag = isLeftColumn ? 0 : 1;
+            d = `M ${x + 100} ${y} A 100 100 0 0 ${sweepFlag} ${x} ${y + 100}`;
+          }
+          glyphGroup.appendChild(createPathElement(d, style));
+        }
+      }
+
+      function drawTripleStack(phoneme, xOffset, yOffset, isLeftColumn, style) {
+        const rules = nyxicAlphabet[phoneme] || nyxicAlphabet["zero"];
+        drawCellPrimitive(rules[0], xOffset, yOffset, isLeftColumn, style);
+        drawCellPrimitive(rules[1], xOffset, yOffset + 100, isLeftColumn, style);
+        drawCellPrimitive(rules[2], xOffset, yOffset + 200, isLeftColumn, style);
+      }
+
+      function renderGlyph() {
+        const text = inputElement.value;
+        glyphGroup.innerHTML = "";
+
+        function updateCanvasViewBox(w, h) {
+          svgCanvas.setAttribute("viewBox", `-${padding} -${padding} ${w + padding * 2} ${h + padding * 2}`);
+        }
+
+        const structuralLimit = currentStyle === "angular" ? 50 * Math.sqrt(2) : 100.0;
+        activeStrokeWidth = 1 + ((structuralLimit - 2) / 8) * (currentThickness - 1);
+
+        const blockSpacingHorizontal = 12 + activeStrokeWidth * 0.9;
+
+        const tokens = tokenizeText(text);
+        const blocks = generateSyllabicBlocks(tokens);
+
+        while (blocks.length > 0 && blocks[blocks.length - 1].type === "space") {
+          blocks.pop();
+        }
+
+        if (blocks.length === 0) {
+          updateCanvasViewBox(blockWidth, baseCanvasHeight);
+          return;
+        }
+
+        let cursorX = 0;
+        let cursorY = 0;
+
+        const maxLineAllowedWidth = maxBlocksCeiling * blockWidth + (maxBlocksCeiling - 1) * blockSpacingHorizontal;
+        const lineWrapBoundary = maxLineAllowedWidth - blockWidth;
+
+        let maxReachedX = 0;
+        let maxReachedY = baseCanvasHeight;
+
+        for (let i = 0; i < blocks.length; i++) {
+          const block = blocks[i];
+          const currentStepWidth = block.type === "space" ? wordSpacing : blockWidth;
+
+          if (cursorX > lineWrapBoundary + 1 && i > 0) {
+            cursorX = 0;
+            cursorY += blockHeight + blockSpacingVertical;
+          }
+
+          if (block.type === "space") {
+            if (cursorX + currentStepWidth > maxReachedX) maxReachedX = cursorX + currentStepWidth;
+            if (cursorY + blockHeight > maxReachedY) maxReachedY = cursorY + blockHeight;
+            cursorX += wordSpacing;
+          } else {
+            drawTripleStack(block.left, cursorX, cursorY, true, currentStyle);
+            drawTripleStack(block.right, cursorX + halfWidth, cursorY, false, currentStyle);
+
+            if (cursorX + blockWidth > maxReachedX) maxReachedX = cursorX + blockWidth;
+            if (cursorY + blockHeight > maxReachedY) maxReachedY = cursorY + blockHeight;
+
+            cursorX += blockWidth + blockSpacingHorizontal;
+          }
+        }
+
+        updateCanvasViewBox(maxReachedX, maxReachedY);
+      }
+
+      // --- Event Listeners ---
+      inputElement.addEventListener("input", renderGlyph);
+
+      thicknessSlider.addEventListener("input", (e) => {
+        currentThickness = e.target.value;
+        renderGlyph();
+      });
+
+      ceilingSlider.addEventListener("input", (e) => {
+        maxBlocksCeiling = parseInt(e.target.value, 10);
+        renderGlyph();
+      });
+
+      themeToggle.addEventListener("click", () => {
+        if (document.body.getAttribute("data-theme") === "dark") {
+          document.body.removeAttribute("data-theme");
+        } else {
+          document.body.setAttribute("data-theme", "dark");
+        }
+      });
+
+      // Style Toggle Handler (Swaps style layout and flips visible button icon)
+      styleToggle.addEventListener("click", () => {
+        if (currentStyle === "angular") {
+          currentStyle = "rounded";
+          styleToggle.classList.add("rounded");
+        } else {
+          currentStyle = "angular";
+          styleToggle.classList.remove("rounded");
+        }
+        renderGlyph();
+      });
+
+      renderGlyph();
+    </script>
+  </body>
+</html>
