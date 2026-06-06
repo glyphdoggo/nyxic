@@ -149,13 +149,14 @@
 
       .canvas-frame {
         width: 100%;
-        min-height: 350px;
+        height: 420px; 
         background: var(--bg-canvas);
         border-radius: 10px;
         overflow: hidden;
         display: flex;
         align-items: center;
         justify-content: center;
+        box-sizing: border-box;
         transition: background-color 0.3s ease;
       }
 
@@ -197,6 +198,9 @@
         }
         .buttons-group {
           justify-content: center;
+        }
+        .canvas-frame {
+          height: 280px;
         }
       }
     </style>
@@ -361,7 +365,7 @@
       const styleToggle = document.getElementById("style-toggle");
       const exportButton = document.getElementById("export-button");
 
-      const baseCanvasHeight = -200;
+      const baseCanvasHeight = 0;
       const padding = 200;
       const halfWidth = 100;
       const blockWidth = 200;
