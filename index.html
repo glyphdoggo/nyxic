@@ -257,7 +257,6 @@
         </div>
       </header>
 
-      <!-- Canvas Frame containing your dynamic SVG -->
       <div class="canvas-frame">
         <svg id="script-canvas" shape-rendering="geometricPrecision" viewBox="0 0 200 300">
           <g id="glyph-group"></g>
@@ -511,7 +510,7 @@
           yPositions = [37.5, 150, 262.5];
         }
 
-        const r = Math.max(8, activeStrokeWidth * .315);
+        const r = Math.max(8, activeStrokeWidth * .3);
 
         for (const cy of yPositions) {
           const absoluteY = yOffset + cy;
