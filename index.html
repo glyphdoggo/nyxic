@@ -10,130 +10,123 @@
         --bg-container: #ddd;
         --bg-canvas: #eee;
         --text-main: #222;
-        --text-muted: #333;
+        --text-muted: #555;
         --border: #bbb;
         --slider-thumb: #222;
       }
 
       [data-theme="dark"] {
-        --bg-body: #222;
-        --bg-container: #333;
-        --bg-canvas: #222;
+        --bg-body: #1e1e1e;
+        --bg-container: #2d2d2d;
+        --bg-canvas: #1e1e1e;
         --text-main: #ddd;
-        --text-muted: #eee;
+        --text-muted: #aaa;
         --border: #444;
         --slider-thumb: #ddd;
       }
 
       body {
         font-family: sans-serif;
+        font-size: 20px;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        height: 100vh;
+        min-height: 100vh;
         margin: 0;
         background-color: var(--bg-body);
-        transition: background-color 0.3s ease;
-      }
-
-      .container {
-        position: relative;
-        background: var(--bg-container);
         color: var(--text-main);
-        padding: 30px;
-        border-radius: 20px;
-        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
-        text-align: center;
-        width: 80%;
-        height: 80%;
-        display: flex;
-        flex-direction: column;
+        transition: background-color 0.3s ease;
+        padding: 20px;
         box-sizing: border-box;
-        transition:
-          background-color 0.3s ease,
-          color 0.3s ease;
       }
 
       h2 {
         margin-top: 0;
-        margin-bottom: 15px;
+        margin-bottom: 0;
+        text-align: center;
       }
 
-      .controls {
-        margin-bottom: 0px;
+      .container {
+        background: var(--bg-container);
+        padding: 25px;
+        border-radius: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        width: 100%;
+        max-width: 1100px;
         display: flex;
         flex-direction: column;
-        gap: 12px;
-        align-items: center;
+        gap: 20px;
+        box-sizing: border-box;
+        transition: background-color 0.3s ease, color 0.3s ease;
       }
 
-      .control-group {
+      .controls-toolbar {
         display: flex;
+        flex-wrap: wrap;
         align-items: center;
-        gap: 10px;
+        gap: 15px;
+        width: 100%;
+      }
+
+      .input-wrapper {
+        flex: 1 1 300px;
       }
 
       input[type="text"] {
-        padding: 8.325px;
+        /*font-family: monospace;*/
+        width: 100%;
+        padding: 10px;
         font-size: 16px;
         border: 2px solid var(--border);
-        background-color: var(--bg-container);
+        background-color: var(--bg-canvas);
         color: var(--text-main);
-        border-radius: 20px;
-        /*width: 70%;*/
-        position: absolute;
-        right: 155px;
-        left: 30px;
+        border-radius: 10px;
         text-align: center;
+        box-sizing: border-box;
         transition: all 0.3s ease;
       }
 
-      .vfill {
-        flex-grow: 1;
+      .sliders-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        flex: 2 1 400px;
       }
 
-      .canvas-frame {
-        width: 100%;
-        height: 70%;
-        margin: 0;
-        background: var(--bg-canvas);
-        border-radius: 10px;
-        overflow: hidden;
-        transition: background-color 0.3s ease;
+      .slider-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        flex: 1 1 180px;
       }
 
-      svg {
-        width: 100%;
-        height: 100%;
-      }
-
-      #glyph-group path {
-        stroke: var(--text-main) !important;
-        transition: stroke 0.3s ease;
-      }
-
-      /* Minimal alignment mechanics */
-      .control-group > label:first-child,
-      .control-group .label-mock {
-        display: inline-block;
-        width: 130px;
-        text-align: right;
+      .slider-wrapper label {
+        font-size: 12px;
         font-weight: bold;
-        font-size: 14px;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
       }
 
-      .control-group input[type="range"] {
-        width: 70%;
+      input[type="range"] {
+        width: 100%;
+        margin: 0;
+        cursor: pointer;
       }
 
-      /* --- Shared Minimalist Icon Button Design --- */
+      .buttons-group {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+      }
+
       .icon-btn {
         background: none;
         border: 2px solid var(--border);
         color: var(--text-muted);
-        width: 40px;
-        height: 40px;
+        width: 42px;
+        height: 42px;
         border-radius: 50%;
         cursor: pointer;
         display: flex;
@@ -150,145 +143,211 @@
       }
 
       .icon-btn svg {
-        width: 18px;
-        height: 18px;
+        width: 20px;
+        height: 20px;
       }
 
-      /* Top-right placement rule specific to the Theme Toggle */
-      #theme-toggle {
-        position: absolute;
-        top: 30px;
-        right: 30px;
-        z-index: 10;
+      .canvas-frame {
+        width: 100%;
+        min-height: 350px;
+        background: var(--bg-canvas);
+        border-radius: 10px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.3s ease;
       }
 
-      /* Top-left placement rule specific to the Style Toggle */
-      #style-toggle {
-        position: absolute;
-        top: 30px;
-        right: 90px;
-        z-index: 10;
+      svg {
+        width: 100%;
+        height: 100%;
+        display: block;
       }
 
-      /* --- Dark/Light Mode Icon Visibility Logic --- */
-      .sun-icon {
-        display: none;
-      }
-      .moon-icon {
-        display: block;
-      }
-      [data-theme="dark"] .sun-icon {
-        display: block;
-      }
-      [data-theme="dark"] .moon-icon {
-        display: none;
+      #glyph-group path {
+        stroke: var(--text-main) !important;
+        transition: stroke 0.3s ease;
       }
 
-      /* --- Angular/Rounded Nib Icon Visibility Logic --- */
-      .diamond-icon {
-        display: block;
-      }
-      .circle-icon {
-        display: none;
-      }
-      #style-toggle.rounded .diamond-icon {
-        display: none;
-      }
-      #style-toggle.rounded .circle-icon {
-        display: block;
+      .sun-icon { display: block; }
+      .moon-icon { display: none; }
+      [data-theme="dark"] .sun-icon { display: none; }
+      [data-theme="dark"] .moon-icon { display: block; }
+
+      .diamond-icon { display: block; }
+      .circle-icon { display: none; }
+      #style-toggle.rounded .diamond-icon { display: none; }
+      #style-toggle.rounded .circle-icon { display: block; }
+
+      @media (max-width: 600px) {
+        body {
+          padding: 10px;
+        }
+        .container {
+          padding: 15px;
+        }
+        .controls-toolbar {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        .buttons-group {
+          justify-content: center;
+        }
       }
     </style>
   </head>
-  <body>
+  <body data-theme="dark">
     <div class="container">
-      <!-- <h2>Nyxic Transcriber</h2> -->
+      <h2>Nyxic Transcriber</h2>
+      <header class="controls-toolbar">
+        <div class="input-wrapper">
+          <input type="text" id="transcriber-input" placeholder="Type here..." />
+        </div>
 
-      <button id="theme-toggle" class="icon-btn" type="button" title="Toggle Theme">
-        <svg
-          class="sun-icon"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <circle cx="12" cy="12" r="5"></circle>
-          <line x1="12" y1="1" x2="12" y2="3"></line>
-          <line x1="12" y1="21" x2="12" y2="23"></line>
-          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-          <line x1="1" y1="12" x2="3" y2="12"></line>
-          <line x1="21" y1="12" x2="23" y2="12"></line>
-          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-        </svg>
-        <svg
-          class="moon-icon"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-        </svg>
-      </button>
+        <div class="sliders-group">
+          <div class="slider-wrapper">
+            <label for="thickness">Line Thickness</label>
+            <input type="range" id="thickness" min="1" max="19" value="10" />
+          </div>
+          <div class="slider-wrapper">
+            <label for="line-ceiling">Line Layout Ceiling</label>
+            <input type="range" id="line-ceiling" min="1" max="37" value="19" />
+          </div>
+        </div>
 
-      <!-- <span class="label-mock">Style:</span> -->
-      <button id="style-toggle" class="icon-btn" type="button" title="Toggle Nib Style">
-        <!-- Diamond Icon (Angular) -->
-        <svg
-          class="diamond-icon"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path d="M2 12L12 2l10 10-10 10Z"></path>
-        </svg>
-        <!-- Circle Icon (Rounded) -->
-        <svg
-          class="circle-icon"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <circle cx="12" cy="12" r="10"></circle>
-        </svg>
-      </button>
+        <div class="buttons-group">
+          <button id="style-toggle" class="icon-btn" type="button" title="Toggle Nib Style">
+            <svg class="diamond-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 12L12 2l10 10-10 10Z"></path>
+            </svg>
+            <svg class="circle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+            </svg>
+          </button>
 
-      <input type="text" id="transcriber-input" placeholder="type here" />
+          <button id="export-button" class="icon-btn" type="button" title="Download SVG">
+            <svg class="download-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+          </button>
 
-      <div class="vfill"></div>
-      <div class="vfill"></div>
-      <div class="vfill"></div>
-      <div class="vfill"></div>
+          <button id="theme-toggle" class="icon-btn" type="button" title="Toggle Theme">
+            <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+          </button>
+        </div>
+      </header>
 
-      <input type="range" id="thickness" min="1" max="9" value="5" />
-
-      <div class="vfill"></div>
-
-      <input type="range" id="line-ceiling" min="1" max="49" value="25" />
-
-      <div class="vfill"></div>
-      <div class="vfill"></div>
-
+      <!-- Canvas Frame containing your dynamic SVG -->
       <div class="canvas-frame">
-        <svg id="script-canvas" viewBox="-60 -60 1320 520">
+        <svg id="script-canvas" shape-rendering="geometricPrecision" viewBox="0 0 200 300">
           <g id="glyph-group"></g>
         </svg>
       </div>
     </div>
 
     <script>
-      let currentStyle = "angular";
+      // ==========================================
+      // 1. GLOBAL LEXICON & ALPHABET CONFIGURATION
+      // ==========================================
+      const CONSONANTS = new Set([
+        "m", "n", "v", "th", "l", "r", "y", "w", "p", "t", "f", "s", "sh", "ch", "k", "b", "d", "z", "h", "j", "g"
+      ]);
+
+      const VOWELS = new Set([
+        "u", "a", "i", "e", "aa", "au", "aw", "oo", "o", "ou", "ow", "ei", "ey", "ai", "ay", "ea", "ee", "oi", "oy", "ue", "uu", "uw", "oa", "oe", "er", "air", "ear", "eer", "ar", "ur", "or", "ir", "oor", "oar"
+      ]);
+
+      const PHONEME_KEYS = [
+        ",", ".", ";", ":", "!", "?",
+        "air", "eer", "ear", "oor", "oar",
+        "th", "sh", "ch", "ph", "wh", "qu", "ng", "aa", "aw", "uu", "ue", "oo", "uw", "ow", "ey", "ay", "ai", "ea", "ee", "oy", "oa", "er", "ar", "ir", "ur", "or", "au", "ou", "ei", "oi", "oe",
+        "m", "n", "v", "l", "r", "p", "t", "f", "s", "x", "k", "c", "q", "b", "d", "z", "h", "j", "g", "y", "w", "a", "e", "i", "o", "u"
+      ];
+
+      const NYXIC_ALPHABET = {
+        m: ["backslash", "backslash", "backslash"],
+        r: ["backslash", "slash", "backslash"], // old N
+        v: ["backslash", "cross", "backslash"],
+        n: ["backslash", "backslash", "slash"], // old R
+        l: ["backslash", "slash", "slash"],
+        w: ["backslash", "cross", "slash"],
+        y: ["backslash", "backslash", "cross"],
+        s: ["backslash", "slash", "cross"], // old W
+
+        p: ["slash", "backslash", "backslash"],
+        t: ["slash", "slash", "backslash"],
+        f: ["slash", "cross", "backslash"],
+        k: ["slash", "backslash", "slash"], // old S
+        0: ["slash", "slash", "slash"],
+        th: ["slash", "cross", "slash"], // old SH
+        ch: ["slash", "backslash", "cross"],
+        sh: ["slash", "slash", "cross"], // old K
+
+        b: ["cross", "backslash", "backslash"],
+        d: ["cross", "slash", "backslash"],
+        g: ["cross", "backslash", "slash"],
+        h: ["cross", "slash", "slash"],
+        j: ["cross", "backslash", "cross"],
+        z: ["cross", "slash", "cross"],
+
+        a: ["backslash", "slash", "backslash"], // TRAP, BATH
+        e: ["backslash", "backslash", "slash"], // DRESS
+        i: ["backslash", "cross", "backslash"], // KIT 
+        o: ["backslash", "slash", "cross"], // LOT, CLOTH
+        u: ["backslash", "backslash", "backslash"], // STRUT, COMMA
+
+        aa: ["backslash", "slash", "slash"], // PALM, FATHER
+        ai: ["slash", "cross", "backslash"], // PRICE, BLIGHT
+        ay: ["slash", "cross", "backslash"],
+        au: ["backslash", "cross", "slash"], // THOUGHT, THAW
+        aw: ["backslash", "cross", "slash"],
+        ei: ["slash", "slash", "backslash"], // FACE, REIGN
+        ey: ["slash", "slash", "backslash"],
+        ea: ["slash", "backslash", "slash"], // FLEECE, PLEASE
+        ee: ["slash", "backslash", "slash"],
+        oa: ["slash", "slash", "cross"], // GOAT, JOE
+        oe: ["slash", "slash", "cross"],
+        oo: ["backslash", "backslash", "cross"], // FOOT
+        oi: ["slash", "cross", "slash"], // CHOICE, BOY
+        oy: ["slash", "cross", "slash"],
+        ou: ["slash", "backslash", "backslash"], // MOUTH, POW!
+        ow: ["slash", "backslash", "backslash"],
+        uu: ["slash", "backslash", "cross"], // GOOSE, MUSE
+        uw: ["slash", "backslash", "cross"],
+        ue: ["slash", "backslash", "cross"],
+
+        ar: ["cross", "slash", "slash"], // START
+        air: ["cross", "slash", "backslash"], // SQUARE, AIR
+        ear: ["cross", "backslash", "slash"], // NEAR, LEER
+        eer: ["cross", "backslash", "slash"],
+        er: ["cross", "backslash", "backslash"], // LETTER, NURSE, FIRST
+        ir: ["cross", "backslash", "backslash"],
+        or: ["cross", "slash", "cross"], // NORTH, FORCE, HORSE, BOAR
+        oar: ["cross", "slash", "cross"],
+        ur: ["cross", "backslash", "cross"], // CURE, MOOR
+        oor: ["cross", "backslash", "cross"],
+      };
+
+      // ==========================================
+      // 2. DOM ELEMENTS & APP STATE
+      // ==========================================
+      let currentStyle = "rounded";
 
       const inputElement = document.getElementById("transcriber-input");
       const thicknessSlider = document.getElementById("thickness");
@@ -297,194 +356,27 @@
       const svgCanvas = document.getElementById("script-canvas");
       const themeToggle = document.getElementById("theme-toggle");
       const styleToggle = document.getElementById("style-toggle");
+      const exportButton = document.getElementById("export-button");
 
-      const baseCanvasHeight = 300;
-      const padding = 120;
-
+      const baseCanvasHeight = 0;
+      const padding = 200;
       const halfWidth = 100;
-      const blockWidth = halfWidth * 2;
+      const blockWidth = 200;
       const blockHeight = 300;
-      const blockSpacingVertical = 60;
-      const wordSpacing = 140;
+      const blockSpacingVertical = 200;
+      const wordSpacing = 150;
 
       let currentThickness = thicknessSlider.value;
       let maxBlocksCeiling = parseInt(ceilingSlider.value, 10);
       let activeStrokeWidth = 1.0;
 
-      const CONSONANTS = new Set([
-        "m",
-        "n",
-        "v",
-        "th",
-        "l",
-        "r",
-        "y",
-        "w",
-        "p",
-        "t",
-        "f",
-        "s",
-        "sh",
-        "ch",
-        "k",
-        "b",
-        "d",
-        "z",
-        "h",
-        "j",
-        "g",
-      ]);
-
-      const VOWELS = new Set([
-        "u",
-        "a",
-        "i",
-        "e",
-        "aa",
-        "au",
-        "aw",
-        "oo",
-        "o",
-        "ou",
-        "ow",
-        "ei",
-        "ey",
-        "ai",
-        "ay",
-        "ea",
-        "ee",
-        "oi",
-        "oy",
-        "uu",
-        "uw",
-        "oa",
-        "er",
-        "air",
-        "ear",
-        "eer",
-        "ar",
-        "ur",
-        "or",
-        "oor",
-      ]);
-
-      const nyxicAlphabet = {
-        zero: ["slash", "slash", "slash"],
-        m: ["backslash", "backslash", "backslash"],
-        n: ["backslash", "slash", "backslash"],
-        v: ["backslash", "cross", "backslash"],
-        th: ["backslash", "backslash", "slash"],
-        l: ["backslash", "slash", "slash"],
-        r: ["backslash", "cross", "slash"],
-        y: ["backslash", "backslash", "cross"],
-        w: ["backslash", "slash", "cross"],
-        p: ["slash", "backslash", "backslash"],
-        t: ["slash", "slash", "backslash"],
-        f: ["slash", "cross", "backslash"],
-        s: ["slash", "backslash", "slash"],
-        sh: ["slash", "cross", "slash"],
-        ch: ["slash", "backslash", "cross"],
-        k: ["slash", "slash", "cross"],
-        b: ["cross", "backslash", "backslash"],
-        d: ["cross", "slash", "backslash"],
-        z: ["cross", "backslash", "slash"],
-        h: ["cross", "slash", "slash"],
-        j: ["cross", "backslash", "cross"],
-        g: ["cross", "slash", "cross"],
-
-        u: ["backslash", "backslash", "backslash"],
-        a: ["backslash", "slash", "backslash"],
-        i: ["backslash", "cross", "backslash"],
-        e: ["backslash", "backslash", "slash"],
-        aa: ["backslash", "slash", "slash"],
-        au: ["backslash", "cross", "slash"],
-        aw: ["backslash", "cross", "slash"],
-        oo: ["backslash", "backslash", "cross"],
-        o: ["backslash", "slash", "cross"],
-        ou: ["slash", "backslash", "backslash"],
-        ow: ["slash", "backslash", "backslash"],
-        ei: ["slash", "slash", "backslash"],
-        ey: ["slash", "slash", "backslash"],
-        ai: ["slash", "cross", "backslash"],
-        ay: ["slash", "cross", "backslash"],
-        ea: ["slash", "backslash", "slash"],
-        ee: ["slash", "backslash", "slash"],
-        oi: ["slash", "cross", "slash"],
-        oy: ["slash", "cross", "slash"],
-        uu: ["slash", "backslash", "cross"],
-        uw: ["slash", "backslash", "cross"],
-        oa: ["slash", "slash", "cross"],
-        er: ["cross", "backslash", "backslash"],
-        air: ["cross", "slash", "backslash"],
-        ear: ["cross", "backslash", "slash"],
-        eer: ["cross", "backslash", "slash"],
-        ar: ["cross", "slash", "slash"],
-        ur: ["cross", "backslash", "cross"],
-        or: ["cross", "slash", "cross"],
-        oor: ["cross", "slash", "cross"],
-      };
-
+      // ==========================================
+      // 3. CORE LOGIC ENGINE
+      // ==========================================
       function tokenizeText(text) {
         let rawTokens = [];
         let i = 0;
         const cleanText = text.toLowerCase();
-
-        const phonemeKeys = [
-          "air",
-          "eer",
-          "ear",
-          "oor",
-          "th",
-          "sh",
-          "ch",
-          "qu",
-          "aa",
-          "aw",
-          "uu",
-          "oo",
-          "uw",
-          "ow",
-          "ey",
-          "ay",
-          "ai",
-          "ea",
-          "ee",
-          "oy",
-          "oa",
-          "er",
-          "ar",
-          "ur",
-          "or",
-          "au",
-          "ou",
-          "ei",
-          "oi",
-          "m",
-          "n",
-          "v",
-          "l",
-          "r",
-          "p",
-          "t",
-          "f",
-          "s",
-          "x",
-          "k",
-          "c",
-          "b",
-          "d",
-          "z",
-          "h",
-          "j",
-          "g",
-          "y",
-          "w",
-          "a",
-          "e",
-          "i",
-          "o",
-          "u",
-        ];
 
         while (i < cleanText.length) {
           if (cleanText[i] === " ") {
@@ -493,20 +385,27 @@
             continue;
           }
 
-          let matchFound = false;
-          for (const key of phonemeKeys) {
-            if (cleanText.substring(i, i + key.length) === key) {
-              if ((key.startsWith("y") || key.startsWith("w")) && key.length > 1) {
-                const isAtWordStart = i === 0 || cleanText[i - 1] === " ";
-                if (isAtWordStart) {
-                  continue;
-                }
-              }
+          if (cleanText[i] === "-" || cleanText[i] === "'") {
+              rawTokens.push(cleanText[i]);
+              i++;
+              continue;
+            }
 
+          let matchFound = false;
+          for (const key of PHONEME_KEYS) {
+            if (cleanText.substring(i, i + key.length) === key) {
               if (key === "x") {
                 rawTokens.push("k", "s");
+              } else if (key === "q") {
+                rawTokens.push("k");
               } else if (key === "qu") {
                 rawTokens.push("k", "w");
+              } else if (key === "ng") {
+                rawTokens.push("h");
+              } else if (key === "ph") {
+                rawTokens.push("f");
+              } else if (key === "wh") {
+                rawTokens.push("w");
               } else if (key === "c") {
                 rawTokens.push("k");
               } else {
@@ -517,19 +416,14 @@
               break;
             }
           }
-          if (!matchFound) {
-            i++;
-          }
+          if (!matchFound) i++;
         }
 
         const filteredTokens = [];
         for (let j = 0; j < rawTokens.length; j++) {
           const current = rawTokens[j];
           const previous = filteredTokens[filteredTokens.length - 1];
-
-          if (CONSONANTS.has(current) && current === previous) {
-            continue;
-          }
+          if (CONSONANTS.has(current) && current === previous) continue;
           filteredTokens.push(current);
         }
 
@@ -545,14 +439,30 @@
 
           if (token === " ") {
             if (currentBlock) {
-              currentBlock.right = "zero";
+              currentBlock.right = "0";
               blocks.push(currentBlock);
               currentBlock = null;
             }
             blocks.push({ type: "space" });
-          } else if (CONSONANTS.has(token)) {
+          } 
+          else if ([",", ".", ";", ":", "!", "?"].includes(token)) {
             if (currentBlock) {
-              currentBlock.right = "zero";
+              currentBlock.right = "0";
+              blocks.push(currentBlock);
+              currentBlock = null;
+            }
+            blocks.push({ type: "punctuation", value: token });
+          } 
+          else if (token === "-" || token === "'") {
+            if (currentBlock) {
+              currentBlock.right = "0";
+              blocks.push(currentBlock);
+              currentBlock = null;
+            }
+          }
+          else if (CONSONANTS.has(token)) {
+            if (currentBlock) {
+              currentBlock.right = "0";
               blocks.push(currentBlock);
             }
             currentBlock = { type: "glyph", left: token, right: null };
@@ -562,13 +472,13 @@
               blocks.push(currentBlock);
               currentBlock = null;
             } else {
-              blocks.push({ type: "glyph", left: "zero", right: token });
+              blocks.push({ type: "glyph", left: "0", right: token });
             }
           }
         }
 
         if (currentBlock) {
-          currentBlock.right = "zero";
+          currentBlock.right = "0";
           blocks.push(currentBlock);
         }
 
@@ -578,42 +488,195 @@
       function createPathElement(dAttribute, style) {
         const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
         path.setAttribute("d", dAttribute);
-        path.setAttribute("stroke", "#2c3e50");
+        path.setAttribute("stroke", "#000");
         path.setAttribute("stroke-width", activeStrokeWidth);
         path.setAttribute("stroke-linecap", style === "angular" ? "square" : "round");
         path.setAttribute("fill", "none");
         return path;
       }
 
-      function drawCellPrimitive(type, x, y, isLeftColumn, style) {
-        if (type === "backslash" || type === "cross") {
-          let d;
-          if (style === "angular") {
-            d = `M ${x} ${y} L ${x + 100} ${y + 100}`;
-          } else {
-            const sweepFlag = isLeftColumn ? 0 : 1;
-            d = `M ${x} ${y} A 100 100 0 0 ${sweepFlag} ${x + 100} ${y + 100}`;
-          }
-          glyphGroup.appendChild(createPathElement(d, style));
+      function drawPunctuation(value, xOffset, yOffset, style) {
+        const cx = xOffset + 50;
+        let yPositions = [];
+
+        if (value === "," || value === ".") {
+          yPositions = [150];
+        } else if (value === ";" || value === ":") {
+          yPositions = [75, 225];
+        } else if (value === "!" || value === "?") {
+          yPositions = [37.5, 150, 262.5];
         }
 
-        if (type === "slash" || type === "cross") {
-          let d;
+        const r = Math.max(8, activeStrokeWidth * .315);
+
+        for (const cy of yPositions) {
+          const absoluteY = yOffset + cy;
+          let d = "";
+
           if (style === "angular") {
-            d = `M ${x + 100} ${y} L ${x} ${y + 100}`;
+            d = `M ${cx} ${absoluteY - r} L ${cx + r} ${absoluteY} L ${cx} ${absoluteY + r} L ${cx - r} ${absoluteY} Z`;
           } else {
-            const sweepFlag = isLeftColumn ? 0 : 1;
-            d = `M ${x + 100} ${y} A 100 100 0 0 ${sweepFlag} ${x} ${y + 100}`;
+            d = `M ${cx - r} ${absoluteY} a ${r} ${r} 0 1 0 ${r * 2} 0 a ${r} ${r} 0 1 0 -${r * 2} 0`;
           }
-          glyphGroup.appendChild(createPathElement(d, style));
+
+          const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+          path.setAttribute("d", d);
+          
+          path.setAttribute("stroke", "var(--text-main)");
+          path.setAttribute("stroke-width", activeStrokeWidth * 0.5);
+          path.setAttribute("fill", "var(--text-main)"); 
+          
+          glyphGroup.appendChild(path);
         }
       }
 
+      function drawActualArc(type, level, x, yOffset, row, isLeftColumn, style, partnerLevel = null) {
+        const cellY = yOffset + row * 100;
+        let d;
+
+        if (style === "angular") {
+          if (type === "backslash") d = `M ${x} ${cellY} L ${x + 100} ${cellY + 100}`;
+          if (type === "slash") d = `M ${x + 100} ${cellY} L ${x} ${cellY + 100}`;
+          glyphGroup.appendChild(createPathElement(d, style));
+          return;
+        }
+
+        if (level === 1) {
+          let cx, cy, startAngle, endAngle, sweepFlag;
+          const r = 100;
+
+          if (type === "backslash") {
+            if (isLeftColumn) {
+              cx = x + 100; cy = cellY; startAngle = Math.PI / 2; endAngle = Math.PI; sweepFlag = 1;
+            } else {
+              cx = x; cy = cellY + 100; startAngle = 3 * Math.PI / 2; endAngle = 2 * Math.PI; sweepFlag = 1;
+            }
+          } else {
+            if (isLeftColumn) {
+              cx = x + 100; cy = cellY + 100; startAngle = 3 * Math.PI / 2; endAngle = Math.PI; sweepFlag = 0;
+            } else {
+              cx = x; cy = cellY; startAngle = Math.PI / 2; endAngle = 0; sweepFlag = 0;
+            }
+          }
+
+          const sx = cx + r * Math.cos(startAngle);
+          const sy = cy + r * Math.sin(startAngle);
+          const ex = cx + r * Math.cos(endAngle);
+          const ey = cy + r * Math.sin(endAngle);
+          d = `M ${sx} ${sy} A ${r} ${r} 0 0 ${sweepFlag} ${ex} ${ey}`;
+          glyphGroup.appendChild(createPathElement(d, style));
+          return;
+        }
+
+        let cx, cy, startAngle, endAngle, sweepFlag;
+        const r = level * 100;
+
+        if (type === "backslash") {
+          if (isLeftColumn) {
+            cx = x + 100; 
+            cy = yOffset + (row + 1) * 100 - r;
+            startAngle = Math.PI / 2; 
+            sweepFlag = 1;
+            endAngle = level === 2 ? (120 * Math.PI) / 180 : (110 * Math.PI) / 180;
+          } else {
+            cx = x; 
+            cy = yOffset + row * 100 + r;       
+            startAngle = 3 * Math.PI / 2; 
+            sweepFlag = 1;
+            endAngle = level === 2 ? (300 * Math.PI) / 180 : (290 * Math.PI) / 180;
+          }
+        } else {
+          if (isLeftColumn) {
+            cx = x + 100; 
+            cy = yOffset + row * 100 + r;       
+            startAngle = 3 * Math.PI / 2; 
+            sweepFlag = 0;
+            endAngle = level === 2 ? (240 * Math.PI) / 180 : (250 * Math.PI) / 180;
+          } else {
+            cx = x; 
+            cy = yOffset + (row + 1) * 100 - r;
+            startAngle = Math.PI / 2; 
+            sweepFlag = 0;
+            endAngle = level === 2 ? (60 * Math.PI) / 180 : (70 * Math.PI) / 180;
+          }
+        }
+
+        if (partnerLevel !== null && partnerLevel < level) {
+          const partnerType = (type === "backslash") ? "slash" : "backslash";
+          const partnerR = partnerLevel * 100;
+          let partnerCy;
+          
+          if (partnerLevel === 1) {
+            partnerCy = (partnerType === "backslash") ? (isLeftColumn ? cellY : cellY + 100) : (isLeftColumn ? cellY + 100 : cellY);
+          } else {
+            partnerCy = (partnerType === "backslash") ? (isLeftColumn ? (yOffset + (row + 1) * 100 - partnerR) : (yOffset + row * 100 + partnerR)) : (isLeftColumn ? (yOffset + row * 100 + partnerR) : (yOffset + (row + 1) * 100 - partnerR));
+          }
+
+          if (cy !== partnerCy) {
+            const Y = (partnerR * partnerR - r * r + cy * cy - partnerCy * partnerCy) / (2 * (cy - partnerCy));
+            const dX2 = r * r - (Y - cy) * (Y - cy);
+            if (dX2 >= 0) {
+              const dX = (isLeftColumn ? -1 : 1) * Math.sqrt(dX2);
+              endAngle = Math.atan2(Y - cy, dX);
+            }
+          }
+        }
+
+        const sx = cx + r * Math.cos(startAngle);
+        const sy = cy + r * Math.sin(startAngle);
+        const ex = cx + r * Math.cos(endAngle);
+        const ey = cy + r * Math.sin(endAngle);
+        d = `M ${sx} ${sy} A ${r} ${r} 0 0 ${sweepFlag} ${ex} ${ey}`;
+        glyphGroup.appendChild(createPathElement(d, style));
+      }
+
       function drawTripleStack(phoneme, xOffset, yOffset, isLeftColumn, style) {
-        const rules = nyxicAlphabet[phoneme] || nyxicAlphabet["zero"];
-        drawCellPrimitive(rules[0], xOffset, yOffset, isLeftColumn, style);
-        drawCellPrimitive(rules[1], xOffset, yOffset + 100, isLeftColumn, style);
-        drawCellPrimitive(rules[2], xOffset, yOffset + 200, isLeftColumn, style);
+        const rules = NYXIC_ALPHABET[phoneme] || NYXIC_ALPHABET["0"];
+
+        function getLevelB(row) {
+          if (isLeftColumn) {
+            if (row === 0) return 1;
+            const prevHasOpposite = rules[row - 1] === "slash" || rules[row - 1] === "cross";
+            if (prevHasOpposite) return 1;
+            return getLevelB(row - 1) + 1;
+          } else {
+            if (row === 2) return 1;
+            const prevHasOpposite = rules[row + 1] === "slash" || rules[row + 1] === "cross";
+            if (prevHasOpposite) return 1;
+            return getLevelB(row + 1) + 1;
+          }
+        }
+
+        function getLevelS(row) {
+          if (isLeftColumn) {
+            if (row === 2) return 1;
+            const prevHasOpposite = rules[row + 1] === "backslash" || rules[row + 1] === "cross";
+            if (prevHasOpposite) return 1;
+            return getLevelS(row + 1) + 1;
+          } else {
+            if (row === 0) return 1;
+            const prevHasOpposite = rules[row - 1] === "backslash" || rules[row - 1] === "cross";
+            if (prevHasOpposite) return 1;
+            return getLevelS(row - 1) + 1;
+          }
+        }
+
+        for (let row = 0; row < 3; row++) {
+          const cellType = rules[row];
+          if (cellType === "none") continue;
+
+          if (cellType === "backslash" || cellType === "cross") {
+            const level = getLevelB(row);
+            const partnerLevel = (cellType === "cross") ? getLevelS(row) : null;
+            drawActualArc("backslash", level, xOffset, yOffset, row, isLeftColumn, style, partnerLevel);
+          }
+
+          if (cellType === "slash" || cellType === "cross") {
+            const level = getLevelS(row);
+            const partnerLevel = (cellType === "cross") ? getLevelB(row) : null;
+            drawActualArc("slash", level, xOffset, yOffset, row, isLeftColumn, style, partnerLevel);
+          }
+        }
       }
 
       function renderGlyph() {
@@ -625,8 +688,7 @@
         }
 
         const structuralLimit = currentStyle === "angular" ? 50 * Math.sqrt(2) : 100.0;
-        activeStrokeWidth = 1 + ((structuralLimit - 2) / 8) * (currentThickness - 1);
-
+        activeStrokeWidth = 1 + ((structuralLimit - 2) / 18) * (currentThickness - 1);
         const blockSpacingHorizontal = 12 + activeStrokeWidth * 0.9;
 
         const tokens = tokenizeText(text);
@@ -643,7 +705,6 @@
 
         let cursorX = 0;
         let cursorY = 0;
-
         const maxLineAllowedWidth = maxBlocksCeiling * blockWidth + (maxBlocksCeiling - 1) * blockSpacingHorizontal;
         const lineWrapBoundary = maxLineAllowedWidth - blockWidth;
 
@@ -651,64 +712,86 @@
         let maxReachedY = baseCanvasHeight;
 
         for (let i = 0; i < blocks.length; i++) {
-          const block = blocks[i];
-          const currentStepWidth = block.type === "space" ? wordSpacing : blockWidth;
+        const block = blocks[i];
 
-          if (cursorX > lineWrapBoundary + 1 && i > 0) {
-            cursorX = 0;
-            cursorY += blockHeight + blockSpacingVertical;
-          }
+        let currentStepWidth = blockWidth;
+        if (block.type === "space") {
+        currentStepWidth = wordSpacing;
+        } else if (block.type === "punctuation") {
+        currentStepWidth = 100;
+        }
 
-          if (block.type === "space") {
-            if (cursorX + currentStepWidth > maxReachedX) maxReachedX = cursorX + currentStepWidth;
-            if (cursorY + blockHeight > maxReachedY) maxReachedY = cursorY + blockHeight;
-            cursorX += wordSpacing;
-          } else {
-            drawTripleStack(block.left, cursorX, cursorY, true, currentStyle);
-            drawTripleStack(block.right, cursorX + halfWidth, cursorY, false, currentStyle);
+        if (cursorX > lineWrapBoundary + 1 && i > 0) {
+        cursorX = 0;
+        cursorY += blockHeight + blockSpacingVertical;
+        }
 
-            if (cursorX + blockWidth > maxReachedX) maxReachedX = cursorX + blockWidth;
-            if (cursorY + blockHeight > maxReachedY) maxReachedY = cursorY + blockHeight;
+        if (block.type === "space") {
+        if (cursorX + currentStepWidth > maxReachedX) maxReachedX = cursorX + currentStepWidth;
+        if (cursorY + blockHeight > maxReachedY) maxReachedY = cursorY + blockHeight;
+        cursorX += wordSpacing;
+        } 
+        else if (block.type === "punctuation") {
+        drawPunctuation(block.value, cursorX, cursorY, currentStyle);
+        if (cursorX + currentStepWidth > maxReachedX) maxReachedX = cursorX + currentStepWidth;
+        if (cursorY + blockHeight > maxReachedY) maxReachedY = cursorY + blockHeight;
+        cursorX += currentStepWidth + blockSpacingHorizontal;
+        } 
+        else {
+        drawTripleStack(block.left, cursorX, cursorY, true, currentStyle);
+        drawTripleStack(block.right, cursorX + halfWidth, cursorY, false, currentStyle);
 
-            cursorX += blockWidth + blockSpacingHorizontal;
-          }
+        if (cursorX + blockWidth > maxReachedX) maxReachedX = cursorX + blockWidth;
+        if (cursorY + blockHeight > maxReachedY) maxReachedY = cursorY + blockHeight;
+
+        cursorX += blockWidth + blockSpacingHorizontal;
+        }
         }
 
         updateCanvasViewBox(maxReachedX, maxReachedY);
       }
 
-      // --- Event Listeners ---
+      // ==========================================
+      // 4. EVENT LISTENERS & INITIALIZATION
+      // ==========================================
       inputElement.addEventListener("input", renderGlyph);
-
-      thicknessSlider.addEventListener("input", (e) => {
-        currentThickness = e.target.value;
-        renderGlyph();
-      });
-
-      ceilingSlider.addEventListener("input", (e) => {
-        maxBlocksCeiling = parseInt(e.target.value, 10);
-        renderGlyph();
-      });
-
+      thicknessSlider.addEventListener("input", (e) => { currentThickness = e.target.value; renderGlyph(); });
+      ceilingSlider.addEventListener("input", (e) => { maxBlocksCeiling = parseInt(e.target.value, 10); renderGlyph(); });
+      
       themeToggle.addEventListener("click", () => {
-        if (document.body.getAttribute("data-theme") === "dark") {
-          document.body.removeAttribute("data-theme");
-        } else {
-          document.body.setAttribute("data-theme", "dark");
-        }
+        if (document.body.getAttribute("data-theme") === "dark") document.body.removeAttribute("data-theme");
+        else document.body.setAttribute("data-theme", "dark");
       });
-
-      // Style Toggle Handler (Swaps style layout and flips visible button icon)
+      
       styleToggle.addEventListener("click", () => {
-        if (currentStyle === "angular") {
-          currentStyle = "rounded";
-          styleToggle.classList.add("rounded");
-        } else {
-          currentStyle = "angular";
-          styleToggle.classList.remove("rounded");
-        }
+        if (currentStyle === "angular") { currentStyle = "rounded"; styleToggle.classList.add("rounded"); }
+        else { currentStyle = "angular"; styleToggle.classList.remove("rounded"); }
         renderGlyph();
       });
+
+      function downloadSVG() {
+        const serializer = new XMLSerializer();
+        let svgString = serializer.serializeToString(svgCanvas);
+
+        const svgBlob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
+        const svgUrl = URL.createObjectURL(svgBlob);
+
+        const downloadLink = document.createElement("a");
+        downloadLink.href = svgUrl;
+        downloadLink.download = "nyxic.svg";
+
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+
+        document.body.removeChild(downloadLink);
+        URL.revokeObjectURL(svgUrl);
+      }
+
+      exportButton.addEventListener("click", downloadSVG);
+
+      styleToggle.classList.add("rounded");
+
+      svgCanvas.setAttribute("shape-rendering", "geometricPrecision");
 
       renderGlyph();
     </script>
