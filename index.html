@@ -149,7 +149,7 @@
 
       .canvas-frame {
         width: 100%;
-        height: 420px; 
+        height: 420px;
         background: var(--bg-canvas);
         border-radius: 10px;
         overflow: hidden;
@@ -180,6 +180,11 @@
       .circle-icon { display: none; }
       #style-toggle.rounded .diamond-icon { display: none; }
       #style-toggle.rounded .circle-icon { display: block; }
+
+      .clip-icon { display: block; }
+      .extend-icon { display: none; }
+      #intersection-toggle.extended .clip-icon { display: none; }
+      #intersection-toggle.extended .extend-icon { display: block; }
 
       @media (max-width: 600px) {
         body {
@@ -225,37 +230,39 @@
         </div>
 
         <div class="buttons-group">
+          <button id="intersection-toggle" class="icon-btn" type="button" title="Toggle Intersection Style">
+            <svg class="clip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m4.93 4.93 14.14 14.14m-14.14 0A1 1 1 1 1 19.07 4.93"/>
+              <!-- <path d="m4 4 4 4m8 8 4 4m0-16L4 20"/> -->
+            </svg>
+            <svg class="extend-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m4.93 4.93 14.14 14.14m2.59-9.66A10 10 0 0 0 9.41 21.66"/>
+              <!-- <path d="m4 4 16 16m0-16L4 20"/> -->
+            </svg>
+          </button>
+
           <button id="style-toggle" class="icon-btn" type="button" title="Toggle Nib Style">
             <svg class="diamond-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M2 12L12 2l10 10-10 10Z"></path>
+              <path d="M2 12 12 2l10 10-10 10Z"/>
             </svg>
             <svg class="circle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"></circle>
+              <circle cx="12" cy="12" r="10"/>
             </svg>
           </button>
 
           <button id="export-button" class="icon-btn" type="button" title="Download SVG">
             <svg class="download-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="7 10 12 15 17 10"></polyline>
-              <line x1="12" y1="15" x2="12" y2="3"></line>
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4m4-5 5 5 5-5m-5 5V3"/>
             </svg>
           </button>
 
           <button id="theme-toggle" class="icon-btn" type="button" title="Toggle Theme">
             <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="5"></circle>
-              <line x1="12" y1="1" x2="12" y2="3"></line>
-              <line x1="12" y1="21" x2="12" y2="23"></line>
-              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-              <line x1="1" y1="12" x2="3" y2="12"></line>
-              <line x1="21" y1="12" x2="23" y2="12"></line>
-              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+              <circle cx="12" cy="12" r="5"/>
+              <path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72 1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
             </svg>
             <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79"/>
             </svg>
           </button>
         </div>
@@ -277,14 +284,20 @@
       ]);
 
       const VOWELS = new Set([
-        "u", "a", "i", "e", "aa", "au", "aw", "oo", "o", "ou", "ow", "ei", "ey", "ai", "ay", "ea", "ee", "oi", "oy", "ue", "uu", "uw", "oa", "oe", "er", "air", "ear", "eer", "ar", "ur", "or", "ir", "oor", "oar"
+        "a", "e", "i", "o", "u",
+        "aa", "au", "aw", "oo", "ou", "ow", "eu", "ew", "ie", "ei", "ey", "ai", "ay", "ea", "ee", "oi", "oy", "ue", "uu", "uw", "oa", "oe",
+        "ar", "er", "ir", "or", "ur",
+        "aar", "air", "ear", "eer", "ier", "oar", "oor",
       ]);
 
       const PHONEME_KEYS = [
         ",", ".", ";", ":", "!", "?",
-        "air", "eer", "ear", "oor", "oar",
-        "th", "sh", "ch", "ph", "wh", "qu", "ng", "aa", "aw", "uu", "ue", "oo", "uw", "ow", "ey", "ay", "ai", "ea", "ee", "oy", "oa", "er", "ar", "ir", "ur", "or", "au", "ou", "ei", "oi", "oe",
-        "m", "n", "v", "l", "r", "p", "t", "f", "s", "x", "k", "c", "q", "b", "d", "z", "h", "j", "g", "y", "w", "a", "e", "i", "o", "u"
+        "aar", "air", "ear", "eer", "ier", "oar", "oor",
+        "th", "sh", "ch", "ph", "wh", "qu", "ng",
+        "aa", "aw", "uu", "ue", "oo", "uw", "ow", "ey", "ay", "ai", "ea", "ee", "oy", "oa", "au", "ou", "ei", "oi", "oe", "eu", "ew", "ie",
+        "ar", "er", "ir", "or", "ur",
+        "m", "n", "v", "l", "r", "p", "t", "f", "s", "x", "k", "c", "q", "b", "d", "z", "h", "j", "g", "y", "w",
+        "a", "e", "i", "o", "u",
       ];
 
       const NYXIC_ALPHABET = {
@@ -315,19 +328,20 @@
 
         a: ["backslash", "slash", "backslash"], // TRAP, BATH
         e: ["backslash", "backslash", "slash"], // DRESS
-        i: ["backslash", "cross", "backslash"], // KIT 
+        i: ["backslash", "cross", "backslash"], // KIT
         o: ["backslash", "slash", "cross"], // LOT, CLOTH
         u: ["backslash", "backslash", "backslash"], // STRUT, COMMA
 
         aa: ["backslash", "slash", "slash"], // PALM, FATHER
         ai: ["slash", "cross", "backslash"], // PRICE, BLIGHT
         ay: ["slash", "cross", "backslash"],
-        au: ["backslash", "cross", "slash"], // THOUGHT, THAW
+        au: ["backslash", "cross", "slash"], // THOUGHT, THAW, CAUSE
         aw: ["backslash", "cross", "slash"],
         ei: ["slash", "slash", "backslash"], // FACE, REIGN
         ey: ["slash", "slash", "backslash"],
         ea: ["slash", "backslash", "slash"], // FLEECE, PLEASE
         ee: ["slash", "backslash", "slash"],
+        ie: ["slash", "backslash", "slash"],
         oa: ["slash", "slash", "cross"], // GOAT, JOE
         oe: ["slash", "slash", "cross"],
         oo: ["backslash", "backslash", "cross"], // FOOT
@@ -337,12 +351,16 @@
         ow: ["slash", "backslash", "backslash"],
         uu: ["slash", "backslash", "cross"], // GOOSE, MUSE
         uw: ["slash", "backslash", "cross"],
+        eu: ["slash", "backslash", "cross"],
+        ew: ["slash", "backslash", "cross"],
         ue: ["slash", "backslash", "cross"],
 
         ar: ["cross", "slash", "slash"], // START
+        aar: ["cross", "slash", "slash"], // START
         air: ["cross", "slash", "backslash"], // SQUARE, AIR
         ear: ["cross", "backslash", "slash"], // NEAR, LEER
         eer: ["cross", "backslash", "slash"],
+        ier: ["cross", "backslash", "slash"],
         er: ["cross", "backslash", "backslash"], // LETTER, NURSE, FIRST
         ir: ["cross", "backslash", "backslash"],
         or: ["cross", "slash", "cross"], // NORTH, FORCE, HORSE, BOAR
@@ -355,6 +373,7 @@
       // 2. DOM ELEMENTS & APP STATE
       // ==========================================
       let currentStyle = "rounded";
+      let intersectionMode = "clip";
 
       const inputElement = document.getElementById("transcriber-input");
       const thicknessSlider = document.getElementById("thickness");
@@ -363,6 +382,7 @@
       const svgCanvas = document.getElementById("script-canvas");
       const themeToggle = document.getElementById("theme-toggle");
       const styleToggle = document.getElementById("style-toggle");
+      const intersectionToggle = document.getElementById("intersection-toggle");
       const exportButton = document.getElementById("export-button");
 
       const baseCanvasHeight = 0;
@@ -393,10 +413,10 @@
           }
 
           if (cleanText[i] === "-" || cleanText[i] === "'") {
-              rawTokens.push(cleanText[i]);
-              i++;
-              continue;
-            }
+            rawTokens.push(cleanText[i]);
+            i++;
+            continue;
+          }
 
           let matchFound = false;
           for (const key of PHONEME_KEYS) {
@@ -451,7 +471,7 @@
               currentBlock = null;
             }
             blocks.push({ type: "space" });
-          } 
+          }
           else if ([",", ".", ";", ":", "!", "?"].includes(token)) {
             if (currentBlock) {
               currentBlock.right = "0";
@@ -459,7 +479,7 @@
               currentBlock = null;
             }
             blocks.push({ type: "punctuation", value: token });
-          } 
+          }
           else if (token === "-" || token === "'") {
             if (currentBlock) {
               currentBlock.right = "0";
@@ -528,11 +548,11 @@
 
           const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
           path.setAttribute("d", d);
-          
+
           path.setAttribute("stroke", "var(--text-main)");
           path.setAttribute("stroke-width", activeStrokeWidth * 0.5);
-          path.setAttribute("fill", "var(--text-main)"); 
-          
+          path.setAttribute("fill", "var(--text-main)");
+
           glyphGroup.appendChild(path);
         }
       }
@@ -580,29 +600,29 @@
 
         if (type === "backslash") {
           if (isLeftColumn) {
-            cx = x + 100; 
+            cx = x + 100;
             cy = yOffset + (row + 1) * 100 - r;
-            startAngle = Math.PI / 2; 
+            startAngle = Math.PI / 2;
             sweepFlag = 1;
             endAngle = level === 2 ? (120 * Math.PI) / 180 : (110 * Math.PI) / 180;
           } else {
-            cx = x; 
-            cy = yOffset + row * 100 + r;       
-            startAngle = 3 * Math.PI / 2; 
+            cx = x;
+            cy = yOffset + row * 100 + r;
+            startAngle = 3 * Math.PI / 2;
             sweepFlag = 1;
             endAngle = level === 2 ? (300 * Math.PI) / 180 : (290 * Math.PI) / 180;
           }
         } else {
           if (isLeftColumn) {
-            cx = x + 100; 
-            cy = yOffset + row * 100 + r;       
-            startAngle = 3 * Math.PI / 2; 
+            cx = x + 100;
+            cy = yOffset + row * 100 + r;
+            startAngle = 3 * Math.PI / 2;
             sweepFlag = 0;
             endAngle = level === 2 ? (240 * Math.PI) / 180 : (250 * Math.PI) / 180;
           } else {
-            cx = x; 
+            cx = x;
             cy = yOffset + (row + 1) * 100 - r;
-            startAngle = Math.PI / 2; 
+            startAngle = Math.PI / 2;
             sweepFlag = 0;
             endAngle = level === 2 ? (60 * Math.PI) / 180 : (70 * Math.PI) / 180;
           }
@@ -612,7 +632,7 @@
           const partnerType = (type === "backslash") ? "slash" : "backslash";
           const partnerR = partnerLevel * 100;
           let partnerCy;
-          
+
           if (partnerLevel === 1) {
             partnerCy = (partnerType === "backslash") ? (isLeftColumn ? cellY : cellY + 100) : (isLeftColumn ? cellY + 100 : cellY);
           } else {
@@ -624,7 +644,14 @@
             const dX2 = r * r - (Y - cy) * (Y - cy);
             if (dX2 >= 0) {
               const dX = (isLeftColumn ? -1 : 1) * Math.sqrt(dX2);
-              endAngle = Math.atan2(Y - cy, dX);
+              const intersectionAngle = Math.atan2(Y - cy, dX);
+
+              if (intersectionMode === "clip") {
+                endAngle = intersectionAngle;
+              } else if (intersectionMode === "extend") {
+                const angleOvershoot = (15 * Math.PI) / 180;
+                endAngle = intersectionAngle + (sweepFlag === 1 ? angleOvershoot : -angleOvershoot);
+              }
             }
           }
         }
@@ -719,40 +746,40 @@
         let maxReachedY = baseCanvasHeight;
 
         for (let i = 0; i < blocks.length; i++) {
-        const block = blocks[i];
+          const block = blocks[i];
 
-        let currentStepWidth = blockWidth;
-        if (block.type === "space") {
-        currentStepWidth = wordSpacing;
-        } else if (block.type === "punctuation") {
-        currentStepWidth = 100;
-        }
+          let currentStepWidth = blockWidth;
+          if (block.type === "space") {
+            currentStepWidth = wordSpacing;
+          } else if (block.type === "punctuation") {
+            currentStepWidth = 100;
+          }
 
-        if (cursorX > lineWrapBoundary + 1 && i > 0) {
-        cursorX = 0;
-        cursorY += blockHeight + blockSpacingVertical;
-        }
+          if (cursorX > lineWrapBoundary + 1 && i > 0) {
+            cursorX = 0;
+            cursorY += blockHeight + blockSpacingVertical;
+          }
 
-        if (block.type === "space") {
-        if (cursorX + currentStepWidth > maxReachedX) maxReachedX = cursorX + currentStepWidth;
-        if (cursorY + blockHeight > maxReachedY) maxReachedY = cursorY + blockHeight;
-        cursorX += wordSpacing;
-        } 
-        else if (block.type === "punctuation") {
-        drawPunctuation(block.value, cursorX, cursorY, currentStyle);
-        if (cursorX + currentStepWidth > maxReachedX) maxReachedX = cursorX + currentStepWidth;
-        if (cursorY + blockHeight > maxReachedY) maxReachedY = cursorY + blockHeight;
-        cursorX += currentStepWidth + blockSpacingHorizontal;
-        } 
-        else {
-        drawTripleStack(block.left, cursorX, cursorY, true, currentStyle);
-        drawTripleStack(block.right, cursorX + halfWidth, cursorY, false, currentStyle);
+          if (block.type === "space") {
+            if (cursorX + currentStepWidth > maxReachedX) maxReachedX = cursorX + currentStepWidth;
+            if (cursorY + blockHeight > maxReachedY) maxReachedY = cursorY + blockHeight;
+            cursorX += wordSpacing;
+          }
+          else if (block.type === "punctuation") {
+            drawPunctuation(block.value, cursorX, cursorY, currentStyle);
+            if (cursorX + currentStepWidth > maxReachedX) maxReachedX = cursorX + currentStepWidth;
+            if (cursorY + blockHeight > maxReachedY) maxReachedY = cursorY + blockHeight;
+            cursorX += currentStepWidth + blockSpacingHorizontal;
+          }
+          else {
+            drawTripleStack(block.left, cursorX, cursorY, true, currentStyle);
+            drawTripleStack(block.right, cursorX + halfWidth, cursorY, false, currentStyle);
 
-        if (cursorX + blockWidth > maxReachedX) maxReachedX = cursorX + blockWidth;
-        if (cursorY + blockHeight > maxReachedY) maxReachedY = cursorY + blockHeight;
+            if (cursorX + blockWidth > maxReachedX) maxReachedX = cursorX + blockWidth;
+            if (cursorY + blockHeight > maxReachedY) maxReachedY = cursorY + blockHeight;
 
-        cursorX += blockWidth + blockSpacingHorizontal;
-        }
+            cursorX += blockWidth + blockSpacingHorizontal;
+          }
         }
 
         updateCanvasViewBox(maxReachedX, maxReachedY);
@@ -764,15 +791,26 @@
       inputElement.addEventListener("input", renderGlyph);
       thicknessSlider.addEventListener("input", (e) => { currentThickness = e.target.value; renderGlyph(); });
       ceilingSlider.addEventListener("input", (e) => { maxBlocksCeiling = parseInt(e.target.value, 10); renderGlyph(); });
-      
+
       themeToggle.addEventListener("click", () => {
         if (document.body.getAttribute("data-theme") === "dark") document.body.removeAttribute("data-theme");
         else document.body.setAttribute("data-theme", "dark");
       });
-      
+
       styleToggle.addEventListener("click", () => {
         if (currentStyle === "angular") { currentStyle = "rounded"; styleToggle.classList.add("rounded"); }
         else { currentStyle = "angular"; styleToggle.classList.remove("rounded"); }
+        renderGlyph();
+      });
+
+      intersectionToggle.addEventListener("click", () => {
+        if (intersectionMode === "clip") {
+          intersectionMode = "extend";
+          intersectionToggle.classList.add("extended");
+        } else {
+          intersectionMode = "clip";
+          intersectionToggle.classList.remove("extended");
+        }
         renderGlyph();
       });
 
