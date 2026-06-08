@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nyxic Transcriber</title>
+    <title>Munavi Transcriber</title>
     <style>
       :root {
         --bg-body: #eee;
@@ -36,7 +36,7 @@
         margin: 0;
         background-color: var(--bg-body);
         color: var(--text-main);
-        transition: background-color 0.3s ease;
+        transition: background-color .5s ease;
         padding: 20px;
         box-sizing: border-box;
       }
@@ -49,23 +49,23 @@
 
       .container {
         background: var(--bg-container);
-        padding: 25px;
+        padding: 20px;
         border-radius: 20px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, .25);
         width: 100%;
-        max-width: 1100px;
+        max-width: 1000px;
         display: flex;
         flex-direction: column;
         gap: 20px;
         box-sizing: border-box;
-        transition: background-color 0.3s ease, color 0.3s ease;
+        transition: background-color .5s ease, color .5s ease;
       }
 
       .controls-toolbar {
         display: flex;
         flex-wrap: wrap;
         align-items: center;
-        gap: 15px;
+        gap: 20px;
         width: 100%;
       }
 
@@ -85,22 +85,28 @@
         border-radius: 10px;
         text-align: center;
         box-sizing: border-box;
-        transition: all 0.3s ease;
+        transition: all .5s ease;
         resize: vertical;
+      }
+
+      .settings-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex: 2 1 380px;
       }
 
       .sliders-group {
         display: flex;
-        flex-wrap: wrap;
-        gap: 15px;
-        flex: 2 1 400px;
+        flex-direction: column;
+        gap: 20px;
+        flex: 1; 
       }
 
       .slider-wrapper {
         display: flex;
         flex-direction: column;
         gap: 5px;
-        flex: 1 1 180px;
       }
 
       .slider-wrapper label {
@@ -108,7 +114,7 @@
         font-weight: bold;
         color: var(--text-muted);
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: .5px;
       }
 
       input[type="range"] {
@@ -118,9 +124,11 @@
       }
 
       .buttons-group {
-        display: flex;
+        display: grid;
+        grid-template-columns: repeat(2, 42px);
+        grid-template-rows: repeat(2, 42px);
         gap: 10px;
-        justify-content: flex-end;
+        flex-shrink: 0; /* Prevents the 2x2 grid block from shrinking on narrow views */
       }
 
       .icon-btn {
@@ -135,7 +143,7 @@
         align-items: center;
         justify-content: center;
         padding: 0;
-        transition: all 0.2s ease;
+        transition: all .5s ease;
       }
 
       .icon-btn:hover {
@@ -151,7 +159,7 @@
 
       .canvas-frame {
         width: 100%;
-        height: 420px;
+        height: 320px;
         background: var(--bg-canvas);
         border-radius: 10px;
         overflow: hidden;
@@ -159,7 +167,7 @@
         align-items: center;
         justify-content: center;
         box-sizing: border-box;
-        transition: background-color 0.3s ease;
+        transition: background-color .5s ease;
       }
 
       svg {
@@ -170,7 +178,7 @@
 
       #glyph-group path {
         stroke: var(--text-main) !important;
-        transition: stroke 0.3s ease;
+        transition: stroke .5s ease;
       }
 
       .sun-icon { display: block; }
@@ -183,67 +191,88 @@
       #style-toggle.rounded .diamond-icon { display: none; }
       #style-toggle.rounded .circle-icon { display: block; }
 
+      .cross-icon { display: block; }
+      .over-icon { display: none; }
+      #intersection-toggle.cross .cross-icon { display: none; }
+      #intersection-toggle.cross .over-icon { display: block; }
+
       @media (max-width: 600px) {
         .controls-toolbar {
           flex-direction: column;
         }
-        .input-wrapper,
-        .sliders-group {
+        .input-wrapper {
+          width: 100%;
           flex: none;
+        }
+        .settings-wrapper {
+          width: 100%;
+          flex: none;
+        }
+        .sliders-group {
+          width: 100%;
         }
         .buttons-group {
           justify-content: center;
-        }
-        .canvas-frame {
-          height: 280px;
+          margin: 0 auto;
         }
       }
     </style>
   </head>
   <body data-theme="dark">
     <div class="container">
-      <h2>Nyxic Transcriber</h2>
+      <h2>Munavi Transcriber</h2>
       <header class="controls-toolbar">
         <div class="input-wrapper">
-          <textarea id="transcriber-input" rows="1" placeholder="Type here!"></textarea>
+          <textarea id="transcriber-input" rows="3" placeholder="Type here :)"></textarea>
         </div>
 
-        <div class="sliders-group">
-          <div class="slider-wrapper">
-            <label for="thickness">Line thickness</label>
-            <input type="range" id="thickness" min="1" max="11" value="6" />
+        <div class="settings-wrapper">
+          <div class="sliders-group">
+            <div class="slider-wrapper">
+              <label for="thickness">Line thickness</label>
+              <input type="range" id="thickness" min="1" max="11" value="6" />
+            </div>
+            <div class="slider-wrapper">
+              <label for="overshoot">Overshoot length</label>
+              <input type="range" id="overshoot" min="0" max="10" value="5" />
+            </div>
           </div>
-          <div class="slider-wrapper">
-            <label for="overshoot">Overshoot length</label>
-            <input type="range" id="overshoot" min="0" max="10" value="5" />
+
+          <div class="buttons-group">
+            <button id="intersection-toggle" class="icon-btn" type="button" title="Toggle intersections">
+              <svg class="over-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m4 4 4 4m8 8 4 4m0-16L4 20"/>
+              </svg>
+              <svg class="cross-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m4 4 16 16m0-16L4 20"/>
+              </svg>
+            </button>
+
+            <button id="style-toggle" class="icon-btn" type="button" title="Toggle style">
+              <svg class="diamond-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 12 12 2l10 10-10 10Z"/>
+              </svg>
+              <svg class="circle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+              </svg>
+            </button>
+
+            <button id="export-button" class="icon-btn" type="button" title="Download SVG">
+              <svg class="download-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4m4-5 5 5 5-5m-5 5V3"/>
+              </svg>
+            </button>
+
+            <button id="theme-toggle" class="icon-btn" type="button" title="Toggle dark mode">
+              <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="5"/>
+                <path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72 1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+              </svg>
+              <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79"/>
+              </svg>
+            </button>
           </div>
-        </div>
-
-        <div class="buttons-group">
-          <button id="style-toggle" class="icon-btn" type="button" title="Toggle style">
-            <svg class="diamond-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M2 12 12 2l10 10-10 10Z"/>
-            </svg>
-            <svg class="circle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/>
-            </svg>
-          </button>
-
-          <button id="export-button" class="icon-btn" type="button" title="Download SVG">
-            <svg class="download-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4m4-5 5 5 5-5m-5 5V3"/>
-            </svg>
-          </button>
-
-          <button id="theme-toggle" class="icon-btn" type="button" title="Toggle dark mode">
-            <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="5"/>
-              <path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72 1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
-            </svg>
-            <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79"/>
-            </svg>
-          </button>
         </div>
       </header>
 
@@ -281,17 +310,17 @@
         "a", "e", "i", "o", "u",
       ];
 
-      const NYXIC_ALPHABET = {
+      const MUNAVI_ALPHABET = {
         m:   ["backslash", "backslash", "backslash"],
         w:   ["backslash", "backslash", "slash"],
         r:   ["backslash", "backslash", "cross"],
 
         n:   ["backslash", "slash", "backslash"],
         l:   ["backslash", "slash", "slash"],
-        y:   ["backslash", "slash", "cross"], // or S
+        s:   ["backslash", "slash", "cross"], // or Y
 
         v:   ["backslash", "cross", "backslash"],
-        z:   ["backslash", "cross", "slash"], // or Y
+        y:   ["backslash", "cross", "slash"], // or Z
 
         p:   ["slash", "backslash", "backslash"],
         k:   ["slash", "backslash", "slash"],
@@ -302,7 +331,7 @@
         sh:  ["slash", "slash", "cross"],
 
         f:   ["slash", "cross", "backslash"],
-        s:   ["slash", "cross", "slash"], // or TH
+        th:  ["slash", "cross", "slash"], // or S
 
         b:   ["cross", "backslash", "backslash"],
         g:   ["cross", "backslash", "slash"],
@@ -310,7 +339,7 @@
 
         d:   ["cross", "slash", "backslash"],
         h:   ["cross", "slash", "slash"],
-        th:  ["cross", "slash", "cross"], // or Z
+        z:   ["cross", "slash", "cross"], // or TH
 
         // TRAP, BATH
         a:   ["backslash", "slash", "backslash"],
@@ -324,7 +353,7 @@
         ih:  ["backslash", "cross", "backslash"],
 
         // LOT, CLOTH
-        o:   ["backslash", "cross", "slash"],
+        o:   ["backslash", "slash", "cross"],
 
         // STRUT, COMMA
         u:   ["backslash", "backslash", "backslash"],
@@ -334,15 +363,15 @@
         aa:  ["backslash", "slash", "slash"],
         ah:  ["backslash", "slash", "slash"],
 
-        // PRICE, BLIGHT, WHY
-        ai:  ["backslash", "slash", "cross"],
-        ay:  ["backslash", "slash", "cross"],
+        // PRICE, BLIGHT, WHY = Y
 
         // THOUGHT, THAW, CAUSE
         au:  ["backslash", "backslash", "cross"],
         aw:  ["backslash", "backslash", "cross"],
 
         // FACE, REIGN
+        ai:  ["slash", "slash", "backslash"],
+        ay:  ["slash", "slash", "backslash"],
         ei:  ["slash", "slash", "backslash"],
         ey:  ["slash", "slash", "backslash"],
 
@@ -404,15 +433,16 @@
       // 2. DOM ELEMENTS & APP STATE
       // ==========================================
       let currentStyle = "rounded";
+      let currentIntersection = "over";
 
       const inputElement = document.getElementById("transcriber-input");
       const thicknessSlider = document.getElementById("thickness");
       const overshootSlider = document.getElementById("overshoot");
       const glyphGroup = document.getElementById("glyph-group");
       const svgCanvas = document.getElementById("script-canvas");
-      const themeToggle = document.getElementById("theme-toggle");
-      const styleToggle = document.getElementById("style-toggle");
       const intersectionToggle = document.getElementById("intersection-toggle");
+      const styleToggle = document.getElementById("style-toggle");
+      const themeToggle = document.getElementById("theme-toggle");
       const exportButton = document.getElementById("export-button");
 
       const baseCanvasHeight = 0;
@@ -460,18 +490,18 @@
             if (cleanText.substring(i, i + key.length) === key) {
               if (key === "x") {
                 rawTokens.push("k", "s");
+              } else if (key === "c") {
+                rawTokens.push("k");
               } else if (key === "q") {
                 rawTokens.push("k");
               } else if (key === "qu") {
                 rawTokens.push("k", "w");
-              } else if (key === "ng") {
-                rawTokens.push("h");
+              } else if (key === "ng") { // not sure about
+                rawTokens.push("h");     // this one
               } else if (key === "ph") {
                 rawTokens.push("f");
               } else if (key === "wh") {
                 rawTokens.push("w");
-              } else if (key === "c") {
-                rawTokens.push("k");
               } else {
                 rawTokens.push(key);
               }
@@ -723,7 +753,7 @@
       }
 
       function drawTripleStack(phoneme, xOffset, yOffset, isLeftColumn, style) {
-        const rules = NYXIC_ALPHABET[phoneme] || NYXIC_ALPHABET["0"];
+        const rules = MUNAVI_ALPHABET[phoneme] || MUNAVI_ALPHABET["0"];
 
         function getLevelB(row) {
           if (isLeftColumn) {
@@ -867,6 +897,12 @@
         renderGlyph();
       });
 
+      intersectionToggle.addEventListener("click", () => {
+        if (currentIntersection === "over") { currentIntersection = "cross"; intersectionToggle.classList.add("cross"); }
+        else { currentIntersection = "over"; intersectionToggle.classList.remove("cross"); }
+        renderGlyph();
+      });
+
       function downloadSVG() {
         const serializer = new XMLSerializer();
         let svgString = serializer.serializeToString(svgCanvas);
@@ -876,7 +912,7 @@
 
         const downloadLink = document.createElement("a");
         downloadLink.href = svgUrl;
-        downloadLink.download = "nyxic.svg";
+        downloadLink.download = "Munavi.svg";
 
         document.body.appendChild(downloadLink);
         downloadLink.click();
@@ -888,6 +924,8 @@
       exportButton.addEventListener("click", downloadSVG);
 
       styleToggle.classList.add("rounded");
+
+      intersectionToggle.classList.add("over");
 
       svgCanvas.setAttribute("shape-rendering", "geometricPrecision");
 
