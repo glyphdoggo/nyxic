@@ -708,7 +708,7 @@
               const intersectionAngle = Math.atan2(Y - cy, dX);
               
               if (partnerLevel < level) {
-                const linearOvershoot = currentOvershoot * 4;
+                const linearOvershoot = currentOvershoot * 5;
                 const angleOvershoot = linearOvershoot / r;
                 endAngle = intersectionAngle + (sweepFlag === 1 ? angleOvershoot : -angleOvershoot);
               }
@@ -716,7 +716,7 @@
           }
         }
         else if (level > 1 && row === 1) {
-          const linearOvershoot = currentOvershoot * 6;
+          const linearOvershoot = currentOvershoot * 5;
           const angleOvershoot = linearOvershoot / r;
           endAngle += (sweepFlag === 1 ? angleOvershoot : -angleOvershoot);
         }
