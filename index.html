@@ -36,7 +36,7 @@
         margin: 0;
         background-color: var(--bg-body);
         color: var(--text-main);
-        transition: background-color .5s ease;
+        transition: background-color .4s ease;
         padding: 20px;
         box-sizing: border-box;
       }
@@ -58,7 +58,7 @@
         flex-direction: column;
         gap: 20px;
         box-sizing: border-box;
-        transition: background-color .5s ease, color .5s ease;
+        transition: background-color .4s ease, color .4s ease;
       }
 
       .controls-toolbar {
@@ -70,12 +70,11 @@
       }
 
       .input-wrapper {
-        flex: 1 1 300px;
+        flex: 1 1 200px;
       }
 
       textarea {
         width: 100%;
-        /*height: 70px;*/
         padding: 10px;
         font-family: sans-serif;
         font-size: 16px;
@@ -85,7 +84,7 @@
         border-radius: 10px;
         text-align: center;
         box-sizing: border-box;
-        transition: all .5s ease;
+        transition: all .4s ease;
         resize: vertical;
       }
 
@@ -93,7 +92,7 @@
         display: flex;
         align-items: center;
         gap: 20px;
-        flex: 2 1 380px;
+        flex: 1 1 280px;
       }
 
       .sliders-group {
@@ -128,7 +127,7 @@
         grid-template-columns: repeat(2, 42px);
         grid-template-rows: repeat(2, 42px);
         gap: 10px;
-        flex-shrink: 0; /* Prevents the 2x2 grid block from shrinking on narrow views */
+        flex-shrink: 0;
       }
 
       .icon-btn {
@@ -143,7 +142,7 @@
         align-items: center;
         justify-content: center;
         padding: 0;
-        transition: all .5s ease;
+        transition: all .4s ease;
       }
 
       .icon-btn:hover {
@@ -167,7 +166,7 @@
         align-items: center;
         justify-content: center;
         box-sizing: border-box;
-        transition: background-color .5s ease;
+        transition: background-color .4s ease;
       }
 
       svg {
@@ -176,9 +175,14 @@
         display: block;
       }
 
-      #glyph-group path {
+      #glyph-group path:not(.weave-mask) {
         stroke: var(--text-main) !important;
-        transition: stroke .5s ease;
+        transition: stroke .4s ease;
+      }
+
+      #glyph-group path.weave-mask {
+        stroke: var(--bg-canvas) !important;
+        transition: stroke .4s ease;
       }
 
       .sun-icon { display: block; }
@@ -191,10 +195,10 @@
       #style-toggle.rounded .diamond-icon { display: none; }
       #style-toggle.rounded .circle-icon { display: block; }
 
-      .cross-icon { display: block; }
-      .over-icon { display: none; }
-      #intersection-toggle.cross .cross-icon { display: none; }
-      #intersection-toggle.cross .over-icon { display: block; }
+      .weave-on-icon { display: block; }
+      .weave-off-icon { display: none; }
+      #weave-toggle.woven .weave-on-icon { display: none; }
+      #weave-toggle.woven .weave-off-icon { display: block; }
 
       @media (max-width: 600px) {
         .controls-toolbar {
@@ -223,7 +227,7 @@
       <h2>Munavi Transcriber</h2>
       <header class="controls-toolbar">
         <div class="input-wrapper">
-          <textarea id="transcriber-input" rows="3" placeholder="Type here :)"></textarea>
+          <textarea id="transcriber-input" rows="7" placeholder="Type here :)"></textarea>
         </div>
 
         <div class="settings-wrapper">
@@ -236,14 +240,18 @@
               <label for="overshoot">Overshoot length</label>
               <input type="range" id="overshoot" min="0" max="10" value="5" />
             </div>
+            <div class="slider-wrapper">
+              <label for="spacing">Letter Spacing</label>
+              <input type="range" id="spacing" min="0" max="1" step=".1" value=".5" />
+            </div>
           </div>
 
           <div class="buttons-group">
-            <button id="intersection-toggle" class="icon-btn" type="button" title="Toggle intersections">
-              <svg class="over-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <button id="weave-toggle" class="icon-btn" type="button" title="Toggle weave">
+              <svg class="weave-off-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="m4 4 4 4m8 8 4 4m0-16L4 20"/>
               </svg>
-              <svg class="cross-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg class="weave-on-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="m4 4 16 16m0-16L4 20"/>
               </svg>
             </button>
@@ -314,117 +322,68 @@
         m:   ["backslash", "backslash", "backslash"],
         w:   ["backslash", "backslash", "slash"],
         r:   ["backslash", "backslash", "cross"],
-
         n:   ["backslash", "slash", "backslash"],
         l:   ["backslash", "slash", "slash"],
-        s:   ["backslash", "slash", "cross"], // or Y
-
+        s:   ["backslash", "slash", "cross"], 
         v:   ["backslash", "cross", "backslash"],
-        y:   ["backslash", "cross", "slash"], // or Z
-
+        y:   ["backslash", "cross", "slash"], 
         p:   ["slash", "backslash", "backslash"],
         k:   ["slash", "backslash", "slash"],
         ch:  ["slash", "backslash", "cross"],
-
         t:   ["slash", "slash", "backslash"],
         0:   ["slash", "slash", "slash"],
         sh:  ["slash", "slash", "cross"],
-
         f:   ["slash", "cross", "backslash"],
-        th:  ["slash", "cross", "slash"], // or S
-
+        th:  ["slash", "cross", "slash"], 
         b:   ["cross", "backslash", "backslash"],
         g:   ["cross", "backslash", "slash"],
         j:   ["cross", "backslash", "cross"],
-
         d:   ["cross", "slash", "backslash"],
         h:   ["cross", "slash", "slash"],
-        z:   ["cross", "slash", "cross"], // or TH
-
-        // TRAP, BATH
+        z:   ["cross", "slash", "cross"], 
         a:   ["backslash", "slash", "backslash"],
-
-        // DRESS
         e:   ["backslash", "backslash", "slash"],
         eh:  ["backslash", "backslash", "slash"],
-
-        // KIT
         i:   ["backslash", "cross", "backslash"],
         ih:  ["backslash", "cross", "backslash"],
-
-        // LOT, CLOTH
         o:   ["backslash", "slash", "cross"],
-
-        // STRUT, COMMA
         u:   ["backslash", "backslash", "backslash"],
         uh:  ["backslash", "backslash", "backslash"],
-
-        // PALM, FATHER
         aa:  ["backslash", "slash", "slash"],
         ah:  ["backslash", "slash", "slash"],
-
-        // PRICE, BLIGHT, WHY = Y
-
-        // THOUGHT, THAW, CAUSE
         au:  ["backslash", "backslash", "cross"],
         aw:  ["backslash", "backslash", "cross"],
-
-        // FACE, REIGN
         ai:  ["slash", "slash", "backslash"],
         ay:  ["slash", "slash", "backslash"],
         ei:  ["slash", "slash", "backslash"],
         ey:  ["slash", "slash", "backslash"],
-
-        // FLEECE, PLEASE
         ea:  ["slash", "backslash", "slash"],
         ee:  ["slash", "backslash", "slash"],
         ie:  ["slash", "backslash", "slash"],
-
-        // GOAT, JOE
         oa:  ["slash", "slash", "cross"],
         oe:  ["slash", "slash", "cross"],
         oh:  ["slash", "slash", "cross"],
-
-        // FOOT
         oo:  ["slash", "cross", "backslash"],
-
-        // CHOICE, BOY
         oi:  ["slash", "cross", "slash"],
         oy:  ["slash", "cross", "slash"],
-
-        // MOUTH, POW!
         ou:  ["slash", "backslash", "backslash"],
         ow:  ["slash", "backslash", "backslash"],
-
-        // GOOSE, MUSE
         uu:  ["slash", "backslash", "cross"],
         uw:  ["slash", "backslash", "cross"],
         ooh: ["slash", "backslash", "cross"],
         eu:  ["slash", "backslash", "cross"],
         ew:  ["slash", "backslash", "cross"],
         ue:  ["slash", "backslash", "cross"],
-
-        // START
         ar:  ["cross", "slash", "slash"],
         aar: ["cross", "slash", "slash"],
-
-        // SQUARE, AIR
         air: ["cross", "slash", "backslash"],
-
-        // NEAR, LEER
         ear: ["cross", "backslash", "slash"],
         eer: ["cross", "backslash", "slash"],
         ier: ["cross", "backslash", "slash"],
-
-        // LETTER, NURSE, FIRST
         er:  ["cross", "backslash", "backslash"],
         ir:  ["cross", "backslash", "backslash"],
-
-        // NORTH, FORCE, HORSE, BOAR
         or:  ["cross", "slash", "cross"],
         oar: ["cross", "slash", "cross"],
-
-        // CURE, MOOR
         ur:  ["cross", "backslash", "cross"],
         oor: ["cross", "backslash", "cross"],
       };
@@ -432,31 +391,34 @@
       // ==========================================
       // 2. DOM ELEMENTS & APP STATE
       // ==========================================
-      let currentStyle = "rounded";
-      let currentIntersection = "over";
-
       const inputElement = document.getElementById("transcriber-input");
       const thicknessSlider = document.getElementById("thickness");
       const overshootSlider = document.getElementById("overshoot");
+      const spacingSlider = document.getElementById("spacing");
       const glyphGroup = document.getElementById("glyph-group");
       const svgCanvas = document.getElementById("script-canvas");
-      const intersectionToggle = document.getElementById("intersection-toggle");
       const styleToggle = document.getElementById("style-toggle");
       const themeToggle = document.getElementById("theme-toggle");
       const exportButton = document.getElementById("export-button");
+      const weaveToggle = document.getElementById("weave-toggle");
 
       const baseCanvasHeight = 0;
       const padding = 200;
       const halfWidth = 100;
       const blockWidth = 200;
       const blockHeight = 300;
-      const blockSpacingVertical = 200;
+      const blockSpacingVertical = 150;
       const wordSpacing = 150;
       const maxBlocksCeiling = 40;
 
       let currentThickness = thicknessSlider.value;
-      let currentOvershoot = parseInt(overshootSlider.value, 10); // Add this
-      let activeStrokeWidth = 1.0;
+      let currentOvershoot = parseInt(overshootSlider.value, 10);
+      let currentSpacing = parseFloat(spacingSlider.value);
+      let currentStyle = "rounded";
+      let weaveMode = false;
+
+      // Dynamic array stores drawing operations to process in an ordered two-pass render cycle
+      let renderingQueue = [];
 
       // ==========================================
       // 3. CORE LOGIC ENGINE
@@ -496,8 +458,8 @@
                 rawTokens.push("k");
               } else if (key === "qu") {
                 rawTokens.push("k", "w");
-              } else if (key === "ng") { // not sure about
-                rawTokens.push("h");     // this one
+              } else if (key === "ng") {
+                rawTokens.push("h");     
               } else if (key === "ph") {
                 rawTokens.push("f");
               } else if (key === "wh") {
@@ -616,6 +578,16 @@
         return path;
       }
 
+      function createMaskPathElement(dAttribute, style, width) {
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", dAttribute);
+        path.setAttribute("class", "weave-mask");
+        path.setAttribute("stroke-width", width);
+        path.setAttribute("stroke-linecap", style === "angular" ? "square" : "round");
+        path.setAttribute("fill", "none");
+        return path;
+      }
+
       function drawPunctuation(value, xOffset, yOffset, style) {
         const cx = xOffset + 50;
         let yPositions = [];
@@ -642,7 +614,6 @@
 
           const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
           path.setAttribute("d", d);
-
           path.setAttribute("fill", "var(--text-main)");
           path.setAttribute("stroke", "none");
 
@@ -650,21 +621,29 @@
         }
       }
 
-      function drawActualArc(type, level, x, yOffset, row, isLeftColumn, style, partnerLevel = null) {
+      // Instead of adding immediately to the DOM, this registers vectors into our deferred layout pipeline
+      function drawActualArc(type, level, x, yOffset, row, isLeftColumn, style, partnerLevel = null, shouldMask = false) {
         const cellY = yOffset + row * 100;
         let d;
+        const maskWidth = Math.max(parseFloat(activeStrokeWidth) + 2, 50 - .1 / parseFloat(activeStrokeWidth));
 
         if (style === "angular") {
           if (type === "backslash") d = `M ${x} ${cellY} L ${x + 100} ${cellY + 100}`;
           if (type === "slash") d = `M ${x + 100} ${cellY} L ${x} ${cellY + 100}`;
-          glyphGroup.appendChild(createPathElement(d, style));
+          
+          renderingQueue.push({
+            d: d,
+            style: style,
+            isMask: shouldMask,
+            maskWidth: maskWidth
+          });
           return;
         }
 
-        if (level === 1) {
-          let cx, cy, startAngle, endAngle, sweepFlag;
-          const r = 100;
+        let cx, cy, startAngle, endAngle, sweepFlag;
+        const r = level * 100;
 
+        if (level === 1) {
           if (type === "backslash") {
             if (isLeftColumn) {
               cx = x + 100; cy = cellY; startAngle = Math.PI / 2; endAngle = Math.PI; sweepFlag = 1;
@@ -678,50 +657,39 @@
               cx = x; cy = cellY; startAngle = Math.PI / 2; endAngle = 0; sweepFlag = 0;
             }
           }
-
-          const sx = cx + r * Math.cos(startAngle);
-          const sy = cy + r * Math.sin(startAngle);
-          const ex = cx + r * Math.cos(endAngle);
-          const ey = cy + r * Math.sin(endAngle);
-          d = `M ${sx} ${sy} A ${r} ${r} 0 0 ${sweepFlag} ${ex} ${ey}`;
-          glyphGroup.appendChild(createPathElement(d, style));
-          return;
-        }
-
-        let cx, cy, startAngle, endAngle, sweepFlag;
-        const r = level * 100;
-
-        if (type === "backslash") {
-          if (isLeftColumn) {
-            cx = x + 100;
-            cy = yOffset + (row + 1) * 100 - r;
-            startAngle = Math.PI / 2;
-            sweepFlag = 1;
-            endAngle = level === 2 ? (120 * Math.PI) / 180 : (110 * Math.PI) / 180;
-          } else {
-            cx = x;
-            cy = yOffset + row * 100 + r;
-            startAngle = 3 * Math.PI / 2;
-            sweepFlag = 1;
-            endAngle = level === 2 ? (300 * Math.PI) / 180 : (290 * Math.PI) / 180;
-          }
         } else {
-          if (isLeftColumn) {
-            cx = x + 100;
-            cy = yOffset + row * 100 + r;
-            startAngle = 3 * Math.PI / 2;
-            sweepFlag = 0;
-            endAngle = level === 2 ? (240 * Math.PI) / 180 : (250 * Math.PI) / 180;
+          if (type === "backslash") {
+            if (isLeftColumn) {
+              cx = x + 100;
+              cy = yOffset + (row + 1) * 100 - r;
+              startAngle = Math.PI / 2;
+              sweepFlag = 1;
+              endAngle = level === 2 ? (120 * Math.PI) / 180 : (110 * Math.PI) / 180;
+            } else {
+              cx = x;
+              cy = yOffset + row * 100 + r;
+              startAngle = 3 * Math.PI / 2;
+              sweepFlag = 1;
+              endAngle = level === 2 ? (300 * Math.PI) / 180 : (290 * Math.PI) / 180;
+            }
           } else {
-            cx = x;
-            cy = yOffset + (row + 1) * 100 - r;
-            startAngle = Math.PI / 2;
-            sweepFlag = 0;
-            endAngle = level === 2 ? (60 * Math.PI) / 180 : (70 * Math.PI) / 180;
+            if (isLeftColumn) {
+              cx = x + 100;
+              cy = yOffset + row * 100 + r;
+              startAngle = 3 * Math.PI / 2;
+              sweepFlag = 0;
+              endAngle = level === 2 ? (240 * Math.PI) / 180 : (250 * Math.PI) / 180;
+            } else {
+              cx = x;
+              cy = yOffset + (row + 1) * 100 - r;
+              startAngle = Math.PI / 2;
+              sweepFlag = 0;
+              endAngle = level === 2 ? (60 * Math.PI) / 180 : (70 * Math.PI) / 180;
+            }
           }
         }
 
-        if (partnerLevel !== null && partnerLevel < level) {
+        if (partnerLevel !== null) {
           const partnerType = (type === "backslash") ? "slash" : "backslash";
           const partnerR = partnerLevel * 100;
           let partnerCy;
@@ -738,10 +706,19 @@
             if (dX2 >= 0) {
               const dX = (isLeftColumn ? -1 : 1) * Math.sqrt(dX2);
               const intersectionAngle = Math.atan2(Y - cy, dX);
-              const angleOvershoot = (currentOvershoot * Math.PI) / 90;
-              endAngle = intersectionAngle + (sweepFlag === 1 ? angleOvershoot : -angleOvershoot);
+              
+              if (partnerLevel < level) {
+                const linearOvershoot = currentOvershoot * 5;
+                const angleOvershoot = linearOvershoot / r;
+                endAngle = intersectionAngle + (sweepFlag === 1 ? angleOvershoot : -angleOvershoot);
+              }
             }
           }
+        }
+        else if (level > 1 && row === 1) {
+          const linearOvershoot = currentOvershoot * 10;
+          const angleOvershoot = linearOvershoot / r;
+          endAngle += (sweepFlag === 1 ? angleOvershoot : -angleOvershoot);
         }
 
         const sx = cx + r * Math.cos(startAngle);
@@ -749,7 +726,13 @@
         const ex = cx + r * Math.cos(endAngle);
         const ey = cy + r * Math.sin(endAngle);
         d = `M ${sx} ${sy} A ${r} ${r} 0 0 ${sweepFlag} ${ex} ${ey}`;
-        glyphGroup.appendChild(createPathElement(d, style));
+
+        renderingQueue.push({
+          d: d,
+          style: style,
+          isMask: shouldMask,
+          maskWidth: maskWidth
+        });
       }
 
       function drawTripleStack(phoneme, xOffset, yOffset, isLeftColumn, style) {
@@ -787,16 +770,24 @@
           const cellType = rules[row];
           if (cellType === "none") continue;
 
-          if (cellType === "backslash" || cellType === "cross") {
-            const level = getLevelB(row);
-            const partnerLevel = (cellType === "cross") ? getLevelS(row) : null;
-            drawActualArc("backslash", level, xOffset, yOffset, row, isLeftColumn, style, partnerLevel);
-          }
+          if (cellType === "cross") {
+            const levelB = getLevelB(row);
+            const levelS = getLevelS(row);
+            const backslashIsOver = (row % 2 === 1);
 
-          if (cellType === "slash" || cellType === "cross") {
+            if (backslashIsOver) {
+              drawActualArc("slash", levelS, xOffset, yOffset, row, isLeftColumn, style, levelB, false);
+              drawActualArc("backslash", levelB, xOffset, yOffset, row, isLeftColumn, style, levelS, true);
+            } else {
+              drawActualArc("backslash", levelB, xOffset, yOffset, row, isLeftColumn, style, levelS, false);
+              drawActualArc("slash", levelS, xOffset, yOffset, row, isLeftColumn, style, levelB, true);
+            }
+          } else if (cellType === "backslash") {
+            const level = getLevelB(row);
+            drawActualArc("backslash", level, xOffset, yOffset, row, isLeftColumn, style, null, false);
+          } else if (cellType === "slash") {
             const level = getLevelS(row);
-            const partnerLevel = (cellType === "cross") ? getLevelB(row) : null;
-            drawActualArc("slash", level, xOffset, yOffset, row, isLeftColumn, style, partnerLevel);
+            drawActualArc("slash", level, xOffset, yOffset, row, isLeftColumn, style, null, false);
           }
         }
       }
@@ -804,14 +795,19 @@
       function renderGlyph() {
         const text = inputElement.value;
         glyphGroup.innerHTML = "";
+        renderingQueue = []; // Empty the layout batcher before processing tokens
 
         function updateCanvasViewBox(w, h) {
-          svgCanvas.setAttribute("viewBox", `-${padding} -${padding} ${w + padding * 2} ${h + padding * 2}`);
+          const bleed = activeStrokeWidth / 2;
+          svgCanvas.setAttribute(
+            "viewBox", 
+            `-${padding + bleed} -${padding + bleed} ${w + (padding * 2) + activeStrokeWidth} ${h + (padding * 2) + activeStrokeWidth}`
+          );
         }
 
         const structuralLimit = currentStyle === "angular" ? 50 * Math.sqrt(2) : 100.0;
         activeStrokeWidth = 1 + ((structuralLimit - 2) / 10) * (currentThickness - 1);
-        const blockSpacingHorizontal = 12 + activeStrokeWidth;
+        const blockSpacingHorizontal = 100 * currentSpacing + activeStrokeWidth * currentSpacing;
 
         const tokens = tokenizeText(text);
         const blocks = generateSyllabicBlocks(tokens);
@@ -838,7 +834,7 @@
 
           if (block.type === "newline") {
             cursorX = 0;
-            cursorY += blockHeight + blockSpacingVertical;
+            cursorY += blockHeight + blockSpacingVertical + activeStrokeWidth;
             continue;
           }
 
@@ -851,7 +847,7 @@
 
           if (cursorX > lineWrapBoundary + 1 && i > 0) {
             cursorX = 0;
-            cursorY += blockHeight + blockSpacingVertical;
+            cursorY += blockHeight + blockSpacingVertical + activeStrokeWidth;
           }
 
           if (block.type === "space") {
@@ -876,6 +872,26 @@
           }
         }
 
+        // --- TWO-PASS RENDERING STAGE ---
+        // PASS 1: Paint standard continuous stroke elements down first
+        for (const pathData of renderingQueue) {
+          if (!pathData.isMask) {
+            glyphGroup.appendChild(createPathElement(pathData.d, pathData.style));
+          }
+        }
+
+        // PASS 2: Overlay weave masks and crossing segments over top of the baseline geometry
+        for (const pathData of renderingQueue) {
+          if (pathData.isMask) {
+            if (weaveMode) {
+              // Only inject the canvas-colored cutout slot if weaving is turned on
+              glyphGroup.appendChild(createMaskPathElement(pathData.d, pathData.style, pathData.maskWidth));
+            }
+            // ALWAYS inject the foreground structural path so it doesn't disappear
+            glyphGroup.appendChild(createPathElement(pathData.d, pathData.style));
+          }
+        }
+
         updateCanvasViewBox(maxReachedX, maxReachedY);
       }
 
@@ -885,6 +901,25 @@
       inputElement.addEventListener("input", renderGlyph);
       thicknessSlider.addEventListener("input", (e) => { currentThickness = e.target.value; renderGlyph(); });
       overshootSlider.addEventListener("input", (e) => { currentOvershoot = parseInt(e.target.value, 10); renderGlyph(); });
+      spacingSlider.addEventListener("input", (e) => { currentSpacing = parseFloat(e.target.value); renderGlyph(); });
+
+      const layoutMediaQuery = window.matchMedia("(max-width: 600px)");
+
+      function handleLayoutChange(e) {
+        if (e.matches) {
+          // Narrow/Stacked mode: Shrink textarea to save vertical space
+          inputElement.setAttribute("rows", "3");
+        } else {
+          // Wide/Desktop mode: Expand textarea for comfortable typing
+          inputElement.setAttribute("rows", "7");
+        }
+      }
+
+      // Run immediately on page load to set the correct size right away
+      handleLayoutChange(layoutMediaQuery);
+
+      // Listen for browser window resizing or orientation flips
+      layoutMediaQuery.addEventListener("change", handleLayoutChange);
 
       themeToggle.addEventListener("click", () => {
         if (document.body.getAttribute("data-theme") === "dark") document.body.removeAttribute("data-theme");
@@ -897,9 +932,13 @@
         renderGlyph();
       });
 
-      intersectionToggle.addEventListener("click", () => {
-        if (currentIntersection === "over") { currentIntersection = "cross"; intersectionToggle.classList.add("cross"); }
-        else { currentIntersection = "over"; intersectionToggle.classList.remove("cross"); }
+      weaveToggle.addEventListener("click", () => {
+        weaveMode = !weaveMode;
+        if (weaveMode) {
+          weaveToggle.classList.add("woven");
+        } else {
+          weaveToggle.classList.remove("woven");
+        }
         renderGlyph();
       });
 
@@ -924,8 +963,7 @@
       exportButton.addEventListener("click", downloadSVG);
 
       styleToggle.classList.add("rounded");
-
-      intersectionToggle.classList.add("over");
+      // weaveToggle.classList.add("woven");
 
       svgCanvas.setAttribute("shape-rendering", "geometricPrecision");
 
