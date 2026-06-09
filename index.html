@@ -14,7 +14,6 @@
         --border: #bbb;
         --slider-thumb: #222;
       }
-
       [data-theme="dark"] {
         --bg-body: #1e1e1e;
         --bg-container: #2d2d2d;
@@ -24,7 +23,6 @@
         --border: #444;
         --slider-thumb: #ddd;
       }
-
       body {
         font-family: sans-serif;
         font-size: 20px;
@@ -40,13 +38,11 @@
         padding: 20px;
         box-sizing: border-box;
       }
-
       h2 {
         margin-top: 0;
         margin-bottom: 0;
         text-align: center;
       }
-
       .container {
         background: var(--bg-container);
         padding: 20px;
@@ -60,7 +56,6 @@
         box-sizing: border-box;
         transition: background-color .4s ease, color .4s ease;
       }
-
       .controls-toolbar {
         display: flex;
         flex-wrap: wrap;
@@ -68,11 +63,9 @@
         gap: 20px;
         width: 100%;
       }
-
       .input-wrapper {
         flex: 1 1 200px;
       }
-
       textarea {
         width: 100%;
         padding: 10px;
@@ -87,27 +80,23 @@
         transition: all .4s ease;
         resize: vertical;
       }
-
       .settings-wrapper {
         display: flex;
         align-items: center;
         gap: 20px;
         flex: 1 1 280px;
       }
-
       .sliders-group {
         display: flex;
         flex-direction: column;
         gap: 20px;
-        flex: 1; 
+        flex: 1;
       }
-
       .slider-wrapper {
         display: flex;
         flex-direction: column;
         gap: 5px;
       }
-
       .slider-wrapper label {
         font-size: 12px;
         font-weight: bold;
@@ -115,13 +104,11 @@
         text-transform: uppercase;
         letter-spacing: .5px;
       }
-
       input[type="range"] {
         width: 100%;
         margin: 0;
         cursor: pointer;
       }
-
       .buttons-group {
         display: grid;
         grid-template-columns: repeat(2, 42px);
@@ -129,7 +116,6 @@
         gap: 10px;
         flex-shrink: 0;
       }
-
       .icon-btn {
         background: none;
         border: 2px solid var(--border);
@@ -144,18 +130,15 @@
         padding: 0;
         transition: all .4s ease;
       }
-
       .icon-btn:hover {
         background: var(--bg-body);
         color: var(--text-main);
         border-color: var(--text-main);
       }
-
       .icon-btn svg {
         width: 20px;
         height: 20px;
       }
-
       .canvas-frame {
         width: 100%;
         height: 320px;
@@ -168,38 +151,31 @@
         box-sizing: border-box;
         transition: background-color .4s ease;
       }
-
       svg {
         width: 100%;
         height: 100%;
         display: block;
       }
-
       #glyph-group path:not(.weave-mask) {
         stroke: var(--text-main) !important;
         transition: stroke .4s ease;
       }
-
       #glyph-group path.weave-mask {
         stroke: var(--bg-canvas) !important;
         transition: stroke .4s ease;
       }
-
       .sun-icon { display: block; }
       .moon-icon { display: none; }
       [data-theme="dark"] .sun-icon { display: none; }
       [data-theme="dark"] .moon-icon { display: block; }
-
       .diamond-icon { display: block; }
       .circle-icon { display: none; }
       #style-toggle.rounded .diamond-icon { display: none; }
       #style-toggle.rounded .circle-icon { display: block; }
-
       .weave-on-icon { display: block; }
       .weave-off-icon { display: none; }
       #weave-toggle.woven .weave-on-icon { display: none; }
       #weave-toggle.woven .weave-off-icon { display: block; }
-
       @media (max-width: 600px) {
         .controls-toolbar {
           flex-direction: column;
@@ -229,7 +205,6 @@
         <div class="input-wrapper">
           <textarea id="transcriber-input" rows="7" placeholder="Type here :)"></textarea>
         </div>
-
         <div class="settings-wrapper">
           <div class="sliders-group">
             <div class="slider-wrapper">
@@ -245,7 +220,6 @@
               <input type="range" id="spacing" min="0" max="1" step=".1" value=".5" />
             </div>
           </div>
-
           <div class="buttons-group">
             <button id="weave-toggle" class="icon-btn" type="button" title="Toggle weave">
               <svg class="weave-off-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -255,7 +229,6 @@
                 <path d="m4 4 16 16m0-16L4 20"/>
               </svg>
             </button>
-
             <button id="style-toggle" class="icon-btn" type="button" title="Toggle style">
               <svg class="diamond-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M2 12 12 2l10 10-10 10Z"/>
@@ -264,13 +237,11 @@
                 <circle cx="12" cy="12" r="10"/>
               </svg>
             </button>
-
             <button id="export-button" class="icon-btn" type="button" title="Download SVG">
               <svg class="download-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4m4-5 5 5 5-5m-5 5V3"/>
               </svg>
             </button>
-
             <button id="theme-toggle" class="icon-btn" type="button" title="Toggle dark mode">
               <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="5"/>
@@ -283,14 +254,12 @@
           </div>
         </div>
       </header>
-
       <div class="canvas-frame">
         <svg id="script-canvas" shape-rendering="geometricPrecision" viewBox="0 0 200 300">
           <g id="glyph-group"></g>
         </svg>
       </div>
     </div>
-
     <script>
       // ==========================================
       // 1. GLOBAL LEXICON & ALPHABET CONFIGURATION
@@ -298,7 +267,6 @@
       const CONSONANTS = new Set([
         "m", "n", "v", "th", "l", "r", "w", "p", "t", "f", "s", "sh", "ch", "k", "b", "d", "z", "h", "j", "g"
       ]);
-
       const VOWELS = new Set([
         "a", "e", "i", "o", "u", "y",
         "aa", "au", "aw", "oo", "ou", "ow", "eu", "ew", "ie", "ei", "ey", "ai", "ay", "ea", "ee", "oi", "oy", "ue", "uu", "uw", "oa", "oe",
@@ -306,7 +274,6 @@
         "ah", "eh", "ih", "oh", "uh",
         "aar", "air", "ear", "eer", "ier", "oar", "oor", "ooh",
       ]);
-
       const PHONEME_KEYS = [
         ",", ".", ";", ":", "!", "?",
         "aar", "air", "ear", "eer", "ier", "oar", "oor", "ooh",
@@ -317,77 +284,75 @@
         "m", "n", "v", "l", "r", "p", "t", "f", "s", "x", "k", "c", "q", "b", "d", "z", "h", "j", "g", "y", "w",
         "a", "e", "i", "o", "u",
       ];
-
       const MUNAVI_ALPHABET = {
-        m:   ["backslash", "backslash", "backslash"],
-        w:   ["backslash", "backslash", "slash"],
-        r:   ["backslash", "backslash", "cross"],
-        n:   ["backslash", "slash", "backslash"],
-        l:   ["backslash", "slash", "slash"],
-        s:   ["backslash", "slash", "cross"], 
-        v:   ["backslash", "cross", "backslash"],
-        y:   ["backslash", "cross", "slash"], 
-        p:   ["slash", "backslash", "backslash"],
-        k:   ["slash", "backslash", "slash"],
-        ch:  ["slash", "backslash", "cross"],
-        t:   ["slash", "slash", "backslash"],
-        0:   ["slash", "slash", "slash"],
-        sh:  ["slash", "slash", "cross"],
-        f:   ["slash", "cross", "backslash"],
-        th:  ["slash", "cross", "slash"], 
-        b:   ["cross", "backslash", "backslash"],
-        g:   ["cross", "backslash", "slash"],
-        j:   ["cross", "backslash", "cross"],
-        d:   ["cross", "slash", "backslash"],
-        h:   ["cross", "slash", "slash"],
-        z:   ["cross", "slash", "cross"], 
-        a:   ["backslash", "slash", "backslash"],
-        e:   ["backslash", "backslash", "slash"],
-        eh:  ["backslash", "backslash", "slash"],
-        i:   ["backslash", "cross", "backslash"],
-        ih:  ["backslash", "cross", "backslash"],
-        o:   ["backslash", "slash", "cross"],
-        u:   ["backslash", "backslash", "backslash"],
-        uh:  ["backslash", "backslash", "backslash"],
-        aa:  ["backslash", "slash", "slash"],
-        ah:  ["backslash", "slash", "slash"],
-        au:  ["backslash", "backslash", "cross"],
-        aw:  ["backslash", "backslash", "cross"],
-        ai:  ["slash", "slash", "backslash"],
-        ay:  ["slash", "slash", "backslash"],
-        ei:  ["slash", "slash", "backslash"],
-        ey:  ["slash", "slash", "backslash"],
-        ea:  ["slash", "backslash", "slash"],
-        ee:  ["slash", "backslash", "slash"],
-        ie:  ["slash", "backslash", "slash"],
-        oa:  ["slash", "slash", "cross"],
-        oe:  ["slash", "slash", "cross"],
-        oh:  ["slash", "slash", "cross"],
-        oo:  ["slash", "cross", "backslash"],
-        oi:  ["slash", "cross", "slash"],
-        oy:  ["slash", "cross", "slash"],
-        ou:  ["slash", "backslash", "backslash"],
-        ow:  ["slash", "backslash", "backslash"],
-        uu:  ["slash", "backslash", "cross"],
-        uw:  ["slash", "backslash", "cross"],
-        ooh: ["slash", "backslash", "cross"],
-        eu:  ["slash", "backslash", "cross"],
-        ew:  ["slash", "backslash", "cross"],
-        ue:  ["slash", "backslash", "cross"],
-        ar:  ["cross", "slash", "slash"],
-        aar: ["cross", "slash", "slash"],
-        air: ["cross", "slash", "backslash"],
-        ear: ["cross", "backslash", "slash"],
-        eer: ["cross", "backslash", "slash"],
-        ier: ["cross", "backslash", "slash"],
-        er:  ["cross", "backslash", "backslash"],
-        ir:  ["cross", "backslash", "backslash"],
-        or:  ["cross", "slash", "cross"],
-        oar: ["cross", "slash", "cross"],
-        ur:  ["cross", "backslash", "cross"],
-        oor: ["cross", "backslash", "cross"],
+        m:    ["backslash", "backslash", "backslash"],
+        w:    ["backslash", "backslash", "slash"],
+        r:    ["backslash", "backslash", "cross"],
+        n:    ["backslash", "slash", "backslash"],
+        l:    ["backslash", "slash", "slash"],
+        s:    ["backslash", "slash", "cross"],
+        v:    ["backslash", "cross", "backslash"],
+        y:    ["backslash", "cross", "slash"],
+        p:    ["slash", "backslash", "backslash"],
+        k:    ["slash", "backslash", "slash"],
+        ch:   ["slash", "backslash", "cross"],
+        t:    ["slash", "slash", "backslash"],
+        0:    ["slash", "slash", "slash"],
+        sh:   ["slash", "slash", "cross"],
+        f:    ["slash", "cross", "backslash"],
+        th:   ["slash", "cross", "slash"],
+        b:    ["cross", "backslash", "backslash"],
+        g:    ["cross", "backslash", "slash"],
+        j:    ["cross", "backslash", "cross"],
+        d:    ["cross", "slash", "backslash"],
+        h:    ["cross", "slash", "slash"],
+        z:    ["cross", "slash", "cross"],
+        a:    ["backslash", "slash", "backslash"],
+        e:    ["backslash", "backslash", "slash"],
+        eh:   ["backslash", "backslash", "slash"],
+        i:    ["backslash", "cross", "backslash"],
+        ih:   ["backslash", "cross", "backslash"],
+        o:    ["backslash", "slash", "cross"],
+        u:    ["backslash", "backslash", "backslash"],
+        uh:   ["backslash", "backslash", "backslash"],
+        aa:   ["backslash", "slash", "slash"],
+        ah:   ["backslash", "slash", "slash"],
+        au:   ["backslash", "backslash", "cross"],
+        aw:   ["backslash", "backslash", "cross"],
+        ai:   ["slash", "slash", "backslash"],
+        ay:   ["slash", "slash", "backslash"],
+        ei:   ["slash", "slash", "backslash"],
+        ey:   ["slash", "slash", "backslash"],
+        ea:   ["slash", "backslash", "slash"],
+        ee:   ["slash", "backslash", "slash"],
+        ie:   ["slash", "backslash", "slash"],
+        oa:   ["slash", "slash", "cross"],
+        oe:   ["slash", "slash", "cross"],
+        oh:   ["slash", "slash", "cross"],
+        oo:   ["slash", "cross", "backslash"],
+        oi:   ["slash", "cross", "slash"],
+        oy:   ["slash", "cross", "slash"],
+        ou:   ["slash", "backslash", "backslash"],
+        ow:   ["slash", "backslash", "backslash"],
+        uu:   ["slash", "backslash", "cross"],
+        uw:   ["slash", "backslash", "cross"],
+        ooh   ["slash", "backslash", "cross"],
+        eu:   ["slash", "backslash", "cross"],
+        ew:   ["slash", "backslash", "cross"],
+        ue:   ["slash", "backslash", "cross"],
+        ar:   ["cross", "slash", "slash"],
+        aar:  ["cross", "slash", "slash"],
+        air:  ["cross", "slash", "backslash"],
+        ear:  ["cross", "backslash", "slash"],
+        eer:  ["cross", "backslash", "slash"],
+        ier:  ["cross", "backslash", "slash"],
+        er:   ["cross", "backslash", "backslash"],
+        ir:   ["cross", "backslash", "backslash"],
+        or:   ["cross", "slash", "cross"],
+        oar:  ["cross", "slash", "cross"],
+        ur:   ["cross", "backslash", "cross"],
+        oor:  ["cross", "backslash", "cross"],
       };
-
       // ==========================================
       // 2. DOM ELEMENTS & APP STATE
       // ==========================================
@@ -401,7 +366,6 @@
       const themeToggle = document.getElementById("theme-toggle");
       const exportButton = document.getElementById("export-button");
       const weaveToggle = document.getElementById("weave-toggle");
-
       const baseCanvasHeight = 0;
       const padding = 200;
       const halfWidth = 100;
@@ -410,16 +374,12 @@
       const blockSpacingVertical = 150;
       const wordSpacing = 150;
       const maxBlocksCeiling = 40;
-
       let currentThickness = thicknessSlider.value;
       let currentOvershoot = parseInt(overshootSlider.value, 10);
       let currentSpacing = parseFloat(spacingSlider.value);
       let currentStyle = "rounded";
       let weaveMode = false;
-
-      // Dynamic array stores drawing operations to process in an ordered two-pass render cycle
       let renderingQueue = [];
-
       // ==========================================
       // 3. CORE LOGIC ENGINE
       // ==========================================
@@ -427,26 +387,22 @@
         let rawTokens = [];
         let i = 0;
         const cleanText = text.toLowerCase();
-
         while (i < cleanText.length) {
           if (cleanText[i] === "\n") {
             rawTokens.push("\n");
             i++;
             continue;
           }
-
           if (cleanText[i] === " ") {
             rawTokens.push(" ");
             i++;
             continue;
           }
-
           if (cleanText[i] === "-" || cleanText[i] === "'") {
             rawTokens.push(cleanText[i]);
             i++;
             continue;
           }
-
           let matchFound = false;
           for (const key of PHONEME_KEYS) {
             if (cleanText.substring(i, i + key.length) === key) {
@@ -459,7 +415,7 @@
               } else if (key === "qu") {
                 rawTokens.push("k", "w");
               } else if (key === "ng") {
-                rawTokens.push("h");     
+                rawTokens.push("h");
               } else if (key === "ph") {
                 rawTokens.push("f");
               } else if (key === "wh") {
@@ -474,7 +430,6 @@
           }
           if (!matchFound) i++;
         }
-
         const filteredTokens = [];
         for (let j = 0; j < rawTokens.length; j++) {
           const current = rawTokens[j];
@@ -482,17 +437,13 @@
           if (CONSONANTS.has(current) && current === previous) continue;
           filteredTokens.push(current);
         }
-
         return filteredTokens;
       }
-
       function generateSyllabicBlocks(tokens) {
         const blocks = [];
         let currentBlock = null;
-
         for (let i = 0; i < tokens.length; i++) {
           const token = tokens[i];
-
           if (token === "\n") {
             if (currentBlock) {
               currentBlock.right = "0";
@@ -559,15 +510,12 @@
             }
           }
         }
-
         if (currentBlock) {
           currentBlock.right = "0";
           blocks.push(currentBlock);
         }
-
         return blocks;
       }
-
       function createPathElement(dAttribute, style) {
         const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
         path.setAttribute("d", dAttribute);
@@ -577,7 +525,6 @@
         path.setAttribute("fill", "none");
         return path;
       }
-
       function createMaskPathElement(dAttribute, style, width) {
         const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
         path.setAttribute("d", dAttribute);
@@ -587,11 +534,9 @@
         path.setAttribute("fill", "none");
         return path;
       }
-
       function drawPunctuation(value, xOffset, yOffset, style) {
         const cx = xOffset + 50;
         let yPositions = [];
-
         if (value === "," || value === ".") {
           yPositions = [150];
         } else if (value === ";" || value === ":") {
@@ -599,34 +544,26 @@
         } else if (value === "!" || value === "?") {
           yPositions = [40, 150, 260];
         }
-
         const r = Math.max(1, activeStrokeWidth * .5);
-
         for (const cy of yPositions) {
           const absoluteY = yOffset + cy;
           let d = "";
-
           if (style === "angular") {
             d = `M ${cx} ${absoluteY - r} L ${cx + r} ${absoluteY} L ${cx} ${absoluteY + r} L ${cx - r} ${absoluteY} Z`;
           } else {
             d = `M ${cx - r} ${absoluteY} a ${r} ${r} 0 1 0 ${r * 2} 0 a ${r} ${r} 0 1 0 -${r * 2} 0`;
           }
-
           const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
           path.setAttribute("d", d);
           path.setAttribute("fill", "var(--text-main)");
           path.setAttribute("stroke", "none");
-
           glyphGroup.appendChild(path);
         }
       }
-
-      // Instead of adding immediately to the DOM, this registers vectors into our deferred layout pipeline
       function drawActualArc(type, level, x, yOffset, row, isLeftColumn, style, partnerLevel = null, shouldMask = false) {
         const cellY = yOffset + row * 100;
         let d;
         const maskWidth = Math.max(parseFloat(activeStrokeWidth) + 2, 50 - .1 / parseFloat(activeStrokeWidth));
-
         if (style === "angular") {
           if (type === "backslash") d = `M ${x} ${cellY} L ${x + 100} ${cellY + 100}`;
           if (type === "slash") d = `M ${x + 100} ${cellY} L ${x} ${cellY + 100}`;
@@ -639,10 +576,8 @@
           });
           return;
         }
-
         let cx, cy, startAngle, endAngle, sweepFlag;
         const r = level * 100;
-
         if (level === 1) {
           if (type === "backslash") {
             if (isLeftColumn) {
@@ -688,18 +623,15 @@
             }
           }
         }
-
         if (partnerLevel !== null) {
           const partnerType = (type === "backslash") ? "slash" : "backslash";
           const partnerR = partnerLevel * 100;
           let partnerCy;
-
           if (partnerLevel === 1) {
             partnerCy = (partnerType === "backslash") ? (isLeftColumn ? cellY : cellY + 100) : (isLeftColumn ? cellY + 100 : cellY);
           } else {
             partnerCy = (partnerType === "backslash") ? (isLeftColumn ? (yOffset + (row + 1) * 100 - partnerR) : (yOffset + row * 100 + partnerR)) : (isLeftColumn ? (yOffset + row * 100 + partnerR) : (yOffset + (row + 1) * 100 - partnerR));
           }
-
           if (cy !== partnerCy) {
             const Y = (partnerR * partnerR - r * r + cy * cy - partnerCy * partnerCy) / (2 * (cy - partnerCy));
             const dX2 = r * r - (Y - cy) * (Y - cy);
@@ -720,13 +652,11 @@
           const angleOvershoot = linearOvershoot / r;
           endAngle += (sweepFlag === 1 ? angleOvershoot : -angleOvershoot);
         }
-
         const sx = cx + r * Math.cos(startAngle);
         const sy = cy + r * Math.sin(startAngle);
         const ex = cx + r * Math.cos(endAngle);
         const ey = cy + r * Math.sin(endAngle);
         d = `M ${sx} ${sy} A ${r} ${r} 0 0 ${sweepFlag} ${ex} ${ey}`;
-
         renderingQueue.push({
           d: d,
           style: style,
@@ -734,10 +664,8 @@
           maskWidth: maskWidth
         });
       }
-
       function drawTripleStack(phoneme, xOffset, yOffset, isLeftColumn, style) {
         const rules = MUNAVI_ALPHABET[phoneme] || MUNAVI_ALPHABET["0"];
-
         function getLevelB(row) {
           if (isLeftColumn) {
             if (row === 0) return 1;
@@ -751,7 +679,6 @@
             return getLevelB(row + 1) + 1;
           }
         }
-
         function getLevelS(row) {
           if (isLeftColumn) {
             if (row === 2) return 1;
@@ -765,16 +692,13 @@
             return getLevelS(row - 1) + 1;
           }
         }
-
         for (let row = 0; row < 3; row++) {
           const cellType = rules[row];
           if (cellType === "none") continue;
-
           if (cellType === "cross") {
             const levelB = getLevelB(row);
             const levelS = getLevelS(row);
             const backslashIsOver = (row % 2 === 1);
-
             if (backslashIsOver) {
               drawActualArc("slash", levelS, xOffset, yOffset, row, isLeftColumn, style, levelB, false);
               drawActualArc("backslash", levelB, xOffset, yOffset, row, isLeftColumn, style, levelS, true);
@@ -791,111 +715,87 @@
           }
         }
       }
-
       function renderGlyph() {
         const text = inputElement.value;
         glyphGroup.innerHTML = "";
-        renderingQueue = []; // Empty the layout batcher before processing tokens
-
+        renderingQueue = [];
         function updateCanvasViewBox(w, h) {
           const bleed = activeStrokeWidth / 2;
           svgCanvas.setAttribute(
-            "viewBox", 
+            "viewBox",
             `-${padding + bleed} -${padding + bleed} ${w + (padding * 2) + activeStrokeWidth} ${h + (padding * 2) + activeStrokeWidth}`
           );
         }
-
         const structuralLimit = currentStyle === "angular" ? 50 * Math.sqrt(2) : 100.0;
         activeStrokeWidth = 1 + ((structuralLimit - 2) / 10) * (currentThickness - 1);
         const baseSpacingFactor = currentStyle === "angular" ? 70.7 : 100;
         const blockSpacingHorizontal = baseSpacingFactor * currentSpacing + activeStrokeWidth * currentSpacing;
-
         const tokens = tokenizeText(text);
         const blocks = generateSyllabicBlocks(tokens);
-
         while (blocks.length > 0 && blocks[blocks.length - 1].type === "space") {
           blocks.pop();
         }
-
         if (blocks.length === 0) {
           updateCanvasViewBox(blockWidth, baseCanvasHeight);
           return;
         }
-
         let cursorX = 0;
         let cursorY = 0;
         const maxLineAllowedWidth = maxBlocksCeiling * blockWidth + (maxBlocksCeiling - 1) * blockSpacingHorizontal;
         const lineWrapBoundary = maxLineAllowedWidth - blockWidth;
-
         let maxReachedX = 0;
         let maxReachedY = baseCanvasHeight;
-
         for (let i = 0; i < blocks.length; i++) {
           const block = blocks[i];
-
           if (block.type === "newline") {
             cursorX = 0;
             cursorY += blockHeight + blockSpacingVertical + activeStrokeWidth;
             continue;
           }
-
           let currentStepWidth = blockWidth;
           if (block.type === "space") {
             currentStepWidth = wordSpacing;
           } else if (block.type === "punctuation") {
             currentStepWidth = 100;
           }
-
           if (cursorX > lineWrapBoundary + 1 && i > 0) {
             cursorX = 0;
             cursorY += blockHeight + blockSpacingVertical + activeStrokeWidth;
           }
-
           if (block.type === "space") {
             if (cursorX + currentStepWidth > maxReachedX) maxReachedX = cursorX + currentStepWidth;
             if (cursorY + blockHeight > maxReachedY) maxReachedY = cursorY + blockHeight;
             cursorX += wordSpacing - 36;
-          } 
+          }
           else if (block.type === "punctuation") {
             drawPunctuation(block.value, cursorX, cursorY, currentStyle);
             if (cursorX + currentStepWidth > maxReachedX) maxReachedX = cursorX + currentStepWidth;
             if (cursorY + blockHeight > maxReachedY) maxReachedY = cursorY + blockHeight;
             cursorX += currentStepWidth + blockSpacingHorizontal;
-          } 
+          }
           else {
             drawTripleStack(block.left, cursorX, cursorY, true, currentStyle);
             drawTripleStack(block.right, cursorX + halfWidth, cursorY, false, currentStyle);
-
             if (cursorX + blockWidth > maxReachedX) maxReachedX = cursorX + blockWidth;
             if (cursorY + blockHeight > maxReachedY) maxReachedY = cursorY + blockHeight;
-
             cursorX += blockWidth + blockSpacingHorizontal;
           }
         }
-
-        // --- TWO-PASS RENDERING STAGE ---
-        // PASS 1: Paint standard continuous stroke elements down first
         for (const pathData of renderingQueue) {
           if (!pathData.isMask) {
             glyphGroup.appendChild(createPathElement(pathData.d, pathData.style));
           }
         }
-
-        // PASS 2: Overlay weave masks and crossing segments over top of the baseline geometry
         for (const pathData of renderingQueue) {
           if (pathData.isMask) {
             if (weaveMode) {
-              // Only inject the canvas-colored cutout slot if weaving is turned on
               glyphGroup.appendChild(createMaskPathElement(pathData.d, pathData.style, pathData.maskWidth));
             }
-            // ALWAYS inject the foreground structural path so it doesn't disappear
             glyphGroup.appendChild(createPathElement(pathData.d, pathData.style));
           }
         }
-
         updateCanvasViewBox(maxReachedX, maxReachedY);
       }
-
       // ==========================================
       // 4. EVENT LISTENERS & INITIALIZATION
       // ==========================================
@@ -903,36 +803,25 @@
       thicknessSlider.addEventListener("input", (e) => { currentThickness = e.target.value; renderGlyph(); });
       overshootSlider.addEventListener("input", (e) => { currentOvershoot = parseInt(e.target.value, 10); renderGlyph(); });
       spacingSlider.addEventListener("input", (e) => { currentSpacing = parseFloat(e.target.value); renderGlyph(); });
-
       const layoutMediaQuery = window.matchMedia("(max-width: 600px)");
-
       function handleLayoutChange(e) {
         if (e.matches) {
-          // Narrow/Stacked mode: Shrink textarea to save vertical space
           inputElement.setAttribute("rows", "3");
         } else {
-          // Wide/Desktop mode: Expand textarea for comfortable typing
           inputElement.setAttribute("rows", "7");
         }
       }
-
-      // Run immediately on page load to set the correct size right away
       handleLayoutChange(layoutMediaQuery);
-
-      // Listen for browser window resizing or orientation flips
       layoutMediaQuery.addEventListener("change", handleLayoutChange);
-
       themeToggle.addEventListener("click", () => {
         if (document.body.getAttribute("data-theme") === "dark") document.body.removeAttribute("data-theme");
         else document.body.setAttribute("data-theme", "dark");
       });
-
       styleToggle.addEventListener("click", () => {
         if (currentStyle === "angular") { currentStyle = "rounded"; styleToggle.classList.add("rounded"); }
         else { currentStyle = "angular"; styleToggle.classList.remove("rounded"); }
         renderGlyph();
       });
-
       weaveToggle.addEventListener("click", () => {
         weaveMode = !weaveMode;
         if (weaveMode) {
@@ -942,32 +831,32 @@
         }
         renderGlyph();
       });
-
       function downloadSVG() {
-        const serializer = new XMLSerializer();
-        let svgString = serializer.serializeToString(svgCanvas);
-
-        const svgBlob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
-        const svgUrl = URL.createObjectURL(svgBlob);
-
-        const downloadLink = document.createElement("a");
-        downloadLink.href = svgUrl;
-        downloadLink.download = "Munavi.svg";
-
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-
-        document.body.removeChild(downloadLink);
-        URL.revokeObjectURL(svgUrl);
+        const clonedCanvas = svgCanvas.cloneNode(true);
+        const viewBox = clonedCanvas.getAttribute("viewBox").split(" ");
+        const minX = parseFloat(viewBox[0]);
+        const minY = parseFloat(viewBox[1]);
+        const width = parseFloat(viewBox[2]);
+        const height = parseFloat(viewBox[3]);
+        const bgRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        bgRect.setAttribute("x", minX);
+        bgRect.setAttribute("y", minY);
+        bgRect.setAttribute("width", width);
+        bgRect.setAttribute("height", height);
+        bgRect.setAttribute("fill", "#fff");
+        clonedCanvas.insertBefore(bgRect, clonedCanvas.firstChild);
+        let s = (new XMLSerializer).serializeToString(clonedCanvas);
+        
+        const e = new Blob([s], {
+                type: "image/svg+xml;charset=utf-8"
+            }),
+            a = URL.createObjectURL(e),
+            t = document.createElement("a");
+        t.href = a, t.download = "Munavi.svg", document.body.appendChild(t), t.click(), document.body.removeChild(t), URL.revokeObjectURL(a)
       }
-
       exportButton.addEventListener("click", downloadSVG);
-
       styleToggle.classList.add("rounded");
-      // weaveToggle.classList.add("woven");
-
       svgCanvas.setAttribute("shape-rendering", "geometricPrecision");
-
       renderGlyph();
     </script>
   </body>
