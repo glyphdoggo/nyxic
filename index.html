@@ -807,7 +807,8 @@
 
         const structuralLimit = currentStyle === "angular" ? 50 * Math.sqrt(2) : 100.0;
         activeStrokeWidth = 1 + ((structuralLimit - 2) / 10) * (currentThickness - 1);
-        const blockSpacingHorizontal = 100 * currentSpacing + activeStrokeWidth * currentSpacing;
+        const baseSpacingFactor = currentStyle === "angular" ? 70.7 : 100;
+        const blockSpacingHorizontal = baseSpacingFactor * currentSpacing + activeStrokeWidth * currentSpacing;
 
         const tokens = tokenizeText(text);
         const blocks = generateSyllabicBlocks(tokens);
