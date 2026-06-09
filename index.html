@@ -409,7 +409,12 @@
               if (key === "x") {
                 rawTokens.push("k", "s");
               } else if (key === "c") {
-                rawTokens.push("k");
+                const nextChar = cleanText[i + 1];
+                if (nextChar === "e" || nextChar === "i") {
+                  rawTokens.push("s");
+                } else {
+                  rawTokens.push("k");
+                }
               } else if (key === "q") {
                 rawTokens.push("k");
               } else if (key === "qu") {
