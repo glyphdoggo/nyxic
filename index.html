@@ -25,7 +25,7 @@
    }
    body {
     font-family: monospace;
-    font-size: 16px;
+    font-size: 12px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -70,7 +70,7 @@
     width: 100%;
     padding: 10px;
     font-family: monospace;
-    font-size: 16px;
+    font-size: 12px;
     border: 2px solid var(--border);
     background-color: var(--bg-canvas);
     color: var(--text-main);
@@ -268,19 +268,19 @@
       <div class="settings-wrapper">
        <div class="sliders-group">
         <div class="slider-wrapper">
-         <label for="thickness">Weight</label><!-- Line Thickness -->
+         <label for="thickness">Weight</label>
          <input type="range" id="thickness" min="1" max="21" value="11" />
         </div>
         <div class="slider-wrapper">
-         <label for="spacing">Spacing</label><!-- Letter Spacing -->
+         <label for="spacing">Spacing</label>
          <input type="range" id="spacing" min="0" max="1" step=".05" value=".5" />
         </div>
         <div class="slider-wrapper style-dependent" id="overshoot-wrapper">
-         <label for="overshoot">Overshoot</label><!-- Overshoot Length -->
+         <label for="overshoot">Overshoot</label>
          <input type="range" id="overshoot" min="0" max="20" value="10" />
         </div>
         <div class="slider-wrapper style-dependent" id="stretch-wrapper">
-         <label for="squish">Stretch</label><!-- Squish Factor -->
+         <label for="squish">Stretch</label>
          <input type="range" id="squish" min="0" max="1" step=".05" value=".5" />
         </div>
        </div>
@@ -294,7 +294,7 @@
          </svg>
         </button>
         <div class="toggle-anchor">
-         <button id="info-toggle" class="icon-btn" type="button" title="Documentation"><!-- Manual -->
+         <button id="info-toggle" class="icon-btn" type="button" title="Documentation">
           <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
            <circle cx="12" cy="12" r="11"/>
            <path d="m12 7 0 0m0 4 0 6"/>
@@ -577,7 +577,9 @@
        'thought': 'thaut',
        'though': 'thoa',
        'plough': 'plow',
-       'bough': 'bow'
+       'bough': 'bow',
+       'and': 'n',
+       'what': 'wot'
      };
      for (let word in complex) clean = clean.replace(new RegExp(word, 'g'), complex[word]);
      clean = clean.replace(/ough\b/g, 'uf')
