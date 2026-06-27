@@ -6,41 +6,36 @@
   <title>Nyxic Transcriber</title>
   <style>
    :root {
-    --bg-body: #ddd;
     --bg-container: #eee;
     --bg-canvas: #ddd;
     --text-main: #222;
     --text-muted: #555;
     --border: #ccc;
-    --slider-thumb: #222;
    }
    [data-theme="dark"] {
-    --bg-body: #222;
     --bg-container: #333;
     --bg-canvas: #222;
     --text-main: #ddd;
     --text-muted: #aaa;
     --border: #444;
-    --slider-thumb: #ddd;
    }
    body {
     font-family: monospace;
-    font-size: 12px;
+    font-size: 14px;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
     min-height: 100vh;
     margin: 0;
-    background-color: var(--bg-body);
+    background-color: var(--bg-canvas);
     color: var(--text-main);
-    transition: all .3s ease;
+    transition: background-color .3s ease, color .3s ease;
     padding: 20px;
     box-sizing: border-box;
    }
    h2 {
     text-align: center;
-    margin-top: 10px;
+    margin-top: 15px;
     margin-bottom: 10px;
    }
    .container {
@@ -48,37 +43,30 @@
     padding: 20px;
     border-radius: 20px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, .25);
-    width: 100%;
-    max-width: 1000px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    box-sizing: border-box;
-    transition: all .3s ease;
+    transition: background-color .3s ease, color .3s ease;
+    max-width: 80%;
    }
    .controls-toolbar {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
     gap: 20px;
-    width: 100%;
    }
    .input-wrapper {
-    flex: 1 1 200px;
+    display: flex;
+    align-items: center;
+    flex: 1 1 380px;
    }
    textarea {
     width: 100%;
     padding: 10px;
-    font-family: monospace;
-    font-size: 12px;
+    font-size: 16px;
     border: 2px solid var(--border);
     background-color: var(--bg-canvas);
     color: var(--text-main);
     border-radius: 10px;
-    text-align: center;
     box-sizing: border-box;
-    transition: all .3s ease;
-    resize: vertical;
+    transition: background-color .3s ease, color .3s ease;
+    min-height: 146px;
    }
    .settings-wrapper {
     display: flex;
@@ -89,7 +77,8 @@
    .sliders-group {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 10px;
+    width: 100%;
     flex: 1;
    }
    .slider-wrapper {
@@ -108,103 +97,92 @@
      display: none;
    }
    input[type="range"] {
-    width: 100%;
     margin: 0;
     cursor: pointer;
    }
    .buttons-group {
     display: grid;
     grid-template-columns: repeat(2, 42px);
-    grid-template-rows: repeat(2, 42px);
     gap: 10px;
-    flex-shrink: 0;
    }
    .icon-btn {
-    background: none;
+    background: var(--bg-canvas);
     border: 2px solid var(--border);
     color: var(--text-muted);
     width: 42px;
     height: 42px;
-    border-radius: 50%;
+    border-radius: 10px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0;
-    transition: all .3s ease;
+    transition: background-color .3s ease, color .3s ease;
    }
    .icon-btn:hover {
-    background: var(--bg-body);
     color: var(--text-main);
     border-color: var(--text-main);
    }
    .icon-btn svg {
-    width: 20px;
-    height: 20px;
+    width: 21px;
+    height: 21px;
    }
    .canvas-frame {
-    width: 100%;
-    height: 300px;
+    height: 320px;
     background: var(--bg-canvas);
     border-radius: 10px;
-    overflow: hidden;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    box-sizing: border-box;
-    transition: all .3s ease;
+    transition: background-color .3s ease, color .3s ease;
    }
    svg {
     width: 100%;
     height: 100%;
-    display: block;
    }
    #glyph-group {
     stroke: var(--text-main) !important;
-    transition: all .3s ease;
+    transition: background-color .3s ease, color .3s ease;
    }
+
    .sun-icon { display: block; }
    .moon-icon { display: none; }
    [data-theme="dark"] .sun-icon { display: none; }
    [data-theme="dark"] .moon-icon { display: block; }
+
    .straight-icon { display: block; }
    .curve-icon { display: none; }
    #style-toggle.rounded .straight-icon { display: none; }
    #style-toggle.rounded .curve-icon { display: block; }
+
    .diamond-icon { display: block; }
    .circle-icon { display: none; }
    #linecap-toggle.round .diamond-icon { display: none; }
    #linecap-toggle.round .circle-icon { display: block; }
 
+   .horiz-icon { display: block; }
+   .vert-icon { display: none; }
+   #orientation-toggle.vertical .horiz-icon { display: none; }
+   #orientation-toggle.vertical .vert-icon { display: block; }
+
    #card-container {
-    position: relative;
-    width: 100%;
-    max-width: 1000px;
     display: grid;
    }
 
    .view {
-    grid-area: 1 / 1 / 2 / 2;
-    background: var(--bg-container);
-    border-radius: 20px;
-    box-sizing: border-box;
+    grid-area: 1/1/1/1;
     display: flex;
     flex-direction: column;
     gap: 20px;
-    transition: all .3s ease;
+    transition: background-color .3s ease, color .3s ease;
    }
 
    .toggle-anchor {
     position: absolute;
     top: 0px;
     right: 0px;
-    z-index: 10;
    }
 
    .view-front {
     opacity: 1;
     visibility: visible;
-    position: relative;
    }
 
    .view-back {
@@ -238,6 +216,9 @@
     .sliders-group {
      width: 100%;
     }
+   .settings-wrapper {
+    gap: 15px;
+   }
     .buttons-group {
      justify-content: center;
      margin: 0 auto;
@@ -253,8 +234,56 @@
     font-weight:normal;overflow:hidden;padding:10px;word-break:normal;}
    .tg .tg-9wq8{border-color:inherit;text-align:center;vertical-align:middle}
    .tg .tg-uzvj{border-color:inherit;font-weight:bold;text-align:center;vertical-align:middle}
-   .tg .tg-ro{transform: rotate(270deg);border-color:inherit;font-weight:bold}
+   .tg .tg-ro{transform: rotate(270deg);border-color:inherit;font-weight:bold;text-align:center}
    .tg .tg-s{font-family:FreeSans;border-color:inherit;font-weight:bold;text-align:center;vertical-align:middle}
+   /* ==========================================
+      VERTICAL MODE GRID LAYOUT
+      ========================================== */
+   @media (min-width: 600px) {
+    .orientation-vertical .view-front {
+     display: grid;
+     grid-template-columns: minmax(0, 300px) 1fr;
+     gap: 20px; 
+    }
+
+    .orientation-vertical .view-front h2 {
+     grid-column: span 2;
+     margin-top: 15px;
+     text-align: center;
+     margin-bottom: 10px;
+    }
+
+    .orientation-vertical .controls-toolbar {
+     flex-direction: column;
+     align-items: stretch;
+     gap: 20px;
+    }
+
+    .orientation-vertical .canvas-frame {
+     height: 488px;
+    }
+
+    .orientation-vertical .input-wrapper {
+     flex: none;
+    }
+
+    .orientation-vertical textarea {
+     min-height: 256px;
+    }
+
+    .orientation-vertical .settings-wrapper {
+     flex: none;
+     flex-direction: column;
+    }
+    
+    .orientation-vertical .buttons-group {
+     grid-template-columns: repeat(6, 0fr);
+    }
+
+    .orientation-vertical .canvas-frame {
+     height: 488px;
+    }
+   }
   </style>
  </head>
  <body data-theme="dark">
@@ -263,65 +292,49 @@
     <h2>Nyxic Transcriber</h2>
      <header class="controls-toolbar">
       <div class="input-wrapper">
-       <textarea id="transcriber-input" rows="7" placeholder="Type here :)"></textarea>
+       <textarea id="transcriber-input" rows="4" placeholder="Type here :)"></textarea>
       </div>
       <div class="settings-wrapper">
-       <div class="sliders-group">
-        <div class="slider-wrapper">
-         <label for="thickness">Weight</label>
-         <input type="range" id="thickness" min="1" max="21" value="11" />
+        <div class="sliders-group">
+         <div class="slider-wrapper">
+          <label for="thickness">Weight</label>
+          <input type="range" id="thickness" min="1" max="21" value="11" />
+         </div>
+         <div class="slider-wrapper">
+          <label for="spacing">Spacing</label>
+          <input type="range" id="spacing" min="0" max="1" step=".05" value=".5" />
+         </div>
+         <div class="slider-wrapper style-dependent" id="overshoot-wrapper">
+          <label for="overshoot">Overshoot</label>
+          <input type="range" id="overshoot" min="0" max="20" value="10" />
+         </div>
+         <div class="slider-wrapper style-dependent" id="stretch-wrapper">
+          <label for="squish">Stretch</label>
+          <input type="range" id="squish" min="0" max="1" step=".05" value=".5" />
+         </div>
         </div>
-        <div class="slider-wrapper">
-         <label for="spacing">Spacing</label>
-         <input type="range" id="spacing" min="0" max="1" step=".05" value=".5" />
-        </div>
-        <div class="slider-wrapper style-dependent" id="overshoot-wrapper">
-         <label for="overshoot">Overshoot</label>
-         <input type="range" id="overshoot" min="0" max="20" value="10" />
-        </div>
-        <div class="slider-wrapper style-dependent" id="stretch-wrapper">
-         <label for="squish">Stretch</label>
-         <input type="range" id="squish" min="0" max="1" step=".05" value=".5" />
-        </div>
-       </div>
        <div class="buttons-group">
-        <button id="style-toggle" class="icon-btn" type="button" title="Toggle style">
-         <svg class="straight-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="m4 4 16 16m0-16L4 20"/>
-         </svg>
-         <svg class="curve-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M4 4a16 16 0 0 0 16 16m0-16A16 16 0 0 0 4 20"/>
-         </svg>
-        </button>
-        <div class="toggle-anchor">
-         <button id="info-toggle" class="icon-btn" type="button" title="Documentation">
-          <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-           <circle cx="12" cy="12" r="11"/>
-           <path d="m12 7 0 0m0 4 0 6"/>
-          </svg>
-         </button>
-        </div>
-        <button id="linecap-toggle" class="icon-btn round" type="button" title="Toggle linecap">
-          <svg class="diamond-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-           <path d="M1 12 12 1l11 11-11 11Z"/>
-          </svg>
-          <svg class="circle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-           <circle cx="12" cy="12" r="10"/>
-          </svg>
+        <button id="orientation-toggle" class="icon-btn" type="button" title="Toggle layout orientation">
+         <svg class="vert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4v16m-4-4 4 4 4-4m4-12v16m-4-4 4 4 4-4"/></svg>
+         <svg class="horiz-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h16m-4-4 4 4-4 4M4 16h16m-4-4 4 4-4 4"/></svg>
         </button>
         <button id="theme-toggle" class="icon-btn" type="button" title="Toggle dark mode">
-         <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="5"/>
-          <path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72 1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
-         </svg>
-         <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79"/>
-         </svg>
+         <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72 1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+         <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79"/></svg>
+        </button>
+        <button id="linecap-toggle" class="icon-btn round" type="button" title="Toggle linecap">
+          <svg class="diamond-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12 12 2l10 10-10 10Z"/></svg>
+          <svg class="circle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/></svg>
         </button>
         <button id="export-button" class="icon-btn" type="button" title="Download SVG">
-         <svg class="download-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4m4-5 5 5 5-5m-5 5V3"/>
-         </svg>
+         <svg class="download-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20h14M6 10.5l6 5.5 6-5.5M12 3v13"/></svg>
+        </button>
+        <button id="style-toggle" class="icon-btn" type="button" title="Toggle style">
+         <svg class="straight-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m4.75 4.75 14.5 14.5m0-14.5-14.5 14.5"/></svg>
+         <svg class="curve-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.75 4.75a14.5 14.5 0 0 0 14.5 14.5m0-14.5a14.5 14.5 0 0 0-14.5 14.5"/></svg>
+        </button>
+        <button id="info-toggle" class="icon-btn" type="button" title="Documentation">
+         <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M19 9a7 7 0 0 1-4 6.32V18H9v-2.68A7 7 0 1 1 19 9M9 22h6"/></svg>
         </button>
        </div>
       </div>
@@ -333,7 +346,7 @@
      </div>
     </div>
     <div class="view view-back">
-     <h2>How does it work?</h2>
+     <h2>How does Nyxic work?</h2>
      <div style="padding: 0px;">
       <p>Left half:
        <table class="tg"><thead>
@@ -460,10 +473,7 @@
      </div>
      <div class="toggle-anchor">
       <button id="back-toggle" class="icon-btn" type="button" title="Back">
-       <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="11"/>
-        <path d="m12 7 0 0m0 4 0 6"/>
-       </svg>
+        <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8" stroke-dasharray="20 10"/><path d="M9.75 7.5h-4.5V3"/></svg>
       </button>
      </div>
     </div>
@@ -555,13 +565,13 @@
    const halfWidth = 100;
    const blockWidth = 200;
    const blockHeight = 300;
-   const blockSpacingVertical = 150;
    const wordSpacing = 150;
    const maxBlocksCeiling = 40;
    let currentThickness = thicknessSlider.value;
    let currentOvershoot = parseInt(overshootSlider.value, 10);
    let currentSpacing = parseFloat(spacingSlider.value);
    let currentSquish = parseFloat(document.getElementById("squish").value);
+   let currentOrientation = "horizontal";
    let currentStyle = "rounded";
    let currentLineCap = "round";
    let activeStrokeWidth;
@@ -583,58 +593,57 @@
        'what': 'wot'
      };
      for (let word in complex) clean = clean.replace(new RegExp(word, 'g'), complex[word]);
-     clean = clean.replace(/ough\b/g, 'uf')
-         .replace(/augh\b/g, 'af')
-         .replace(/ire\b/g, 'igher');
+     clean = clean.replace(/ough\b/g,'uf')
+         .replace(/augh\b/g,'af')
+         .replace(/ire\b/g,'igher');
 
-     clean = clean.replace(/c(?=[eiy])/g, 's');
+     clean = clean.replace(/c(?=[eiy])/g,'s');
 
-     clean = clean.replace(/g(?=[eiy])/g, 'j')
-                  .replace(/g/g, 'g');
+     clean = clean.replace(/g(?=[eiy])/g,'j')
+                  .replace(/g/g,'g');
 
-     clean = clean.replace(/([b-df-hj-np-tv-z])e\b/g, '$1$2');
+     clean = clean.replace(/([b-df-hj-np-tv-z])e\b/g,'$1$2');
 
-     clean = clean.replace(/([^aeiou])y/g, '$1ii');
+     clean = clean.replace(/([^aeiou])y/g,'$1ii');
 
-     clean = clean.replace(/ng\b/g, 'h');
-     clean = clean.replace(/stion/g, 'schun')
-         .replace(/tion/g, 'shun')
-         .replace(/sion/g, 'zun')
-         .replace(/ch/g, 'č')
-         .replace(/ăr|âr|ĕr/g, 'air')
-         .replace(/eer|ier|ĭr|îr/g, 'ear')
-         .replace(/ur|ir|er|yr|ər|ûr/g, 'ir')
-         .replace(/ue|ew|uu|uw/g, 'eu')
-         .replace(/ay|ey|eigh|ā/g, 'ai')
-         .replace(/ea|ei|ie|ē/g, 'ee')
-         .replace(/aw|ô/g, 'au')
-         .replace(/igh|ī/g, 'ii')
-         .replace(/ŏŏr|our/g, 'oor')
-         .replace(/oar|orr/g, 'or')
-         .replace(/aar|är/g, 'ar')
-         .replace(/ao|ow/g, 'ou')
-         .replace(/oe|ō/g, 'oa')
-         .replace(/oy/g, 'oi')
-         .replace(/qu/g, 'kw')
-         .replace(/q/g, 'k')
-         .replace(/kn|gn/g, 'n')
-         .replace(/wr/g, 'r')
-         .replace(/ph/g, 'f')
-         .replace(/th/g, 'þ')
-         .replace(/wh/g, 'w')
-         .replace(/zh/g, 'z')
-         .replace(/dge\b/g, 'j')
-         .replace(/x/g, 'ks')
-         .replace(/ă/g, 'a')
-         .replace(/ĕ/g, 'e')
-         .replace(/ĭ/g, 'i')
-         .replace(/ä/g, 'aa')
-         .replace(/ŏ/g, 'o')
-         .replace(/ə|ŭ/g, 'u');
+     clean = clean.replace(/ng\b/g,'h');
+     clean = clean.replace(/tch|ch/g,'č');
+     clean = clean.replace(/stion/g,'schun')
+         .replace(/tion/g,'shun')
+         .replace(/sion/g,'zun')
+         .replace(/ăr|âr|ĕr/g,'air')
+         .replace(/eer|ier|ĭr|îr/g,'ear')
+         .replace(/ur|er|yr|ər|ûr/g,'ir')
+         .replace(/ue|ew|uu|uw/g,'eu')
+         .replace(/ay|ey|eigh|ā/g,'ai')
+         .replace(/ea|ei|ie|ē/g,'ee')
+         .replace(/aw|ô/g,'au')
+         .replace(/igh|ī/g,'ii')
+         .replace(/ŏŏr|our/g,'oor')
+         .replace(/oar|orr/g,'or')
+         .replace(/aar|är/g,'ar')
+         .replace(/ao|ow/g,'ou')
+         .replace(/oe|ō/g,'oa')
+         .replace(/oy/g,'oi')
+         .replace(/qu/g,'kw')
+         .replace(/q/g,'k')
+         .replace(/kn|gn/g,'n')
+         .replace(/wr/g,'r')
+         .replace(/ph/g,'f')
+         .replace(/th/g,'þ')
+         .replace(/wh/g,'w')
+         .replace(/zh/g,'z')
+         .replace(/dge\b/g,'j')
+         .replace(/x/g,'ks')
+         .replace(/ă/g,'a')
+         .replace(/ĕ/g,'e')
+         .replace(/ĭ/g,'i')
+         .replace(/ä/g,'aa')
+         .replace(/ŏ/g,'o')
+         .replace(/ə|ŭ/g,'u');
 
-     clean = clean.replace(/c/g, 'k');
-
-     clean = clean.replace(/č/g, 'ch');
+     clean = clean.replace(/c/g,'k');
+     clean = clean.replace(/č/g,'ch');
 
      return clean;
    }
@@ -655,7 +664,7 @@
            }
            let matchFound = false;
            for (const key of PHONEME_KEYS) {
-               if (cleanText.substring(i, i + key.length) === key) {
+               if (cleanText.substring(i, i+key.length) === key) {
                    rawTokens.push(key);
                    i += key.length;
                    matchFound = true;
@@ -667,7 +676,7 @@
     const filteredTokens = [];
     for (let j = 0; j < rawTokens.length; j++) {
      const current = rawTokens[j];
-     const previous = filteredTokens[filteredTokens.length - 1];
+     const previous = filteredTokens[filteredTokens.length-1];
      if (CONSONANTS.has(current) && current === previous) continue;
      filteredTokens.push(current);
     }
@@ -741,25 +750,43 @@
     glyphGroup.appendChild(path);
    }
    function drawPunctuation(value, xOffset, yOffset, style) {
-    const xScale = (currentStyle === "angular") ? (1.5 - currentSquish) : 1.0;
-    const yScale = (currentStyle === "angular") ? (0.5 + currentSquish) : 1.0;
-    const cx = xOffset + 100;
-    let yPositions = [];
-    if (value === "," || value === "." || value === "-") {
-     yPositions = [150];
-    } else if (value === ";" || value === ":") {
-     yPositions = [95, 205];
-    } else if (value === "!" || value === "?") {
-     yPositions = [40, 150, 260];
+    const xScale = (currentStyle === "angular") ? (1.5-currentSquish) : 1.0;
+    const yScale = (currentStyle === "angular") ? (0.5+currentSquish) : 1.0;
+    const r = Math.max(1, activeStrokeWidth*2/3);
+    let dotPositions = [];
+    if (currentOrientation === "horizontal") {
+     let yPositions = [];
+     if (value === "," || value === "." || value === "-") {
+      yPositions = [150];
+     } else if (value === ";" || value === ":") {
+      yPositions = [95, 205];
+     } else if (value === "!" || value === "?") {
+      yPositions = [40, 150, 260];
+     }
+     dotPositions = yPositions.map(cy => ({
+      cx: (xOffset+100)*xScale,
+      cy: (yOffset+cy)*yScale
+     }));
+    } else {
+     let relativePositions = [];
+     if (value === "," || value === ".") {
+      relativePositions = [{ dx: 100, dy: 60 }];
+     } else if (value === ";" || value === ":") {
+      relativePositions = [{ dx: 50, dy: 60 }, { dx: 150, dy: 60 }];
+     } else if (value === "!" || value === "?") {
+      relativePositions = [{ dx: 0, dy: 60 }, { dx: 100, dy: 60 }, { dx: 200, dy: 60 }];
+     }
+     dotPositions = relativePositions.map(pos => ({
+      cx: (xOffset+pos.dx)*xScale,
+      cy: (yOffset+pos.dy)*yScale
+     }));
     }
-    const r = Math.max(1, activeStrokeWidth * 2/3);
-    for (const cy of yPositions) {
-     const absoluteY = (yOffset + cy) * yScale;
+    for (const pt of dotPositions) {
      let d = "";
-     if (style === "angular") {
-      d = `M ${cx} ${absoluteY - r} L ${cx + r} ${absoluteY} L ${cx} ${absoluteY + r} L ${cx - r} ${absoluteY} Z`;
+     if (currentLineCap === "square") {
+      d = `M${pt.cx} ${pt.cy-r}L${pt.cx+r} ${pt.cy}L${pt.cx} ${pt.cy+r}L${pt.cx-r} ${pt.cy} Z`;
      } else {
-      d = `M ${cx - r} ${absoluteY} a ${r} ${r} 0 1 0 ${r * 2} 0 a ${r} ${r} 0 1 0 -${r * 2} 0`;
+      d = `M${pt.cx-r} ${pt.cy}a${r} ${r} 0 1 0 ${r*2} 0a${r} ${r} 0 1 0 -${r*2} 0`;
      }
      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
      path.setAttribute("d", d);
@@ -769,103 +796,103 @@
     }
    }
    function drawActualArc(type, level, x, yOffset, row, isLeftColumn, style, partnerLevel, isPartner) {
-     const xScale = (currentStyle === "angular") ? (1.5 - currentSquish) : 1;
-     const yScale = (currentStyle === "angular") ? (0.5 + currentSquish) : 1.0;
+     const xScale = (currentStyle === "angular") ? (1.5-currentSquish) : 1;
+     const yScale = (currentStyle === "angular") ? (0.5+currentSquish) : 1.0;
      
-     const scaledX = x * xScale;
-     const cellY = (yOffset + row * 100) * yScale;
-     const scaledOffset = 100 * xScale;
-     const scaledHeight = 100 * yScale;
+     const scaledX = x*xScale;
+     const cellY = (yOffset+row*100)*yScale;
+     const scaledOffset = 100*xScale;
+     const scaledHeight = 100*yScale;
      let d = "";
        if (style === "angular") {
-         if (type === "b") d = `M ${scaledX} ${cellY} L ${scaledX + scaledOffset} ${cellY + scaledHeight}`;
-         if (type === "s") d = `M ${scaledX + scaledOffset} ${cellY} L ${scaledX} ${cellY + scaledHeight}`;
+         if (type === "b") d = `M${scaledX} ${cellY}L${scaledX+scaledOffset} ${cellY+scaledHeight}`;
+         if (type === "s") d = `M${scaledX+scaledOffset} ${cellY}L${scaledX} ${cellY+scaledHeight}`;
        } else {
         let cx, cy, startAngle, endAngle, sweepFlag;
-        const r = level * 100;
+        const r = level*100;
         if (level === 1) {
          if (type === "b") {
           if (isLeftColumn) {
-           cx = x + 100; cy = cellY; startAngle = Math.PI / 2; endAngle = Math.PI; sweepFlag = 1;
+           cx = x+100; cy = cellY; startAngle = Math.PI/2; endAngle = Math.PI; sweepFlag = 1;
           } else {
-           cx = x; cy = cellY + 100; startAngle = 3 * Math.PI / 2; endAngle = 2 * Math.PI; sweepFlag = 1;
+           cx = x; cy = cellY+100; startAngle = 3*Math.PI/2; endAngle = 2*Math.PI; sweepFlag = 1;
           }
          } else {
           if (isLeftColumn) {
-           cx = x + 100; cy = cellY + 100; startAngle = 3 * Math.PI / 2; endAngle = Math.PI; sweepFlag = 0;
+           cx = x+100; cy = cellY+100; startAngle = 3*Math.PI/2; endAngle = Math.PI; sweepFlag = 0;
           } else {
-           cx = x; cy = cellY; startAngle = Math.PI / 2; endAngle = 0; sweepFlag = 0;
+           cx = x; cy = cellY; startAngle = Math.PI/2; endAngle = 0; sweepFlag = 0;
           }
          }
         } else {
          if (type === "b") {
           if (isLeftColumn) {
-           cx = x + 100;
-           cy = yOffset + (row + 1) * 100 - r;
-           startAngle = Math.PI / 2;
+           cx = x+100;
+           cy = yOffset+(row+1)*100-r;
+           startAngle = Math.PI/2;
            sweepFlag = 1;
-           endAngle = level === 2 ? (120 * Math.PI) / 180 : (110 * Math.PI) / 180;
+           endAngle = level === 2 ? (120*Math.PI)/180 : (110*Math.PI)/180;
           } else {
            cx = x;
-           cy = yOffset + row * 100 + r;
-           startAngle = 3 * Math.PI / 2;
+           cy = yOffset+row*100+r;
+           startAngle = 3*Math.PI/2;
            sweepFlag = 1;
-           endAngle = level === 2 ? (300 * Math.PI) / 180 : (290 * Math.PI) / 180;
+           endAngle = level === 2 ? (300*Math.PI)/180 : (290*Math.PI)/180;
           }
          } else {
           if (isLeftColumn) {
-           cx = x + 100;
-           cy = yOffset + row * 100 + r;
-           startAngle = 3 * Math.PI / 2;
+           cx = x+100;
+           cy = yOffset+row*100+r;
+           startAngle = 3*Math.PI/2;
            sweepFlag = 0;
-           endAngle = level === 2 ? (240 * Math.PI) / 180 : (250 * Math.PI) / 180;
+           endAngle = level === 2 ? (240*Math.PI)/180 : (250*Math.PI)/180;
           } else {
            cx = x;
-           cy = yOffset + (row + 1) * 100 - r;
-           startAngle = Math.PI / 2;
+           cy = yOffset+(row+1)*100-r;
+           startAngle = Math.PI/2;
            sweepFlag = 0;
-           endAngle = level === 2 ? (60 * Math.PI) / 180 : (70 * Math.PI) / 180;
+           endAngle = level === 2 ? (60*Math.PI)/180 : (70*Math.PI)/180;
           }
          }
         }
         if (partnerLevel !== null) {
          const partnerType = (type === "b") ? "s" : "b";
-         const partnerR = partnerLevel * 100;
+         const partnerR = partnerLevel*100;
          let partnerCy;
          if (partnerLevel === 1) {
-          partnerCy = (partnerType === "b") ? (isLeftColumn ? cellY : cellY + 100) : (isLeftColumn ? cellY + 100 : cellY);
+          partnerCy = (partnerType === "b") ? (isLeftColumn ? cellY : cellY+100) : (isLeftColumn ? cellY+100 : cellY);
          } else {
-          partnerCy = (partnerType === "b") ? (isLeftColumn ? (yOffset + (row + 1) * 100 - partnerR) : (yOffset + row * 100 + partnerR)) : (isLeftColumn ? (yOffset + row * 100 + partnerR) : (yOffset + (row + 1) * 100 - partnerR));
+          partnerCy = (partnerType === "b") ? (isLeftColumn ? (yOffset+(row+1)*100-partnerR) : (yOffset+row*100+partnerR)) : (isLeftColumn ? (yOffset+row*100+partnerR) : (yOffset+(row+1)*100-partnerR));
          }
          if (cy !== partnerCy) {
-          const Y = (partnerR * partnerR - r * r + cy * cy - partnerCy * partnerCy) / (2 * (cy - partnerCy));
-          const dX2 = r * r - (Y - cy) * (Y - cy);
+          const Y = (partnerR*partnerR-r*r+cy*cy-partnerCy*partnerCy)/(2*(cy-partnerCy));
+          const dX2 = r*r-(Y-cy)*(Y-cy);
           if (dX2 >= 0) {
-           const dX = (isLeftColumn ? -1 : 1) * Math.sqrt(dX2);
-           const intersectionAngle = Math.atan2(Y - cy, dX);
+           const dX = (isLeftColumn ? -1 : 1)*Math.sqrt(dX2);
+           const intersectionAngle = Math.atan2(Y-cy, dX);
            if (partnerLevel <= level) {
             if (level > 1) {
              let targetEndAngle = endAngle;
              if (row === 1) {
-              const baseOvershootAngle = (2 * Math.PI) - Math.asin(0.75) - ((300 * Math.PI) / 180);
+              const baseOvershootAngle = (2*Math.PI)-Math.asin(0.75)-((300*Math.PI)/180);
               targetEndAngle += (sweepFlag === 1 ? baseOvershootAngle : -baseOvershootAngle);
               if (partnerLevel === level) {
-               const linearOvershoot = currentOvershoot * (((2 * Math.PI) - Math.asin(.75) - ((300 * Math.PI) / 180)) * r) / 10;
-               const angleOvershoot = linearOvershoot / r;
+               const linearOvershoot = currentOvershoot*(((2*Math.PI)-Math.asin(.75)-((300*Math.PI)/180))*r)/10;
+               const angleOvershoot = linearOvershoot/r;
                endAngle += (sweepFlag === 1 ? angleOvershoot : -angleOvershoot);
               } else {
                const sweepDir = sweepFlag === 1 ? 1 : -1;
-               let angleDiff = (targetEndAngle - intersectionAngle) * sweepDir;
-               while (angleDiff < -Math.PI) angleDiff += 2 * Math.PI;
-               while (angleDiff > Math.PI) angleDiff -= 2 * Math.PI;
+               let angleDiff = (targetEndAngle-intersectionAngle)*sweepDir;
+               while (angleDiff < -Math.PI) angleDiff += 2*Math.PI;
+               while (angleDiff > Math.PI) angleDiff -= 2*Math.PI;
                if (angleDiff < 0) angleDiff = 0;
-               const scaledOvershoot = angleDiff * (currentOvershoot / 10);
-               endAngle = intersectionAngle + sweepDir * scaledOvershoot;
+               const scaledOvershoot = angleDiff*(currentOvershoot/10);
+               endAngle = intersectionAngle+sweepDir*scaledOvershoot;
               }
              } else {
-              const linearOvershoot = currentOvershoot * 3.6;
-              const angleOvershoot = linearOvershoot / r;
-              endAngle = intersectionAngle + (sweepFlag === 1 ? angleOvershoot : -angleOvershoot);
+              const linearOvershoot = currentOvershoot*3.6;
+              const angleOvershoot = linearOvershoot/r;
+              endAngle = intersectionAngle+(sweepFlag === 1 ? angleOvershoot : -angleOvershoot);
              }
             }
            }
@@ -873,15 +900,15 @@
          }
         }
         else if (level > 1 && row === 1) {
-         const linearOvershoot = currentOvershoot * (((2 * Math.PI) - Math.asin(.75) - ((300 * Math.PI) / 180)) * r) / 10;
-         const angleOvershoot = linearOvershoot / r;
+         const linearOvershoot = currentOvershoot*(((2*Math.PI)-Math.asin(.75)-((300*Math.PI)/180))*r)/10;
+         const angleOvershoot = linearOvershoot/r;
          endAngle += (sweepFlag === 1 ? angleOvershoot : -angleOvershoot);
         }
-        const sx = cx + r * Math.cos(startAngle);
-        const sy = cy + r * Math.sin(startAngle);
-        const ex = cx + r * Math.cos(endAngle);
-        const ey = cy + r * Math.sin(endAngle);
-        d = `M ${sx} ${sy} A ${r} ${r} 0 0 ${sweepFlag} ${ex} ${ey}`;
+        const sx = cx+r*Math.cos(startAngle);
+        const sy = cy+r*Math.sin(startAngle);
+        const ex = cx+r*Math.cos(endAngle);
+        const ey = cy+r*Math.sin(endAngle);
+        d = `M${sx} ${sy}A${r} ${r} 0 0${sweepFlag} ${ex} ${ey}`;
        }
        if (d) createPathElement(d, style);
       }
@@ -890,27 +917,27 @@
     function getLevelB(row) {
      if (isLeftColumn) {
       if (row === 0) return 1;
-      const prevHasOpposite = rules[row - 1] === "s" || rules[row - 1] === "x";
+      const prevHasOpposite = rules[row-1] === "s" || rules[row-1] === "x";
       if (prevHasOpposite) return 1;
-      return getLevelB(row - 1) + 1;
+      return getLevelB(row-1)+1;
      } else {
       if (row === 2) return 1;
-      const prevHasOpposite = rules[row + 1] === "s" || rules[row + 1] === "x";
+      const prevHasOpposite = rules[row+1] === "s" || rules[row+1] === "x";
       if (prevHasOpposite) return 1;
-      return getLevelB(row + 1) + 1;
+      return getLevelB(row+1)+1;
      }
     }
     function getLevelS(row) {
      if (isLeftColumn) {
       if (row === 2) return 1;
-      const prevHasOpposite = rules[row + 1] === "b" || rules[row + 1] === "x";
+      const prevHasOpposite = rules[row+1] === "b" || rules[row+1] === "x";
       if (prevHasOpposite) return 1;
-      return getLevelS(row + 1) + 1;
+      return getLevelS(row+1)+1;
      } else {
       if (row === 0) return 1;
-      const prevHasOpposite = rules[row - 1] === "b" || rules[row - 1] === "x";
+      const prevHasOpposite = rules[row-1] === "b" || rules[row-1] === "x";
       if (prevHasOpposite) return 1;
-      return getLevelS(row - 1) + 1;
+      return getLevelS(row-1)+1;
      }
     }
     for (let row = 0; row < 3; row++) {
@@ -942,26 +969,27 @@
     const tokens = tokenizeText(cleanedText);
     glyphGroup.innerHTML = "";
     function updateCanvasViewBox(w, h) {
-      const bleed = activeStrokeWidth / 2;
-      const xScale = (currentStyle === "angular") ? (1.5 - currentSquish) : 1.0;
-      const yScale = (currentStyle === "angular") ? (0.5 + currentSquish) : 1.0;
+      const bleed = activeStrokeWidth/2;
+      const xScale = (currentStyle === "angular") ? (1.5-currentSquish) : 1.0;
+      const yScale = (currentStyle === "angular") ? (0.5+currentSquish) : 1.0;
       
-      const visualWidth = currentStyle === "angular" ? w * xScale : w;
-      const visualHeight = currentStyle === "angular" ? h * yScale : h;
+      const visualWidth = currentStyle === "angular" ? w*xScale : w;
+      const visualHeight = currentStyle === "angular" ? h*yScale : h;
       
-      svgCanvas.setAttribute("viewBox", `-${padding + bleed} -${padding + bleed} ${visualWidth + (padding * 2) + activeStrokeWidth} ${visualHeight + (padding * 2) + activeStrokeWidth}`);
+      svgCanvas.setAttribute("viewBox", `-${padding+bleed} -${padding+bleed} ${visualWidth+(padding*2)+activeStrokeWidth} ${visualHeight+(padding*2)+activeStrokeWidth}`);
     }
-    const structuralLimit = currentStyle === "angular" ? 50 * Math.sqrt(2) : 100.0;
-    const baseThickness = 1 + ((structuralLimit - 2) / 20) * (currentThickness - 1);
+    const structuralLimit = currentStyle === "angular" ? 50*Math.sqrt(2) : 100.0;
+    const baseThickness = 1+((structuralLimit-2)/20)*(currentThickness-1);
     activeStrokeWidth = baseThickness;
-    const targetTheta = (2 * Math.PI) - Math.asin(0.75);
-    const singleProtrusion = (200 * Math.cos(targetTheta)) - 100;
-    const exactTargetGap = 2 * singleProtrusion;
-    const perfectRoundedFactor = (exactTargetGap / 0.5) - activeStrokeWidth;    
-    const baseSpacingFactor = currentStyle === "angular" ? perfectRoundedFactor * Math.sqrt(2) / 2 : perfectRoundedFactor;
-    const blockSpacingHorizontal = baseSpacingFactor * currentSpacing + activeStrokeWidth * currentSpacing;
+    const targetTheta = (2*Math.PI)-Math.asin(0.75);
+    const singleProtrusion = (200*Math.cos(targetTheta))-100;
+    const exactTargetGap = 2*singleProtrusion;
+    const perfectRoundedFactor = (exactTargetGap/0.5)-activeStrokeWidth;    
+    const baseSpacingFactor = currentStyle === "angular" ? perfectRoundedFactor*Math.sqrt(2)/2 : perfectRoundedFactor;
+    const blockSpacingHorizontal = baseSpacingFactor*currentSpacing+activeStrokeWidth*currentSpacing;
+    const blockSpacingVertical = 150*currentSpacing+activeStrokeWidth*currentSpacing;
     const blocks = generateSyllabicBlocks(tokens);
-    while (blocks.length > 0 && blocks[blocks.length - 1].type === "space") {
+    while (blocks.length > 0 && blocks[blocks.length-1].type === "space") {
      blocks.pop();
     }
     if (blocks.length === 0) {
@@ -970,45 +998,90 @@
     }
     let cursorX = 0;
     let cursorY = 0;
-    const maxLineAllowedWidth = maxBlocksCeiling * blockWidth + (maxBlocksCeiling - 1) * blockSpacingHorizontal;
-    const lineWrapBoundary = maxLineAllowedWidth - blockWidth;
-    let maxReachedX = 0;
+    let maxReachedX = blockWidth;
     let maxReachedY = baseCanvasHeight;
+
+    // Define structural bounds depending on direction
+    const maxLineAllowedWidth = maxBlocksCeiling*blockWidth+(maxBlocksCeiling-1)*blockSpacingHorizontal;
+    const lineWrapBoundary = maxLineAllowedWidth-blockWidth;
+    
+    // Vertical Page boundary setup (e.g., wrap column after roughly 5 default-height blocks)
+    const maxPageHeightBoundary = 5*blockHeight+4*blockSpacingVertical;
+
     for (let i = 0; i < blocks.length; i++) {
      const block = blocks[i];
-     if (block.type === "newline") {
-      cursorX = 0;
-      cursorY += blockHeight + blockSpacingVertical + activeStrokeWidth;
-      continue;
-     }
-     let currentStepWidth = blockWidth;
-     if (block.type === "space") {
-      currentStepWidth = wordSpacing;
-     } else if (block.type === "punctuation") {
-      currentStepWidth = 200;
-     }
-     if (cursorX > lineWrapBoundary + 1 && i > 0) {
-      cursorX = 0;
-      cursorY += blockHeight + blockSpacingVertical + activeStrokeWidth;
-     }
-     if (block.type === "space") {
-      if (cursorX + currentStepWidth > maxReachedX) maxReachedX = cursorX + currentStepWidth;
-      if (cursorY + blockHeight > maxReachedY) maxReachedY = cursorY + blockHeight;
-      cursorX += wordSpacing;
-     }
-     else if (block.type === "punctuation") {
-      drawPunctuation(block.value, cursorX, cursorY, currentStyle);
-      if (cursorX + currentStepWidth > maxReachedX) maxReachedX = cursorX + currentStepWidth;
-      if (cursorY + blockHeight > maxReachedY) maxReachedY = cursorY + blockHeight;
-      cursorX += currentStepWidth + blockSpacingHorizontal;
-     }
-     else {
-      drawTripleStack(block.left, cursorX, cursorY, true, currentStyle);
-      drawTripleStack(block.right, cursorX + halfWidth, cursorY, false, currentStyle);
-      if (cursorX + blockWidth > maxReachedX) maxReachedX = cursorX + blockWidth;
-      if (cursorY + blockHeight > maxReachedY) maxReachedY = cursorY + blockHeight;
-      cursorX += blockWidth + blockSpacingHorizontal;
-     }
+     
+     if (currentOrientation === "horizontal") {
+      // ==========================================
+      // HORIZONTAL FLOW MODE
+      // ==========================================
+      if (block.type === "newline") {
+       cursorX = 0;
+       cursorY += blockHeight+blockSpacingVertical+activeStrokeWidth;
+       continue;
+      }
+      
+      let currentStepWidth = (block.type === "space") ? wordSpacing : 200;
+      
+      if (cursorX > lineWrapBoundary+1 && i > 0) {
+       cursorX = 0;
+       cursorY += blockHeight+blockSpacingVertical+activeStrokeWidth;
+      }
+      
+      if (block.type === "space") {
+       if (cursorX+currentStepWidth > maxReachedX) maxReachedX = cursorX+currentStepWidth;
+       cursorX += wordSpacing;
+      } else if (block.type === "punctuation") {
+       drawPunctuation(block.value, cursorX, cursorY, currentStyle);
+       if (cursorX+currentStepWidth > maxReachedX) maxReachedX = cursorX+currentStepWidth;
+       cursorX += currentStepWidth+blockSpacingHorizontal;
+      } else {
+       drawTripleStack(block.left, cursorX, cursorY, true, currentStyle);
+       drawTripleStack(block.right, cursorX+halfWidth, cursorY, false, currentStyle);
+       if (cursorX+blockWidth > maxReachedX) maxReachedX = cursorX+blockWidth;
+       cursorX += blockWidth+blockSpacingHorizontal;
+      }
+      if (cursorY+blockHeight > maxReachedY) maxReachedY = cursorY+blockHeight;
+
+      } else {
+       // ==========================================
+       // VERTICAL FLOW MODE (Columns)
+       // ==========================================
+       
+       // Define a proper column spacing dimension using the vertical line spacing metric
+       const columnSpacing = blockSpacingVertical; 
+
+       if (block.type === "newline") {
+        cursorY = 0;
+        cursorX += blockWidth + columnSpacing; // FIX: Use column spacing instead of char spacing
+        continue;
+       }
+       
+       const maxPageHeightBoundary = 25 * blockHeight + 4 * blockSpacingVertical;
+       let currentStepHeight = (block.type === "space") ? wordSpacing * currentSpacing : blockHeight;
+       
+       // Auto wrap column if text overflows the designated max page height
+       if (cursorY + currentStepHeight > maxPageHeightBoundary && i > 0) {
+        cursorY = 0;
+        cursorX += blockWidth + columnSpacing; // FIX: Use column spacing instead of char spacing
+       }
+       
+       if (block.type === "space") {
+        cursorY += wordSpacing;
+       } else if (block.type === "punctuation") {
+        drawPunctuation(block.value, cursorX, cursorY, currentStyle);
+        // Character separation within the column:
+        cursorY += 200 * currentSpacing + blockSpacingHorizontal; 
+       } else {
+        drawTripleStack(block.left, cursorX, cursorY, true, currentStyle);
+        drawTripleStack(block.right, cursorX + halfWidth, cursorY, false, currentStyle);
+        // Character separation within the column:
+        cursorY += blockHeight + blockSpacingHorizontal; 
+       }
+       
+       if (cursorX + blockWidth > maxReachedX) maxReachedX = cursorX + blockWidth;
+       if (cursorY > maxReachedY) maxReachedY = cursorY;
+      }
     }
     updateCanvasViewBox(maxReachedX, maxReachedY);
    }
@@ -1020,15 +1093,6 @@
    overshootSlider.addEventListener("input", (e) => { currentOvershoot = parseInt(e.target.value, 10); renderGlyph(); });
    spacingSlider.addEventListener("input", (e) => { currentSpacing = parseFloat(e.target.value); renderGlyph(); });
    const layoutMediaQuery = window.matchMedia("(max-width: 600px)");
-   function handleLayoutChange(e) {
-    if (e.matches) {
-     inputElement.setAttribute("rows", "4");
-    } else {
-     inputElement.setAttribute("rows", "7");
-    }
-   }
-   handleLayoutChange(layoutMediaQuery);
-   layoutMediaQuery.addEventListener("change", handleLayoutChange);
    themeToggle.addEventListener("click", () => {
     if (document.body.getAttribute("data-theme") === "dark") document.body.removeAttribute("data-theme");
     else document.body.setAttribute("data-theme", "dark");
@@ -1061,18 +1125,18 @@
      let punctD = "";
      allPaths.forEach(p => {
        if (p.getAttribute("fill") !== "none" && p.getAttribute("stroke") === "none") {
-         punctD += p.getAttribute("d") + " ";
+         punctD += p.getAttribute("d")+" ";
        } else {
-         glyphD += p.getAttribute("d") + " ";
+         glyphD += p.getAttribute("d")+" ";
        }
      });
      const newSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
      newSvg.setAttribute("viewBox", clonedCanvas.getAttribute("viewBox"));
-     newSvg.setAttribute("style", `background-color:${bgColor};`);
+     newSvg.setAttribute("style", `background:${bgColor}`);
      const vb = clonedCanvas.getAttribute("viewBox").split(" ");
      const bgPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
      bgPath.setAttribute("fill", bgColor);
-     bgPath.setAttribute("d", `M${vb[0]},${vb[1]}h${vb[2]}v${vb[3]}h${-vb[2]}z`);
+     bgPath.setAttribute("d",`M${vb[0]}${vb[1]}h${vb[2]}v${vb[3]}h${-vb[2]}z`);
      newSvg.appendChild(bgPath);
      if (glyphD) {
        const glyphPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
@@ -1090,7 +1154,7 @@
        newSvg.appendChild(punctPath);
      }
      let s = (new XMLSerializer()).serializeToString(newSvg);
-     s = s.replace(/\d+\.\d+/g, (m) => Math.round(parseFloat(m) * 100) / 100);
+     s = s.replace(/\d+\.\d+/g, (m) => Math.round(parseFloat(m)*100)/100);
      const e = new Blob([s], { type: "image/svg+xml;charset=utf-8" }),
         a = URL.createObjectURL(e),
         t = document.createElement("a");
@@ -1125,6 +1189,26 @@
      if (target.id === "info-toggle" || target.id === "back-toggle") {
        cardContainer.classList.toggle("switched");
      }
+   });
+   const orientationToggle = document.getElementById("orientation-toggle");
+   orientationToggle.addEventListener("click", () => {
+    const horizIcon = orientationToggle.querySelector(".horiz-icon");
+    const vertIcon = orientationToggle.querySelector(".vert-icon");
+    
+    if (currentOrientation === "horizontal") {
+     currentOrientation = "vertical";
+     horizIcon.style.display = "none";
+     vertIcon.style.display = "block";
+     // Add class for vertical CSS styles
+     cardContainer.classList.add("orientation-vertical");
+    } else {
+     currentOrientation = "horizontal";
+     horizIcon.style.display = "block";
+     vertIcon.style.display = "none";
+     // Remove class to restore horizontal layout
+     cardContainer.classList.remove("orientation-vertical");
+    }
+    renderGlyph();
    });
   </script>
  </body>
