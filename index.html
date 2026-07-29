@@ -658,10 +658,14 @@
                i++;
                continue;
            }
+           
+           // UPDATE: Push the hyphen/apostrophe into rawTokens so the engine registers the boundary
            if ("-/'".includes(cleanText[i])) {
+               rawTokens.push(cleanText[i]);
                i++;
                continue;
            }
+           
            let matchFound = false;
            for (const key of PHONEME_KEYS) {
                if (cleanText.substring(i, i+key.length) === key) {
@@ -1043,44 +1047,46 @@
       }
       if (cursorY+blockHeight > maxReachedY) maxReachedY = cursorY+blockHeight;
 
-      } else {
+            } else {
        // ==========================================
        // VERTICAL FLOW MODE (Columns)
        // ==========================================
        
-       // Define a proper column spacing dimension using the vertical line spacing metric
        const columnSpacing = blockSpacingVertical; 
 
        if (block.type === "newline") {
         cursorY = 0;
-        cursorX += blockWidth + columnSpacing; // FIX: Use column spacing instead of char spacing
+        cursorX += blockWidth + columnSpacing;
         continue;
        }
        
        const maxPageHeightBoundary = 25 * blockHeight + 4 * blockSpacingVertical;
        let currentStepHeight = (block.type === "space") ? wordSpacing * currentSpacing : blockHeight;
        
-       // Auto wrap column if text overflows the designated max page height
        if (cursorY + currentStepHeight > maxPageHeightBoundary && i > 0) {
         cursorY = 0;
-        cursorX += blockWidth + columnSpacing; // FIX: Use column spacing instead of char spacing
+        cursorX += blockWidth + columnSpacing;
        }
        
        if (block.type === "space") {
+        // Measure height of the space block before advancing cursor
+        if (cursorY + wordSpacing > maxReachedY) maxReachedY = cursorY + wordSpacing;
         cursorY += wordSpacing;
        } else if (block.type === "punctuation") {
         drawPunctuation(block.value, cursorX, cursorY, currentStyle);
-        // Character separation within the column:
+        // Measure actual punctuation bounds (height is 200) before adding spacing
+        if (cursorY + 200 > maxReachedY) maxReachedY = cursorY + 200;
         cursorY += 200 * currentSpacing + blockSpacingHorizontal; 
        } else {
         drawTripleStack(block.left, cursorX, cursorY, true, currentStyle);
         drawTripleStack(block.right, cursorX + halfWidth, cursorY, false, currentStyle);
-        // Character separation within the column:
+        // Measure actual block height (300) before adding trailing spacing
+        if (cursorY + blockHeight > maxReachedY) maxReachedY = cursorY + blockHeight;
         cursorY += blockHeight + blockSpacingHorizontal; 
        }
        
+       // Update width bounds normally
        if (cursorX + blockWidth > maxReachedX) maxReachedX = cursorX + blockWidth;
-       if (cursorY > maxReachedY) maxReachedY = cursorY;
       }
     }
     updateCanvasViewBox(maxReachedX, maxReachedY);
