@@ -21,7 +21,7 @@
    }
    body {
     font-family: monospace;
-    font-size: 14px;
+    font-size: 0.9rem; /* 14px */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -59,7 +59,7 @@
    textarea {
     width: 100%;
     padding: 10px;
-    font-size: 16px;
+    font-size: 1rem; /* 16px */
     border: 2px solid var(--border);
     background-color: var(--bg-canvas);
     color: var(--text-main);
@@ -87,7 +87,7 @@
     gap: 5px;
    }
    .slider-wrapper label {
-    font-size: 12px;
+    font-size: .8rem; /* 12px */
     font-weight: bold;
     color: var(--text-muted);
     text-transform: uppercase;
@@ -202,6 +202,9 @@
    }
 
    @media (max-width: 600px) {
+    html {
+     font-size: 80%;
+    }
     .controls-toolbar {
      flex-direction: column;
     }
@@ -228,17 +231,24 @@
     }
    }
    .tg {width: 100%; table-layout: fixed;border-collapse:collapse;border-spacing:0;}
-   .tg td{border-color:black;border-style:solid;border-width:1px;font-size:12px;
-    overflow:hidden;padding:10px;word-break:normal;}
-   .tg th{border-color:black;border-style:solid;border-width:1px;font-size:12px;
-    font-weight:normal;overflow:hidden;padding:10px;word-break:normal;}
+   .tg td, .tg th {
+    border-color:black;
+    border-style:solid;
+    border-width:1px;
+    font-weight:normal;
+    padding:10px 0;
+    line-height: 1;
+    font-size: 0.75rem; /* 12px */
+   }
    .tg .tg-9wq8{border-color:inherit;text-align:center;vertical-align:middle}
    .tg .tg-uzvj{border-color:inherit;font-weight:bold;text-align:center;vertical-align:middle}
    .tg .tg-ro{transform: rotate(270deg);border-color:inherit;font-weight:bold;text-align:center}
    .tg .tg-s{font-family:FreeSans;border-color:inherit;font-weight:bold;text-align:center;vertical-align:middle}
+
    /* ==========================================
       VERTICAL MODE GRID LAYOUT
       ========================================== */
+
    @media (min-width: 600px) {
     .orientation-vertical .view-front {
      display: grid;
@@ -392,7 +402,7 @@
          <td class="tg-9wq8">g</td>
          <td class="tg-9wq8">l</td>
          <td class="tg-9wq8">∅</td>
-         <td class="tg-9wq8">h</td>
+         <td class="tg-9wq8">h/ŋ</td>
          <td class="tg-9wq8">j</td>
          <td class="tg-9wq8">θ~ð</td>
         </tr>
