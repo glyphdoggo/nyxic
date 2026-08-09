@@ -1019,9 +1019,11 @@
       // ==========================================
       // HORIZONTAL FLOW MODE
       // ==========================================
+      const lineGap = 100;
+      
       if (block.type === "newline") {
        cursorX = 0;
-       cursorY += blockHeight+blockSpacingVertical+activeStrokeWidth;
+       cursorY += blockHeight + lineGap + activeStrokeWidth;
        continue;
       }
       
@@ -1029,7 +1031,7 @@
       
       if (cursorX > lineWrapBoundary+1 && i > 0) {
        cursorX = 0;
-       cursorY += blockHeight+blockSpacingVertical+activeStrokeWidth;
+       cursorY += blockHeight + lineGap + activeStrokeWidth;
       }
       
       if (block.type === "space") {
@@ -1053,10 +1055,11 @@
        // ==========================================
        
        const columnSpacing = blockSpacingVertical; 
+       const columnGap = 100;
 
        if (block.type === "newline") {
         cursorY = 0;
-        cursorX += blockWidth + columnSpacing;
+        cursorX += blockWidth + columnGap + activeStrokeWidth;
         continue;
        }
        
@@ -1065,7 +1068,7 @@
        
        if (cursorY + currentStepHeight > maxPageHeightBoundary && i > 0) {
         cursorY = 0;
-        cursorX += blockWidth + columnSpacing;
+        cursorX += blockWidth + columnGap + activeStrokeWidth;
        }
        
        if (block.type === "space") {
