@@ -982,8 +982,19 @@
       
       svgCanvas.setAttribute("viewBox", `-${padding+bleed} -${padding+bleed} ${visualWidth+(padding*2)+activeStrokeWidth} ${visualHeight+(padding*2)+activeStrokeWidth}`);
     }
-    const structuralLimit = currentStyle === "angular" ? 50*Math.sqrt(2) : 100.0;
-    const baseThickness = 1+((structuralLimit-2)/20)*(currentThickness-1);
+    
+    let structuralLimit;
+
+    if (currentStyle === "angular") {
+     const cellW = 100 * (1.5 - currentSquish);
+     const cellH = 100 * (0.5 + currentSquish);
+     structuralLimit = (cellW * cellH) / Math.sqrt(cellW * cellW + cellH * cellH);
+    } else {
+     structuralLimit = 100.0;
+    }
+
+    const baseThickness = 1 + ((structuralLimit - 2) / 20) * (currentThickness - 1);
+
     activeStrokeWidth = baseThickness;
     const targetTheta = (2*Math.PI)-Math.asin(0.75);
     const singleProtrusion = (200*Math.cos(targetTheta))-100;
