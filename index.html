@@ -1,10 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
  <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Nyxic Transcriber</title>
   <style>
+  @font-face {
+   font-family: 'Noto Sans';
+   font-style: normal;
+   font-weight: 400;
+   src: local('Noto Sans Regular'),
+        local('NotoSans-Regular'),
+        url('NotoSans-Regular.ttf') format('truetype'),
+        url('https://fonts.gstatic.com/s/notosans/v38/o-0eIpHfvRCSob33n9GSMTzaAL8.woff2') format('woff2');
+  }
+
+  @font-face {
+    font-family: 'Noto Sans';
+    font-style: italic;
+    font-weight: 400;
+    src: local('Noto Sans Italic'), local('NotoSans-Italic'),
+         url('NotoSans-Italic.ttf') format('truetype'),
+         url('https://fonts.gstatic.com/s/notosans/v38/o-0gIpHfvRCSob33n9GS830.woff2') format('woff2');
+  }
+
+  @font-face {
+    font-family: 'Noto Sans';
+    font-style: normal;
+    font-weight: 700;
+    src: local('Noto Sans Bold'), local('NotoSans-Bold'),
+         url('NotoSans-Bold.ttf') format('truetype'),
+         url('https://fonts.gstatic.com/s/notosans/v38/o-0NIpHfvRCSob33n9GSVMY.woff2') format('woff2');
+  }
+  
    :root {
     --bg-container: #eee;
     --bg-canvas: #ddd;
@@ -20,12 +48,11 @@
     --border: #444;
    }
    body {
-    font-family: monospace;
+    font-family: "Noto Sans", sans-serif;
     font-size: 0.9rem; /* 14px */
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 100vh;
     margin: 0;
     background-color: var(--bg-canvas);
     color: var(--text-main);
@@ -44,7 +71,8 @@
     border-radius: 20px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, .25);
     transition: background-color .3s ease, color .3s ease;
-    max-width: 80%;
+    max-width: 90%;
+    max-height: 90%;
    }
    .controls-toolbar {
     display: flex;
@@ -127,10 +155,8 @@
     height: 21px;
    }
    .canvas-frame {
-    height: 320px;
     background: var(--bg-canvas);
     border-radius: 10px;
-    display: flex;
     transition: background-color .3s ease, color .3s ease;
    }
    svg {
@@ -238,17 +264,17 @@
     font-weight:normal;
     padding:10px 0;
     line-height: 1;
-    font-size: 0.75rem; /* 12px */
    }
    .tg .tg-9wq8{border-color:inherit;text-align:center;vertical-align:middle}
    .tg .tg-uzvj{border-color:inherit;font-weight:bold;text-align:center;vertical-align:middle}
    .tg .tg-ro{transform: rotate(270deg);border-color:inherit;font-weight:bold;text-align:center}
    .tg .tg-s{font-family:FreeSans;border-color:inherit;font-weight:bold;text-align:center;vertical-align:middle}
-
+   .tg td, .tg th {
+    font-size: 0.75rem; /* 12px */
+   }
    /* ==========================================
       VERTICAL MODE GRID LAYOUT
       ========================================== */
-
    @media (min-width: 600px) {
     .orientation-vertical .view-front {
      display: grid;
