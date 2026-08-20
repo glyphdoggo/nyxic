@@ -616,8 +616,87 @@
    let currentStyle = "rounded";
    let currentLineCap = "round";
    let activeStrokeWidth;
+   
    // ==========================================
-   // 3. CORE LOGIC ENGINE
+   // 3. URL STATE PERSISTENCE ENGINE
+   // ==========================================
+   function updateURLState() {
+    const params = new URLSearchParams();
+    if (inputElement.value) params.set("text", inputElement.value);
+    params.set("w", thicknessSlider.value);
+    params.set("s", spacingSlider.value);
+    params.set("o", overshootSlider.value);
+    params.set("sq", squishSlider.value);
+    params.set("st", currentStyle);
+    params.set("lc", currentLineCap);
+    params.set("or", currentOrientation);
+    params.set("th", document.body.getAttribute("data-theme") || "light");
+
+    window.history.replaceState(null, "", "#" + params.toString());
+   }
+
+   function loadURLState() {
+    if (!window.location.hash) return;
+    const hash = window.location.hash.substring(1);
+    const params = new URLSearchParams(hash);
+
+    if (params.has("text")) inputElement.value = params.get("text");
+    if (params.has("w")) { thicknessSlider.value = params.get("w"); currentThickness = params.get("w"); }
+    if (params.has("s")) { spacingSlider.value = params.get("s"); currentSpacing = parseFloat(params.get("s")); }
+    if (params.has("o")) { overshootSlider.value = params.get("o"); currentOvershoot = parseInt(params.get("o"), 10); }
+    if (params.has("sq")) { squishSlider.value = params.get("sq"); currentSquish = parseFloat(params.get("sq")); }
+    
+    if (params.has("th")) {
+      const theme = params.get("th");
+      if (theme === "dark") document.body.setAttribute("data-theme", "dark");
+      else document.body.removeAttribute("data-theme");
+    }
+
+    if (params.has("lc")) {
+      currentLineCap = params.get("lc");
+      if (currentLineCap === "round") linecapToggle.classList.add("round");
+      else linecapToggle.classList.remove("round");
+    }
+
+    if (params.has("or")) {
+      currentOrientation = params.get("or");
+      const horizIcon = orientationToggle.querySelector(".horiz-icon");
+      const vertIcon = orientationToggle.querySelector(".vert-icon");
+      if (currentOrientation === "vertical") {
+        horizIcon.style.display = "none";
+        vertIcon.style.display = "block";
+        cardContainer.classList.add("orientation-vertical");
+      } else {
+        horizIcon.style.display = "block";
+        vertIcon.style.display = "none";
+        cardContainer.classList.remove("orientation-vertical");
+      }
+    }
+
+    if (params.has("st")) {
+      currentStyle = params.get("st");
+      if (currentStyle === "rounded") {
+        styleToggle.classList.add("rounded");
+        overshootWrapper.classList.remove("hidden");
+        stretchWrapper.classList.add("hidden");
+      } else {
+        styleToggle.classList.remove("rounded");
+        overshootWrapper.classList.add("hidden");
+        stretchWrapper.classList.remove("hidden");
+      }
+    }
+   }
+
+   function copyShareLink() {
+    updateURLState();
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 2000);
+    });
+   }
+
+   // ==========================================
+   // 4. CORE LOGIC ENGINE
    // ==========================================
    function isBoundary(char) {
     return char && !CONSONANTS.has(char) && !VOWELS.has(char);
@@ -647,22 +726,22 @@
 
      clean = clean.replace(/([^aeiou])y/g,'$1ii');
 
-     clean = clean.replace(/ng\b/g,'h');
+     clean = clean.replace(/ng(?=[b-df-hj-np-tv-z]|\b)/g, 'h');
      clean = clean.replace(/tch|ch/g,'č');
      clean = clean.replace(/stion/g,'schun')
          .replace(/tion/g,'shun')
          .replace(/sion/g,'zun')
-         .replace(/ăr|âr|ĕr/g,'air')
-         .replace(/eer|ier|ĭr|îr/g,'ear')
-         .replace(/ur|er|yr|ər|ûr/g,'ir')
+         .replace(/(?:ăr|âr|ĕr)(?![aeiouy])/g, 'air')
+         .replace(/(?:eer|ier|ĭr|îr)(?![aeiouy])/g, 'ear')
+         .replace(/(?:ur|er|yr|ər|ûr)(?![aeiouy])/g, 'ir')
          .replace(/ue|ew|uu|uw/g,'eu')
          .replace(/ay|ey|eigh|ā/g,'ai')
          .replace(/ea|ei|ie|ē/g,'ee')
          .replace(/aw|ô/g,'au')
          .replace(/igh|ī/g,'ii')
-         .replace(/ŏŏr|our/g,'oor')
-         .replace(/oar|orr/g,'or')
-         .replace(/aar|är/g,'ar')
+         .replace(/(?:ŏŏr|our)(?![aeiouy])/g, 'oor')
+         .replace(/(?:oar|orr)(?![aeiouy])/g, 'or')
+         .replace(/(?:aar|är)(?![aeiouy])/g, 'ar')
          .replace(/ao|ow/g,'ou')
          .replace(/oe|ō/g,'oa')
          .replace(/oy/g,'oi')
@@ -700,7 +779,6 @@
                continue;
            }
            
-           // UPDATE: Push the hyphen/apostrophe into rawTokens so the engine registers the boundary
            if ("-/'".includes(cleanText[i])) {
                rawTokens.push(cleanText[i]);
                i++;
@@ -1050,6 +1128,7 @@
     }
     if (blocks.length === 0) {
      updateCanvasViewBox(blockWidth, baseCanvasHeight);
+     updateURLState();
      return;
     }
     let cursorX = 0;
@@ -1057,11 +1136,9 @@
     let maxReachedX = blockWidth;
     let maxReachedY = baseCanvasHeight;
 
-    // Define structural bounds depending on direction
     const maxLineAllowedWidth = maxBlocksCeiling*blockWidth+(maxBlocksCeiling-1)*blockSpacingHorizontal;
     const lineWrapBoundary = maxLineAllowedWidth-blockWidth;
     
-    // Vertical Page boundary setup (e.g., wrap column after roughly 5 default-height blocks)
     const maxPageHeightBoundary = 5*blockHeight+4*blockSpacingVertical;
 
     for (let i = 0; i < blocks.length; i++) {
@@ -1124,30 +1201,26 @@
        }
        
        if (block.type === "space") {
-        // Measure height of the space block before advancing cursor
         if (cursorY + wordSpacing > maxReachedY) maxReachedY = cursorY + wordSpacing;
         cursorY += wordSpacing;
        } else if (block.type === "punctuation") {
         drawPunctuation(block.value, cursorX, cursorY, currentStyle);
-        // Measure actual punctuation bounds (height is 200) before adding spacing
         if (cursorY + 200 > maxReachedY) maxReachedY = cursorY + 200;
         cursorY += 200 * currentSpacing + blockSpacingHorizontal; 
        } else {
         drawTripleStack(block.left, cursorX, cursorY, true, currentStyle);
         drawTripleStack(block.right, cursorX + halfWidth, cursorY, false, currentStyle);
-        // Measure actual block height (300) before adding trailing spacing
         if (cursorY + blockHeight > maxReachedY) maxReachedY = cursorY + blockHeight;
         cursorY += blockHeight + blockSpacingHorizontal; 
        }
-       
-       // Update width bounds normally
-       if (cursorX + blockWidth > maxReachedX) maxReachedX = cursorX + blockWidth;
-      }
+             if (cursorX + blockWidth > maxReachedX) maxReachedX = cursorX + blockWidth;
+            }
     }
     updateCanvasViewBox(maxReachedX, maxReachedY);
+     updateURLState();
    }
    // ==========================================
-   // 4. EVENT LISTENERS & INITIALIZATION
+   // 5. EVENT LISTENERS & INITIALIZATION
    // ==========================================
    inputElement.addEventListener("input", renderGlyph);
    thicknessSlider.addEventListener("input", (e) => { currentThickness = e.target.value; renderGlyph(); });
@@ -1157,6 +1230,7 @@
    themeToggle.addEventListener("click", () => {
     if (document.body.getAttribute("data-theme") === "dark") document.body.removeAttribute("data-theme");
     else document.body.setAttribute("data-theme", "dark");
+    updateURLState();
    });
    styleToggle.addEventListener("click", () => {
      if (currentStyle === "angular") {
@@ -1229,6 +1303,7 @@
    exportButton.addEventListener("click", downloadSVG);
    styleToggle.classList.add("rounded");
    svgCanvas.setAttribute("shape-rendering", "geometricPrecision");
+   loadURLState();
    linecapToggle.addEventListener("click", () => {
      currentLineCap = (currentLineCap === "round") ? "square" : "round";
      linecapToggle.classList.toggle("round");
@@ -1260,13 +1335,11 @@
      currentOrientation = "vertical";
      horizIcon.style.display = "none";
      vertIcon.style.display = "block";
-     // Add class for vertical CSS styles
      cardContainer.classList.add("orientation-vertical");
     } else {
      currentOrientation = "horizontal";
      horizIcon.style.display = "block";
      vertIcon.style.display = "none";
-     // Remove class to restore horizontal layout
      cardContainer.classList.remove("orientation-vertical");
     }
     renderGlyph();
