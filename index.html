@@ -601,6 +601,8 @@
    const linecapToggle = document.getElementById("linecap-toggle");
    const overshootWrapper = document.getElementById("overshoot-wrapper");
    const stretchWrapper = document.getElementById("stretch-wrapper");
+   const squishSlider = document.getElementById("squish");
+   const orientationToggle = document.getElementById("orientation-toggle");
    const baseCanvasHeight = 0;
    const padding = 200;
    const halfWidth = 100;
@@ -1246,10 +1248,10 @@
      }
      renderGlyph();
    });
-   document.getElementById("squish").addEventListener("input", (e) => { 
-     currentSquish = parseFloat(e.target.value); 
-     renderGlyph(); 
-   });
+   squishSlider.addEventListener("input", (e) => { 
+  currentSquish = parseFloat(e.target.value); 
+  renderGlyph(); 
+});
    function downloadSVG() {
      const clonedCanvas = svgCanvas.cloneNode(true);
      const isDark = document.body.getAttribute("data-theme") === "dark";
@@ -1326,7 +1328,7 @@
        cardContainer.classList.toggle("switched");
      }
    });
-   const orientationToggle = document.getElementById("orientation-toggle");
+   
    orientationToggle.addEventListener("click", () => {
     const horizIcon = orientationToggle.querySelector(".horiz-icon");
     const vertIcon = orientationToggle.querySelector(".vert-icon");
