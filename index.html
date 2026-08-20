@@ -272,6 +272,54 @@
    .tg td, .tg th {
     font-size: 0.75rem; /* 12px */
    }
+  
+  .dropdown-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background-color: var(--bg-container);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 100;
+  min-width: 50px;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+  visibility: visible;
+}
+
+.dropdown-menu.hidden {
+  opacity: 0;
+  transform: translateY(-8px);
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.dropdown-item {
+  background: none;
+  border: none;
+  color: var(--text-main);
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background-color: var(--bg-canvas);
+}
+  
    /* ==========================================
       VERTICAL MODE GRID LAYOUT
       ========================================== */
@@ -374,9 +422,17 @@
           <svg class="diamond-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12 12 2l10 10-10 10Z"/></svg>
           <svg class="circle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/></svg>
         </button>
-        <button id="export-button" class="icon-btn" type="button" title="Download SVG">
-         <svg class="download-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20h14M6 10.5l6 5.5 6-5.5M12 3v13"/></svg>
-        </button>
+        <div class="dropdown-wrapper">
+         <button id="export-button" class="icon-btn" type="button" title="Download Image">
+          <svg class="download-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+           <path d="M5 20h14M6 10.5l6 5.5 6-5.5M12 3v13"/>
+          </svg>
+         </button>
+         <div id="export-menu" class="dropdown-menu hidden">
+          <button type="button" class="dropdown-item" data-format="svg">SVG</button>
+          <button type="button" class="dropdown-item" data-format="png">PNG</button>
+         </div>
+        </div>
        </div>
       </div>
      </header>
@@ -586,6 +642,7 @@
     eu:  ["x", "s", "s"],// GOOSE
     oor: ["x", "s", "x"],// CURE
    };
+
    // ==========================================
    // 2. DOM ELEMENTS & APP STATE
    // ==========================================
@@ -618,87 +675,9 @@
    let currentStyle = "rounded";
    let currentLineCap = "round";
    let activeStrokeWidth;
-   
-   // ==========================================
-   // 3. URL STATE PERSISTENCE ENGINE
-   // ==========================================
-   function updateURLState() {
-    const params = new URLSearchParams();
-    if (inputElement.value) params.set("text", inputElement.value);
-    params.set("w", thicknessSlider.value);
-    params.set("s", spacingSlider.value);
-    params.set("o", overshootSlider.value);
-    params.set("sq", squishSlider.value);
-    params.set("st", currentStyle);
-    params.set("lc", currentLineCap);
-    params.set("or", currentOrientation);
-    params.set("th", document.body.getAttribute("data-theme") || "light");
-
-    window.history.replaceState(null, "", "#" + params.toString());
-   }
-
-   function loadURLState() {
-    if (!window.location.hash) return;
-    const hash = window.location.hash.substring(1);
-    const params = new URLSearchParams(hash);
-
-    if (params.has("text")) inputElement.value = params.get("text");
-    if (params.has("w")) { thicknessSlider.value = params.get("w"); currentThickness = params.get("w"); }
-    if (params.has("s")) { spacingSlider.value = params.get("s"); currentSpacing = parseFloat(params.get("s")); }
-    if (params.has("o")) { overshootSlider.value = params.get("o"); currentOvershoot = parseInt(params.get("o"), 10); }
-    if (params.has("sq")) { squishSlider.value = params.get("sq"); currentSquish = parseFloat(params.get("sq")); }
-    
-    if (params.has("th")) {
-      const theme = params.get("th");
-      if (theme === "dark") document.body.setAttribute("data-theme", "dark");
-      else document.body.removeAttribute("data-theme");
-    }
-
-    if (params.has("lc")) {
-      currentLineCap = params.get("lc");
-      if (currentLineCap === "round") linecapToggle.classList.add("round");
-      else linecapToggle.classList.remove("round");
-    }
-
-    if (params.has("or")) {
-      currentOrientation = params.get("or");
-      const horizIcon = orientationToggle.querySelector(".horiz-icon");
-      const vertIcon = orientationToggle.querySelector(".vert-icon");
-      if (currentOrientation === "vertical") {
-        horizIcon.style.display = "none";
-        vertIcon.style.display = "block";
-        cardContainer.classList.add("orientation-vertical");
-      } else {
-        horizIcon.style.display = "block";
-        vertIcon.style.display = "none";
-        cardContainer.classList.remove("orientation-vertical");
-      }
-    }
-
-    if (params.has("st")) {
-      currentStyle = params.get("st");
-      if (currentStyle === "rounded") {
-        styleToggle.classList.add("rounded");
-        overshootWrapper.classList.remove("hidden");
-        stretchWrapper.classList.add("hidden");
-      } else {
-        styleToggle.classList.remove("rounded");
-        overshootWrapper.classList.add("hidden");
-        stretchWrapper.classList.remove("hidden");
-      }
-    }
-   }
-
-   function copyShareLink() {
-    updateURLState();
-    navigator.clipboard.writeText(window.location.href).then(() => {
-      toast.classList.add("show");
-      setTimeout(() => toast.classList.remove("show"), 2000);
-    });
-   }
 
    // ==========================================
-   // 4. CORE LOGIC ENGINE
+   // 3. CORE LOGIC ENGINE
    // ==========================================
    function isBoundary(char) {
     return char && !CONSONANTS.has(char) && !VOWELS.has(char);
@@ -1130,7 +1109,6 @@
     }
     if (blocks.length === 0) {
      updateCanvasViewBox(blockWidth, baseCanvasHeight);
-     updateURLState();
      return;
     }
     let cursorX = 0;
@@ -1219,10 +1197,10 @@
             }
     }
     updateCanvasViewBox(maxReachedX, maxReachedY);
-     updateURLState();
    }
+
    // ==========================================
-   // 5. EVENT LISTENERS & INITIALIZATION
+   // 4. EVENT LISTENERS & INITIALIZATION
    // ==========================================
    inputElement.addEventListener("input", renderGlyph);
    thicknessSlider.addEventListener("input", (e) => { currentThickness = e.target.value; renderGlyph(); });
@@ -1232,7 +1210,6 @@
    themeToggle.addEventListener("click", () => {
     if (document.body.getAttribute("data-theme") === "dark") document.body.removeAttribute("data-theme");
     else document.body.setAttribute("data-theme", "dark");
-    updateURLState();
    });
    styleToggle.addEventListener("click", () => {
      if (currentStyle === "angular") {
@@ -1252,60 +1229,126 @@
   currentSquish = parseFloat(e.target.value); 
   renderGlyph(); 
 });
-   function downloadSVG() {
-     const clonedCanvas = svgCanvas.cloneNode(true);
-     const isDark = document.body.getAttribute("data-theme") === "dark";
-     const computedColor = getComputedStyle(document.body).getPropertyValue('--text-main').trim();
-     const bgColor = isDark ? "#222" : "#ccc"; 
-     const allPaths = clonedCanvas.querySelectorAll('path');
-     let glyphD = "";
-     let punctD = "";
-     allPaths.forEach(p => {
-       if (p.getAttribute("fill") !== "none" && p.getAttribute("stroke") === "none") {
-         punctD += p.getAttribute("d")+" ";
-       } else {
-         glyphD += p.getAttribute("d")+" ";
-       }
-     });
-     const newSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-     newSvg.setAttribute("viewBox", clonedCanvas.getAttribute("viewBox"));
-     newSvg.setAttribute("style", `background:${bgColor}`);
-     const vb = clonedCanvas.getAttribute("viewBox").split(" ");
-     const bgPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-     bgPath.setAttribute("fill", bgColor);
-     bgPath.setAttribute("d",`M${vb[0]}${vb[1]}h${vb[2]}v${vb[3]}h${-vb[2]}z`);
-     newSvg.appendChild(bgPath);
-     if (glyphD) {
-       const glyphPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-       glyphPath.setAttribute("d", glyphD.trim());
-       glyphPath.setAttribute("stroke", computedColor);
-       glyphPath.setAttribute("stroke-width", activeStrokeWidth);
-       glyphPath.setAttribute("stroke-linecap", currentLineCap);
-       glyphPath.setAttribute("fill", "none");
-       newSvg.appendChild(glyphPath);
-     }
-     if (punctD) {
-       const punctPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-       punctPath.setAttribute("d", punctD.trim());
-       punctPath.setAttribute("fill", computedColor);
-       newSvg.appendChild(punctPath);
-     }
-     let s = (new XMLSerializer()).serializeToString(newSvg);
-     s = s.replace(/\d+\.\d+/g, (m) => Math.round(parseFloat(m)*100)/100);
-     const e = new Blob([s], { type: "image/svg+xml;charset=utf-8" }),
-        a = URL.createObjectURL(e),
-        t = document.createElement("a");
-     t.href = a;
-     t.download = "Nyxic.svg";
-     document.body.appendChild(t);
-     t.click();
-     document.body.removeChild(t);
-     URL.revokeObjectURL(a);
-   }
-   exportButton.addEventListener("click", downloadSVG);
+
+// ==========================================
+// EXPORT & DROPDOWN CONTROLS
+// ==========================================
+const exportMenu = document.getElementById("export-menu");
+
+// Toggle slide-down menu
+exportButton.addEventListener("click", (e) => {
+  e.stopPropagation();
+  exportMenu.classList.toggle("hidden");
+});
+
+// Close menu on outside click
+document.addEventListener("click", () => {
+  exportMenu.classList.add("hidden");
+});
+
+// Build processed SVG element
+function createExportableSVG() {
+  const clonedCanvas = svgCanvas.cloneNode(true);
+  const isDark = document.body.getAttribute("data-theme") === "dark";
+  const computedColor = getComputedStyle(document.body).getPropertyValue('--text-main').trim();
+  const bgColor = isDark ? "#222" : "#ccc"; 
+  const allPaths = clonedCanvas.querySelectorAll('path');
+  let glyphD = "";
+  let punctD = "";
+  
+  allPaths.forEach(p => {
+    if (p.getAttribute("fill") !== "none" && p.getAttribute("stroke") === "none") {
+      punctD += p.getAttribute("d") + " ";
+    } else {
+      glyphD += p.getAttribute("d") + " ";
+    }
+  });
+  
+  const newSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  const vb = clonedCanvas.getAttribute("viewBox").split(" ");
+  newSvg.setAttribute("viewBox", clonedCanvas.getAttribute("viewBox"));
+  newSvg.setAttribute("width", vb[2]);
+  newSvg.setAttribute("height", vb[3]);
+  newSvg.setAttribute("style", `background:${bgColor}`);
+  
+  const bgPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  bgPath.setAttribute("fill", bgColor);
+  bgPath.setAttribute("d", `M${vb[0]} ${vb[1]}h${vb[2]}v${vb[3]}h${-vb[2]}z`);
+  newSvg.appendChild(bgPath);
+  
+  if (glyphD) {
+    const glyphPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    glyphPath.setAttribute("d", glyphD.trim());
+    glyphPath.setAttribute("stroke", computedColor);
+    glyphPath.setAttribute("stroke-width", activeStrokeWidth);
+    glyphPath.setAttribute("stroke-linecap", currentLineCap);
+    glyphPath.setAttribute("fill", "none");
+    newSvg.appendChild(glyphPath);
+  }
+  
+  if (punctD) {
+    const punctPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    punctPath.setAttribute("d", punctD.trim());
+    punctPath.setAttribute("fill", computedColor);
+    newSvg.appendChild(punctPath);
+  }
+  
+  return { svgElement: newSvg, viewBox: vb };
+}
+
+// Handle format selection downloads
+exportMenu.querySelectorAll(".dropdown-item").forEach(item => {
+  item.addEventListener("click", (e) => {
+    const format = e.currentTarget.getAttribute("data-format");
+    const { svgElement, viewBox } = createExportableSVG();
+    
+    let serialized = new XMLSerializer().serializeToString(svgElement);
+    serialized = serialized.replace(/\d+\.\d+/g, (m) => Math.round(parseFloat(m) * 100) / 100);
+
+    if (format === "svg") {
+      const blob = new Blob([serialized], { type: "image/svg+xml;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      triggerDownload(url, "Nyxic.svg");
+    } else if (format === "png") {
+      const scale = 2; // High-DPI scale multiplier
+      const width = parseFloat(viewBox[2]) * scale;
+      const height = parseFloat(viewBox[3]) * scale;
+      
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      
+      const img = new Image();
+      const blob = new Blob([serialized], { type: "image/svg+xml;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      
+      img.onload = () => {
+        ctx.drawImage(img, 0, 0, width, height);
+        URL.revokeObjectURL(url);
+        
+        const pngUrl = canvas.toDataURL("image/png");
+        triggerDownload(pngUrl, "Nyxic.png");
+      };
+      img.src = url;
+    }
+    
+    exportMenu.classList.add("hidden");
+  });
+});
+
+function triggerDownload(url, filename) {
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  if (url.startsWith("blob:")) URL.revokeObjectURL(url);
+}
+
    styleToggle.classList.add("rounded");
    svgCanvas.setAttribute("shape-rendering", "geometricPrecision");
-   loadURLState();
    linecapToggle.addEventListener("click", () => {
      currentLineCap = (currentLineCap === "round") ? "square" : "round";
      linecapToggle.classList.toggle("round");
