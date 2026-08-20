@@ -1277,14 +1277,27 @@ function createExportableSVG() {
   newSvg.appendChild(bgPath);
   
   if (glyphD) {
-    const glyphPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    glyphPath.setAttribute("d", glyphD.trim());
-    glyphPath.setAttribute("stroke", computedColor);
-    glyphPath.setAttribute("stroke-width", activeStrokeWidth);
-    glyphPath.setAttribute("stroke-linecap", currentLineCap);
-    glyphPath.setAttribute("fill", "none");
-    newSvg.appendChild(glyphPath);
-  }
+  const glyphGroupExport = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  glyphGroupExport.setAttribute("stroke", computedColor);
+  glyphGroupExport.setAttribute("stroke-width", activeStrokeWidth);
+  glyphGroupExport.setAttribute("stroke-linecap", currentLineCap);
+  glyphGroupExport.setAttribute("stroke-linejoin", "round");
+  glyphGroupExport.setAttribute("fill", "none");
+
+  // Clone all glyph path children individually so explicit path attributes are preserved
+  const originalPaths = clonedCanvas.querySelectorAll("#glyph-group path");
+  originalPaths.forEach(p => {
+    if (p.getAttribute("fill") === "none" || !p.hasAttribute("fill")) {
+      const pathCopy = p.cloneNode(true);
+      pathCopy.setAttribute("stroke", computedColor);
+      pathCopy.setAttribute("stroke-width", activeStrokeWidth);
+      pathCopy.setAttribute("stroke-linecap", currentLineCap);
+      glyphGroupExport.appendChild(pathCopy);
+    }
+  });
+
+  newSvg.appendChild(glyphGroupExport);
+}
   
   if (punctD) {
     const punctPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
