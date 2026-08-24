@@ -980,8 +980,8 @@
               const baseOvershootAngle = (2*Math.PI)-Math.asin(0.75)-((300*Math.PI)/180);
               targetEndAngle += (sweepFlag === 1 ? baseOvershootAngle : -baseOvershootAngle);
               if (partnerLevel === level) {
-               const linearOvershoot = currentOvershoot*(((2*Math.PI)-Math.asin(.75)-((300*Math.PI)/180))*r)/10;
-               const angleOvershoot = linearOvershoot/r;
+               const linearOvershoot = currentOvershoot * (((2 * Math.PI) - Math.asin(.75) - ((300 * Math.PI) / 180)) * r) / 10;
+               const angleOvershoot = linearOvershoot / r;
                endAngle += (sweepFlag === 1 ? angleOvershoot : -angleOvershoot);
               } else {
                const sweepDir = sweepFlag === 1 ? 1 : -1;
@@ -993,8 +993,9 @@
                endAngle = intersectionAngle+sweepDir*scaledOvershoot;
               }
              } else {
-              const linearOvershoot = currentOvershoot*3.6;
-              const angleOvershoot = linearOvershoot/r;
+              const multiplier = (level === 3) ? 3.65 : 4.35;
+              const linearOvershoot = currentOvershoot * multiplier;
+              const angleOvershoot = linearOvershoot / r;
               endAngle = intersectionAngle+(sweepFlag === 1 ? angleOvershoot : -angleOvershoot);
              }
             }
@@ -1003,8 +1004,8 @@
          }
         }
         else if (level > 1 && row === 1) {
-         const linearOvershoot = currentOvershoot*(((2*Math.PI)-Math.asin(.75)-((300*Math.PI)/180))*r)/10;
-         const angleOvershoot = linearOvershoot/r;
+         const linearOvershoot = currentOvershoot * (((2 * Math.PI) - Math.asin(.75) - ((300 * Math.PI) / 180)) * r) / 10;
+         const angleOvershoot = linearOvershoot / r;
          endAngle += (sweepFlag === 1 ? angleOvershoot : -angleOvershoot);
         }
         const sx = cx+r*Math.cos(startAngle);
