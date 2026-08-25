@@ -367,6 +367,44 @@
      height: 488px;
     }
    }
+   /* Enable custom track rendering for webkit sliders */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* Chrome, Safari, Edge, Opera Track */
+input[type="range"]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background-color: var(--border);
+  background-image: 
+    radial-gradient(circle at center, var(--text-main) 1.5px, transparent 1.5px),
+    radial-gradient(circle at center, var(--text-main) 1.5px, transparent 1.5px),
+    radial-gradient(circle at center, var(--text-main) 1.5px, transparent 1.5px);
+  background-repeat: no-repeat;
+  /* Positions dots precisely at 25%, 50%, and 75% across the slider track width */
+  background-position: 25% center, 50% center, 75% center;
+  background-size: 6px 6px;
+}
+
+/* Firefox Track */
+input[type="range"]::-moz-range-track {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background-color: var(--border);
+  background-image: 
+    radial-gradient(circle at center, var(--text-main) 1.5px, transparent 1.5px),
+    radial-gradient(circle at center, var(--text-main) 1.5px, transparent 1.5px),
+    radial-gradient(circle at center, var(--text-main) 1.5px, transparent 1.5px);
+  background-repeat: no-repeat;
+  background-position: 25% center, 50% center, 75% center;
+  background-size: 6px 6px;
+}
   </style>
  </head>
  <body data-theme="dark">
