@@ -367,51 +367,6 @@
      height: 488px;
     }
    }
-
-/* Container alignment */
-.control-group {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Force browsers to show datalist marks correctly beneath range inputs */
-input[type="range"]::-webkit-slider-container {
-  min-height: 20px;
-}
-
-datalist {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  padding: 0 2px;
-  margin-top: -4px;
-}
-
-datalist option {
-  padding: 0;
-  font-size: 0; /* Hide text if any */
-}
-
-/* Standard native tick styling fallback */
-input[type="range"]::-webkit-slider-runnable-track {
-  margin-bottom: 2px;
-}
-
-/* Subtle midpoint notch indicator overlay (works cleanly across all browsers) */
-.control-group::after {
-  content: "";
-  position: absolute;
-  bottom: 6px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 2px;
-  height: 4px;
-  background-color: var(--border);
-  opacity: 0.6;
-  pointer-events: none;
-  border-radius: 1px;
-}
   </style>
  </head>
  <body data-theme="dark">
@@ -427,30 +382,18 @@ input[type="range"]::-webkit-slider-runnable-track {
          <div class="slider-wrapper">
           <label for="thickness">Weight</label>
           <input type="range" id="thickness" min="1" max="21" value="11" />
-          <datalist id="overshoot-ticks">
-           <option value="11"></option>
-          </datalist>
          </div>
          <div class="slider-wrapper">
           <label for="spacing">Spacing</label>
           <input type="range" id="spacing" min="0" max="1" step=".05" value=".5" />
-          <datalist id="spacing-ticks">
-           <option value=".5"></option>
-          </datalist>
          </div>
          <div class="slider-wrapper style-dependent" id="overshoot-wrapper">
           <label for="overshoot">Overshoot</label>
           <input type="range" id="overshoot" min="0" max="20" value="10" />
-          <datalist id="overshoot-ticks">
-           <option value="10"></option>
-          </datalist>
          </div>
          <div class="slider-wrapper style-dependent" id="stretch-wrapper">
           <label for="squish">Stretch</label>
           <input type="range" id="squish" min="0" max="1" step=".05" value=".5" />
-          <datalist id="overshoot-ticks">
-           <option value=".5"></option>
-          </datalist>
          </div>
         </div>
        <div class="buttons-group">
