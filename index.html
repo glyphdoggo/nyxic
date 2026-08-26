@@ -5,39 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nyxic Transcriber</title>
     <style>
-      @font-face {
-        font-family: 'EmptySetFont';
-        src: local('Noto Sans Math'),
-          url('https://fonts.gstatic.com/s/notosansmath/v1/4UaGrENs6ByA1_oTnoS997xR94_9E9g.woff2') format('woff2');
-        unicode-range: U+2205;
-      }
+      @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Mono:wght@100..900&display=swap');
 
-      @font-face {
-        font-family: 'Noto Sans';
-        font-style: normal;
+      .noto-sans-mono-regular {
+        font-family: "Noto Sans Mono", monospace;
+        font-optical-sizing: auto;
         font-weight: 400;
-        src: local('Noto Sans Regular'),
-          local('NotoSans-Regular'),
-          url('NotoSans-Regular.ttf') format('truetype'),
-          url('https://fonts.gstatic.com/s/notosans/v38/o-0eIpHfvRCSob33n9GSMTzaAL8.woff2') format('woff2');
-      }
-
-      @font-face {
-        font-family: 'Noto Sans';
-        font-style: italic;
-        font-weight: 400;
-        src: local('Noto Sans Italic'), local('NotoSans-Italic'),
-          url('NotoSans-Italic.ttf') format('truetype'),
-          url('https://fonts.gstatic.com/s/notosans/v38/o-0gIpHfvRCSob33n9GS830.woff2') format('woff2');
-      }
-
-      @font-face {
-        font-family: 'Noto Sans';
         font-style: normal;
-        font-weight: 700;
-        src: local('Noto Sans Bold'), local('NotoSans-Bold'),
-          url('NotoSans-Bold.ttf') format('truetype'),
-          url('https://fonts.gstatic.com/s/notosans/v38/o-0NIpHfvRCSob33n9GSVMY.woff2') format('woff2');
+        font-variation-settings:
+          "wdth" 100;
+      }
+
+      .noto-sans-mono-bold {
+        font-family: "Noto Sans Mono", monospace;
+        font-optical-sizing: auto;
+        font-weight: 800;
+        font-style: normal;
+        font-variation-settings:
+          "wdth" 100;
       }
 
       :root {
@@ -56,12 +41,8 @@
         --border: #444;
       }
 
-      body, input, textarea, svg text {
-        font-family: 'EmptySetFont', "Noto Sans", sans-serif;
-      }
-
       body {
-        font-family: "EmptySetFont", "Noto Sans", sans-serif;
+        font-family: "Noto Sans Mono", monospace;
         font-size: 1rem; /* 16px */
         display: flex;
         align-items: center;
@@ -377,7 +358,7 @@
       }
 
       .tg .tg-s {
-        font-family: "Noto Sans Math", "Noto Sans", sans serif;
+        font-family: "Noto Sans Mono", monospace;
         border-color: inherit;
         font-weight: bold;
         text-align: center;
