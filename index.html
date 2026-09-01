@@ -35,6 +35,7 @@
       :root {
         --bg-container: #eee;
         --bg-canvas: #ddd;
+        --bg-modal: #eee8;
         --text-main: #222;
         --text-muted: #555;
         --border: #ccc;
@@ -43,6 +44,7 @@
       [data-theme="dark"] {
         --bg-container: #333;
         --bg-canvas: #222;
+        --bg-modal: #2228;
         --text-main: #ddd;
         --text-muted: #aaa;
         --border: #444;
@@ -65,7 +67,7 @@
       h2 {
         text-align: center;
         margin-top: 15px;
-        margin-bottom: 10px;
+        margin-bottom: 30px;
       }
 
       .container {
@@ -174,6 +176,7 @@
       .canvas-frame {
         background: var(--bg-canvas);
         border-radius: 10px;
+        margin-top: 20px;
         transition: background-color .3s ease, color .3s ease;
       }
 
@@ -253,6 +256,7 @@
 
       #card-container {
         display: grid;
+        flex: 1 1 280px;
       }
 
       .view {
@@ -268,26 +272,62 @@
         bottom: 0px;
         right: 0px;
       }
-
-      .view-front {
+    
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: var(--bg-modal);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 99;
         opacity: 1;
         visibility: visible;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+        padding: 40px;
+        box-sizing: border-box;
       }
 
-      .view-back {
+      .modal-overlay.hidden {
         opacity: 0;
         visibility: hidden;
-        position: relative;
+        pointer-events: none;
       }
 
-      #card-container.switched .view-front {
-        opacity: 0;
-        visibility: hidden;
+      .modal-container {
+        background: var(--bg-container);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        max-width: 650px;
+        width: 100%;
+        max-height: 85vh;
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        box-sizing: border-box;
       }
 
-      #card-container.switched .view-back {
-        opacity: 1;
-        visibility: visible;
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+
+      .modal-header h3 {
+        margin: 0;
+        font-size: 1.1rem;
+      }
+
+      .modal-content {
+        font-size: 0.85rem;
+        overflow-y: auto;
       }
 
       @media (max-width: 600px) {
@@ -479,119 +519,20 @@
       }
     </style>
   </head>
-  <body data-theme="dark">
-    <div class="container" id="card-container">
-      <div class="view view-front">
-        <h2>Nyxic Transcriber</h2>
-        <header class="controls-toolbar">
-          <div class="input-wrapper">
-            <textarea id="transcriber-input" rows="4" placeholder="Type here :)"></textarea>
-          </div>
-          <div class="settings-wrapper">
-            <div class="sliders-group">
-              <div class="slider-wrapper">
-                <label for="thickness">Weight</label>
-                <input type="range" id="thickness" min="1" max="21" value="11" list="t-tickmarks" />
-                <datalist id="t-tickmarks">
-                  <!--<option value="6"></option>-->
-                  <option value="11"></option>
-                  <!--<option value="16"></option>-->
-                </datalist>
-              </div>
-              <div class="slider-wrapper">
-                <label for="spacing">Spacing</label>
-                <input type="range" id="spacing" min="0" max="1" step=".05" value=".5" list="s-tickmarks" />
-                <datalist id="s-tickmarks">
-                  <!--<option value=".25"></option>-->
-                  <option value=".5"></option>
-                  <!--<option value=".75"></option>-->
-                </datalist>
-              </div>
-              <div class="slider-wrapper style-dependent" id="overshoot-wrapper">
-                <label for="overshoot">Overshoot</label>
-                <input type="range" id="overshoot" min="0" max="20" value="10" list="o-tickmarks" />
-                <datalist id="o-tickmarks">
-                  <!--<option value="5"></option>-->
-                  <option value="10"></option>
-                  <!--<option value="15"></option>-->
-                </datalist>
-              </div>
-              <div class="slider-wrapper style-dependent" id="stretch-wrapper">
-                <label for="squish">Stretch</label>
-                <input type="range" id="squish" min="0" max="1" step=".05" value=".5" list="q-tickmarks" />
-                <datalist id="q-tickmarks">
-                  <!--<option value=".25"></option>-->
-                  <!--<option value=".75"></option>-->
-                  <option value=".5"></option>
-                </datalist>
-              </div>
-            </div>
-            <div class="buttons-group">
-              <button id="orientation-toggle" class="icon-btn" type="button" title="Toggle layout orientation">
-                <svg class="vert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M8 4v16m-4-4 4 4 4-4m4-12v16m-4-4 4 4 4-4" />
-                </svg>
-                <svg class="horiz-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M4 8h16m-4-4 4 4-4 4M4 16h16m-4-4 4 4-4 4" />
-                </svg>
-              </button>
-              <button id="theme-toggle" class="icon-btn" type="button" title="Toggle dark mode">
-                <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="12" cy="12" r="5" />
-                  <path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72 1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
-                </svg>
-                <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79" />
-                </svg>
-              </button>
-              <button id="style-toggle" class="icon-btn" type="button" title="Toggle style">
-                <svg class="straight-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="m4.75 4.75 14.5 14.5m0-14.5-14.5 14.5" />
-                </svg>
-                <svg class="curve-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M4.75 4.75a14.5 14.5 0 0 0 14.5 14.5m0-14.5a14.5 14.5 0 0 0-14.5 14.5" />
-                </svg>
-              </button>
-              <button id="info-toggle" class="icon-btn" type="button" title="Documentation">
-                <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
-                  <!-- <path d="M19 9a7 7 0 0 1-4 6.32V18H9v-2.68A7 7 0 1 1 19 9M9 22h6"/> -->
-                  <circle cx="17.5" cy="6.5" r="4" />
-                  <path d="M14 10l-11 11M10 16l2 2M7 19l2 2" />
-                  <!-- <path d="M7.5 7.5a4.5 4.5 0 1 1 7.5 3c-1.5 1.5-3 3-3 6m.55 5a.6.6 0 1 1 0-.01"/> -->
-                </svg>
-              </button>
-              <button id="linecap-toggle" class="icon-btn round" type="button" title="Toggle linecap">
-                <svg class="diamond-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M2 12 12 2l10 10-10 10Z" />
-                </svg>
-                <svg class="circle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="12" cy="12" r="9" />
-                </svg>
-              </button>
-              <div class="dropdown-wrapper">
-                <button id="export-button" class="icon-btn" type="button" title="Download Image">
-                  <svg class="download-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M5 20h14M6 10.5l6 5.5 6-5.5M12 3v13" />
-                  </svg>
-                </button>
-                <div id="export-menu" class="dropdown-menu hidden">
-                  <button type="button" class="dropdown-item" data-format="svg">SVG</button>
-                  <button type="button" class="dropdown-item" data-format="png">PNG</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </header>
-        <div class="canvas-frame">
-          <svg id="script-canvas" shape-rendering="geometricPrecision" viewBox="0 0 200 300">
-            <g id="glyph-group"></g>
-          </svg>
+    <body data-theme="dark">
+    <!-- Modal Overlay -->
+    <div id="info-modal" class="modal-overlay hidden">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h3>How does Nyxic work?</h3>
+          <button id="modal-close" class="icon-btn" type="button" title="Close" style="width: 32px; height: 32px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;">
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+          </button>
         </div>
-      </div>
-      <div class="view view-back">
-        <h2>How does Nyxic work?</h2>
-        <div style="padding: 0px;">
-          <p>Left half:
+        <div class="modal-content">
+          <p style="margin-top: 0;">Left half:</p>
           <table class="tg">
             <thead>
               <tr>
@@ -655,7 +596,7 @@
             </tbody>
           </table>
           <br />
-          <p>Right half:
+          <p>Right half:</p>
           <table class="tg">
             <thead>
               <tr>
@@ -718,18 +659,109 @@
               </tr>
             </tbody>
           </table>
-          </p>
-        </div>
-        <div class="toggle-anchor">
-          <button id="back-toggle" class="icon-btn" type="button" title="Back">
-            <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="8" stroke-dasharray="20 10" />
-              <path d="M9.75 7.5h-4.5V3" />
-            </svg>
-          </button>
         </div>
       </div>
     </div>
+
+    <!-- Main Container -->
+    <div class="container" id="card-container">
+      <h2>Nyxic Transcriber</h2>
+      <header class="controls-toolbar">
+        <div class="input-wrapper">
+          <textarea id="transcriber-input" rows="4" placeholder="Type here :)"></textarea>
+        </div>
+        <div class="settings-wrapper">
+          <div class="sliders-group">
+            <div class="slider-wrapper">
+              <label for="thickness">Weight</label>
+              <input type="range" id="thickness" min="1" max="21" value="11" list="t-tickmarks" />
+              <datalist id="t-tickmarks">
+                <option value="11"></option>
+              </datalist>
+            </div>
+            <div class="slider-wrapper">
+              <label for="spacing">Spacing</label>
+              <input type="range" id="spacing" min="0" max="1" step=".05" value=".5" list="s-tickmarks" />
+              <datalist id="s-tickmarks">
+                <option value=".5"></option>
+              </datalist>
+            </div>
+            <div class="slider-wrapper style-dependent" id="overshoot-wrapper">
+              <label for="overshoot">Overshoot</label>
+              <input type="range" id="overshoot" min="0" max="20" value="10" list="o-tickmarks" />
+              <datalist id="o-tickmarks">
+                <option value="10"></option>
+              </datalist>
+            </div>
+            <div class="slider-wrapper style-dependent" id="stretch-wrapper">
+              <label for="squish">Stretch</label>
+              <input type="range" id="squish" min="0" max="1" step=".05" value=".5" list="q-tickmarks" />
+              <datalist id="q-tickmarks">
+                <option value=".5"></option>
+              </datalist>
+            </div>
+          </div>
+          <div class="buttons-group">
+            <button id="orientation-toggle" class="icon-btn" type="button" title="Toggle layout orientation">
+              <svg class="vert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M8 4v16m-4-4 4 4 4-4m4-12v16m-4-4 4 4 4-4" />
+              </svg>
+              <svg class="horiz-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 8h16m-4-4 4 4-4 4M4 16h16m-4-4 4 4-4 4" />
+              </svg>
+            </button>
+            <button id="theme-toggle" class="icon-btn" type="button" title="Toggle dark mode">
+              <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="5" />
+                <path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72 1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+              </svg>
+              <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79" />
+              </svg>
+            </button>
+            <button id="style-toggle" class="icon-btn" type="button" title="Toggle style">
+              <svg class="straight-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m4.75 4.75 14.5 14.5m0-14.5-14.5 14.5" />
+              </svg>
+              <svg class="curve-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4.75 4.75a14.5 14.5 0 0 0 14.5 14.5m0-14.5a14.5 14.5 0 0 0-14.5 14.5" />
+              </svg>
+            </button>
+            <button id="info-toggle" class="icon-btn" type="button" title="Documentation">
+              <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="17.5" cy="6.5" r="4" />
+                <path d="M14 10l-11 11M10 16l2 2M7 19l2 2" />
+              </svg>
+            </button>
+            <button id="linecap-toggle" class="icon-btn round" type="button" title="Toggle linecap">
+              <svg class="diamond-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 12 12 2l10 10-10 10Z" />
+              </svg>
+              <svg class="circle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9" />
+              </svg>
+            </button>
+            <div class="dropdown-wrapper">
+              <button id="export-button" class="icon-btn" type="button" title="Download Image">
+                <svg class="download-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 20h14M6 10.5l6 5.5 6-5.5M12 3v13" />
+                </svg>
+              </button>
+              <div id="export-menu" class="dropdown-menu hidden">
+                <button type="button" class="dropdown-item" data-format="svg">SVG</button>
+                <button type="button" class="dropdown-item" data-format="png">PNG</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+      <div class="canvas-frame">
+        <svg id="script-canvas" shape-rendering="geometricPrecision" viewBox="0 0 200 300">
+          <g id="glyph-group"></g>
+        </svg>
+      </div>
+    </div>
+
     <script>
       // 1. GLOBAL LEXICON & ALPHABET CONFIGURATION
       const CONSONANTS = new Set(["ch", "sh", "þ", "m", "w", "r", "n", "l", "s", "v", "y", "p", "k", "t", "f", "b", "g", "j", "d", "h", "z", "ʔ", ]);
@@ -796,6 +828,25 @@
       const stretchWrapper = document.getElementById("stretch-wrapper");
       const squishSlider = document.getElementById("squish");
       const orientationToggle = document.getElementById("orientation-toggle");
+
+      const infoModal = document.getElementById("info-modal");
+      const infoToggle = document.getElementById("info-toggle");
+      const modalClose = document.getElementById("modal-close");
+
+      // Event listeners for opening & closing modal
+      infoToggle.addEventListener("click", () => {
+        infoModal.classList.remove("hidden");
+      });
+
+      modalClose.addEventListener("click", () => {
+        infoModal.classList.add("hidden");
+      });
+
+      infoModal.addEventListener("click", (e) => {
+        if (e.target === infoModal) {
+          infoModal.classList.add("hidden");
+        }
+      });
       const baseCanvasHeight = 0;
       const padding = 200;
       const halfWidth = 100;
@@ -838,7 +889,51 @@
         clean = clean.replace(/([b-df-hj-np-tv-z])y/g, '$1ii');
         clean = clean.replace(/ng(?=[b-df-hj-np-tv-z]|\b)/g, 'h');
         clean = clean.replace(/tch|ch/g, 'č');
-        clean = clean.replace(/stion/g, 'schun').replace(/tion/g, 'shun').replace(/sion/g, 'zun').replace(/(?:ăr|âr|ĕr)(?![aeiouy])/g, 'air').replace(/(?:eer|ier|ĭr|îr)(?![aeiouy])/g, 'ear').replace(/(?:ur|er|yr|ər|ûr)(?![aeiouy])/g, 'ir').replace(/ue|ew|uu|uw/g, 'eu').replace(/ay|ey|eigh|ā/g, 'ai').replace(/ea|ei|ie|ē/g, 'ee').replace(/aw|ô/g, 'au').replace(/igh|ī/g, 'ii').replace(/(?:ŏŏr|our)(?![aeiouy])/g, 'oor').replace(/(?:oar|orr)(?![aeiouy])/g, 'or').replace(/(?:aar|är)(?![aeiouy])/g, 'ar').replace(/ao|ow/g, 'ou').replace(/oe|ō/g, 'oa').replace(/oy/g, 'oi').replace(/qu/g, 'kw').replace(/q/g, 'k').replace(/kn|gn/g, 'n').replace(/wr/g, 'r').replace(/ph/g, 'f').replace(/th/g, 'þ').replace(/wh/g, 'w').replace(/zh/g, 'z').replace(/dge\b/g, 'j').replace(/x/g, 'ks').replace(/ă/g, 'a').replace(/ĕ/g, 'e').replace(/ĭ/g, 'i').replace(/ä/g, 'aa').replace(/ŏ/g, 'o').replace(/ə|ŭ/g, 'u');
+        clean = clean
+  // 1. Suffixes & Special Combinations
+  .replace(/stion/g, 'schun')
+  .replace(/tion/g, 'shun')
+  .replace(/sion/g, 'zun')
+  .replace(/dge\b/g, 'j')
+  .replace(/qu/g, 'kw')
+  .replace(/q/g, 'k')
+  .replace(/kn|gn/g, 'n')
+  .replace(/wr/g, 'r')
+  .replace(/ph/g, 'f')
+  .replace(/th/g, 'þ')
+  .replace(/wh/g, 'w')
+  .replace(/zh/g, 'z')
+  .replace(/x/g, 'ks')
+
+  // 2. R-Colored Vowels (Guarded against following vowels)
+  .replace(/(?:ăr|âr|ĕr)(?![aeiouy])/g, 'air')
+  .replace(/(?:eer|ier|ĭr|îr)(?![aeiouy])/g, 'ear')
+  .replace(/(?:ur|er|yr|ər|ûr)(?![aeiouy])/g, 'ir')
+  .replace(/(?:ŏŏr|our)(?![aeiouy])/g, 'oor')
+  .replace(/(?:oar|orr)(?![aeiouy])/g, 'or')
+  .replace(/(?:aar|är)(?![aeiouy])/g, 'ar')
+
+  // 3. Multi-character Diphthongs & Macrons
+  // (Longer/unambiguous representations placed first)
+  .replace(/eigh|ā/g, 'ai')
+  .replace(/ea|ei|ie|ē/g, 'ee')
+  .replace(/igh|ī/g, 'ii')
+  .replace(/oe|ō/g, 'oa')
+
+  // 4. -w and -y Diphthongs (Guarded so w/y can act as onsets when a vowel follows)
+  .replace(/(?:ue|uu)(?![aeiouy])|ew(?![aeiouy])/g, 'eu')
+  .replace(/(?:ay|ey)(?![aeiouy])/g, 'ai')
+  .replace(/aw(?![aeiouy])|ô/g, 'au')
+  .replace(/(?:ao)(?![aeiouy])|ow(?![aeiouy])/g, 'ou')
+  .replace(/oy(?![aeiouy])/g, 'oi')
+
+  // 5. Short Vowels & Diacritics Fallback
+  .replace(/ă/g, 'a')
+  .replace(/ĕ/g, 'e')
+  .replace(/ĭ/g, 'i')
+  .replace(/ä/g, 'aa')
+  .replace(/ŏ/g, 'o')
+  .replace(/ə|ŭ/g, 'u');
         clean = clean.replace(/c/g, 'k');
         clean = clean.replace(/č/g, 'ch');
         return clean;
