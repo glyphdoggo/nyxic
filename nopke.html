@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Nopke's Asemic Script</title>
+    <style>
+      :root {
+          --bkgrd: #646E78;
+          --panel: #8D98A7;
+          --accnt: #DCCCBB;
+
+          --gap: .75rem;
+          --radius: 8px;
+          --font-size: .75rem;
+      }
+
+      *, *::before, *::after {
+          box-sizing: border-box;
+      }
+
+      /* 1. Global Typography & Base Styles */
+      body, button, input {
+          font-family: monospace;
+          font-size: var(--font-size);
+          color: var(--accnt);
+      }
+
+      body {
+          background-color: var(--bkgrd);
+          margin: 0;
+          padding: var(--gap);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          min-height: 100vh;
+          cursor: pointer;
+      }
+
+      h2 {
+          padding: var(--gap);
+          margin: var(--gap);
+          color: var(--accnt);
+          cursor: default;
+      }
+
+      /* 2. Container & Panel Rules */
+      .control-panel, .controls-group, .slider-container,
+      .toggle-grid, .glyph-grid, .svg-container, .stats-breakdown {
+          width: 100%;
+      }
+
+      .control-panel, .glyph-card {
+          background-color: var(--panel);
+          border-radius: 16px;
+          padding: var(--gap);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          cursor: default;
+      }
+
+      .control-panel {
+          margin-bottom: var(--gap);
+          gap: var(--gap);
+          max-width: 400px;
+      }
+
+      .controls-group, .slider-container {
+          display: flex;
+          gap: var(--gap);
+      }
+
+      .controls-group {
+          flex-direction: column;
+      }
+
+      .slider-container {
+          align-items: center;
+          padding: 0 .5rem;
+          margin: 0;
+      }
+
+      .slider-container label, .stats-title {
+          font-weight: 700;
+      }
+
+      .slider-container input[type="range"] {
+          flex-grow: 1;
+          accent-color: var(--accnt);
+          cursor: pointer;
+      }
+
+      .slider-value {
+          color: var(--accnt);
+          text-align: right;
+          width: 20px;
+      }
+
+      /* 3. Grids & Components */
+      .toggle-grid, .stats-breakdown {
+          display: grid;
+          gap: var(--gap);
+      }
+
+      .toggle-grid {
+          grid-template-columns: repeat(3, 1fr);
+      }
+
+      .stats-breakdown {
+          grid-template-columns: repeat(4, 1fr);
+      }
+
+      .toggle-btn, .stat-badge {
+          background-color: var(--bkgrd);
+          padding: var(--gap);
+          border-radius: 8px;
+          font-weight: 700;
+          cursor: pointer;
+          text-align: center;
+          border: none;
+      }
+
+      .toggle-btn.active, .stat-badge.active {
+          background-color: var(--accnt);
+          color: var(--bkgrd);
+      }
+
+      .stat-badge.active strong {
+          color: var(--bkgrd);
+      }
+
+      .glyph-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+          gap: var(--gap);
+          max-width: 1500px;
+      }
+
+      .glyph-card.hidden, .node-dots.hidden {
+          display: none;
+      }
+
+      .glyph-id {
+          color: var(--accnt);
+          user-select: none;
+          padding-top: var(--gap);
+      }
+
+      .stats-title {
+          color: var(--accnt);
+      }
+
+      .theme-hint {
+          color: var(--panel);
+          font-weight: 700;
+          margin-bottom: var(--gap);
+          text-align: center;
+          user-select: none;
+      }
+
+      /* 4. SVG & Animations */
+      .svg-container {
+          display: flex;
+          justify-content: center;
+      }
+
+      svg {
+          background-color: var(--bkgrd);
+          border-radius: 8px;
+          width: 100%;
+          aspect-ratio: 1 / 1;
+          height: auto;
+      }
+
+      #example-word-container svg {
+          aspect-ratio: auto;
+          max-height: 150px;
+          cursor: pointer;
+      }
+
+      #example-word-container svg:active {
+          opacity: .7;
+      }
+
+      @keyframes drawStroke {
+          to { stroke-dashoffset: 0; }
+      }
+
+      .draw-line {
+          animation-name: drawStroke;
+          animation-timing-function: linear;
+          animation-fill-mode: forwards;
+      }
+      
+      .glyph-card {
+          cursor: pointer;
+      }
+
+    </style>
+  </head>
+  <body>
+    <h2>Nopke's Asemic Script</h2>
+
+    <div class="control-panel">
+      <div class="svg-container" id="example-word-container"></div>
+      <div class="stats-title" id="svg-subtitle">Click canvas to generate random word</div>
+    </div>
+
+    <div class="control-panel">
+        <div class="toggle-grid">
+            <button id="toggle-style-btn" type="button" class="toggle-btn active">Smoothing<br>ON</button>
+            <button id="toggle-points-btn" type="button" class="toggle-btn">Grid<br>OFF</button>
+            <button id="toggle-list-btn" type="button" class="toggle-btn">Cards<br>OFF</button>
+            <button id="toggle-loops-btn" type="button" class="toggle-btn active">Loops<br>ON</button>
+            <button id="toggle-anim-btn" type="button" class="toggle-btn active">Animations<br>ON</button>
+            <button id="download-png-btn" type="button" class="toggle-btn">Download<br>PNG</button>
+        </div>
+    </div>
+    <div class="control-panel">
+        <div class="stats-breakdown" id="stats-breakdown"></div>
+        <div class="stats-title" id="stats-total"></div>
+    </div>
+    <div class="control-panel">
+        <div class="controls-group">
+<div class="slider-container">
+  <label for="length-slider">Length:&nbsp;&nbsp;&nbsp;</label>
+  <input
+    type="range"
+    id="length-slider"
+    min="1"
+    max="20"
+    value="8"
+    step="1"
+  />
+  <span class="slider-value" id="length-val">8</span>
+</div>
+        <div class="slider-container">
+          <label for="thickness-slider">Thickness:</label>
+          <input
+            type="range"
+            id="thickness-slider"
+            min="1"
+            max="53"
+            value="20"
+            step="1"
+          />
+          <span class="slider-value" id="thickness-val">20</span>
+        </div>
+        <div class="slider-container">
+          <label for="spacing-slider">Spacing:&nbsp;&nbsp;</label>
+          <input
+            type="range"
+            id="spacing-slider"
+            min="1"
+            max="53"
+            value="20"
+            step="1"
+          />
+          <span class="slider-value" id="spacing-val">20</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="theme-hint" id="theme-hint"></div>
+
+    <div class="glyph-grid" id="glyph-grid" style="display: none;"></div>
+
+    <script>
+      // 0. DOM ELEMENTS AND GLOBAL STATE
+      const UI = {
+          lengthSlider: document.getElementById('length-slider'),
+          lengthVal: document.getElementById('length-val'),
+          thicknessSlider: document.getElementById('thickness-slider'),
+          thicknessVal: document.getElementById('thickness-val'),
+          spacingSlider: document.getElementById('spacing-slider'),
+          spacingVal: document.getElementById('spacing-val'),
+          btnStyle: document.getElementById('toggle-style-btn'),
+          btnPoints: document.getElementById('toggle-points-btn'),
+          btnList: document.getElementById('toggle-list-btn'),
+          btnLoops: document.getElementById('toggle-loops-btn'),
+          btnAnim: document.getElementById('toggle-anim-btn'),
+          btnDownload: document.getElementById('download-png-btn'),
+          gridContainer: document.getElementById('glyph-grid'),
+          wordContainer: document.getElementById('example-word-container'),
+          statsTotal: document.getElementById('stats-total'),
+          breakdownContainer: document.getElementById('stats-breakdown'),
+          themeHint: document.getElementById('theme-hint')
+      };
+
+      const THEMES = [
+          { bkgrd: '#646E78', panel: '#8D98A7', accnt: '#DCCCBB' },
+          { bkgrd: '#EAF4D3', panel: '#DBD8AE', accnt: '#CA907E' },
+          { bkgrd: '#382F2E', panel: '#796A63', accnt: '#E0DAD1' },
+          { bkgrd: '#F1DAC4', panel: '#A69CAC', accnt: '#474973' },
+          { bkgrd: '#673C4F', panel: '#575F60', accnt: '#B9B4B1' },
+          { bkgrd: '#F0E7D8', panel: '#CC92C2', accnt: '#69585F' },
+          { bkgrd: '#725752', panel: '#99A399', accnt: '#EEE0CB' },
+          { bkgrd: '#E6E1C5', panel: '#C2847A', accnt: '#395C6B' },
+          { bkgrd: '#5A7D7C', panel: '#BD9391', accnt: '#EFEBCE' },
+      ];
+
+      let currentThemeIndex = 0;
+
+      function applyTheme(index) {
+          const theme = THEMES[index];
+          const root = document.documentElement.style;
+          root.setProperty('--bkgrd', theme.bkgrd);
+          root.setProperty('--panel', theme.panel);
+          root.setProperty('--accnt', theme.accnt);
+          UI.themeHint.textContent = `Click background to change theme (${index + 1}/${THEMES.length})`;
+      }
+
+      const STATE = {
+          showGridPoints: false,
+          isSmoothed: true,
+          showGlyphGrid: false,
+          allowLoops: true,
+          isAnimated: true
+      };
+      
+      let replaceIndex = 0;
+
+      // 1. GRID AND CORE DATA GENERATION
+      const GRID = { left: 75, right: 225, spacing: 75 };
+      const points = Array.from({ length: 9 }, (_, i) => ({
+          x: GRID.left + (i % 3) * GRID.spacing,
+          y: Math.floor(i / 3) * GRID.spacing + 50
+      }));
+
+      const validEdges = [];
+      for (let i = 0; i < 9; i++) {
+          for (let j = i + 1; j < 9; j++) {
+              const dr = Math.abs(Math.floor(i / 3) - Math.floor(j / 3));
+              const dc = Math.abs((i % 3) - (j % 3));
+              if ((dr <= 1 && dc <= 1) || (dr === 1 && dc === 2) || (dr === 2 && dc === 1)) {
+                  validEdges.push([i, j]);
+              }
+          }
+      }
+
+      // 2. MATH AND INTERSECTIONS
+      const Geom = {
+          orientation(p, q, r) {
+              const val = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
+              if (Math.abs(val) < 1e-9) return 0;
+              return val > 0 ? 1 : 2;
+          },
+          onSegment(p, q, r) {
+              return q.x <= Math.max(p.x, r.x) && q.x >= Math.min(p.x, r.x) &&
+                     q.y <= Math.max(p.y, r.y) && q.y >= Math.min(p.y, r.y);
+          },
+          doSegmentsIntersect(p1, q1, p2, q2) {
+              if ((p1.x === p2.x && p1.y === p2.y) || (p1.x === q2.x && p1.y === q2.y) ||
+                  (q1.x === p2.x && q1.y === p2.y) || (q1.x === q2.x && q1.y === q2.y)) return false;
+
+              const o1 = this.orientation(p1, q1, p2);
+              const o2 = this.orientation(p1, q1, q2);
+              const o3 = this.orientation(p2, q2, p1);
+              const o4 = this.orientation(p2, q2, q1);
+
+              return (o1 !== o2 && o3 !== o4) ||
+                     (o1 === 0 && this.onSegment(p1, p2, q1)) ||
+                     (o2 === 0 && this.onSegment(p1, q2, q1)) ||
+                     (o3 === 0 && this.onSegment(p2, p1, q2)) ||
+                     (o4 === 0 && this.onSegment(p2, q1, q2));
+          }
+      };
+
+      // 3. GRAPH BACKTRACKING AND PROPERTY EXTRACTION
+      const validGraphs = [];
+      const graphProperties = [];
+      const activeEdgeFilters = new Set([8]);
+
+      (function findGraphs(startIdx = 0, currentEdges = []) {
+          const getDegrees = edges => {
+              const deg = Array(9).fill(0);
+              edges.forEach(idx => {
+                  const [u, v] = validEdges[idx];
+                  deg[u]++; deg[v]++;
+              });
+              return deg;
+          };
+
+          const hasCrossings = newEdgeIdx => {
+              const [u2, v2] = validEdges[newEdgeIdx];
+              return currentEdges.some(edgeIdx =>
+                  Geom.doSegmentsIntersect(points[validEdges[edgeIdx][0]], points[validEdges[edgeIdx][1]], points[u2], points[v2])
+              );
+          };
+
+          if (currentEdges.length >= 4 && getDegrees(currentEdges).every(d => d === 1 || d === 2)) {
+              validGraphs.push([...currentEdges]);
+          }
+          if (currentEdges.length >= 8) return;
+
+          for (let i = startIdx; i < validEdges.length; i++) {
+              if (!hasCrossings(i)) {
+                  currentEdges.push(i);
+                  if (getDegrees(currentEdges).every(d => d <= 2)) findGraphs(i + 1, currentEdges);
+                  currentEdges.pop();
+              }
+          }
+      })();
+
+      validGraphs.forEach((g) => {
+          const adj = {};
+          g.forEach(idx => {
+              const [u, v] = validEdges[idx];
+              (adj[u] = adj[u] || []).push(v);
+              (adj[v] = adj[v] || []).push(u);
+          });
+
+          let hasLoop = false;
+          const visited = new Set();
+          for (const startNode of Object.keys(adj)) {
+              if (visited.has(startNode)) continue;
+              let allDegreeTwo = true;
+              const stack = [startNode];
+
+              while(stack.length) {
+                  const node = stack.pop();
+                  if (!visited.has(node)) {
+                      visited.add(node);
+                      if (adj[node].length !== 2) allDegreeTwo = false;
+                      adj[node].forEach(nbr => {
+                          if (!visited.has(String(nbr))) stack.push(String(nbr));
+                      });
+                  }
+              }
+              if (allDegreeTwo) hasLoop = true;
+          }
+          graphProperties.push({ hasLoop });
+      });
+
+      // 4. FILTERING AND SELECTING GLYPHS
+function generateFilteredWordIndices() {
+    const len = parseInt(UI.lengthSlider ? UI.lengthSlider.value : 8, 10);
+    const available = validGraphs.map((g, i) => {
+        if (!activeEdgeFilters.has(g.length)) return -1;
+        if (!STATE.allowLoops && graphProperties[i].hasLoop) return -1;
+        return i;
+    }).filter(i => i !== -1);
+
+    if (!available.length) return [];
+    return Array.from({ length: len }, () => available[Math.floor(Math.random() * available.length)]);
+}
+
+      let exampleWordIndices = generateFilteredWordIndices();
+
+      function setupFilters() {
+          const allEdgeLengths = new Set(validGraphs.map(g => g.length));
+          Array.from(allEdgeLengths).sort((a, b) => a - b).forEach(numEdges => {
+              const badge = document.createElement('div');
+              badge.className = `stat-badge ${activeEdgeFilters.has(numEdges) ? 'active' : ''}`;
+              badge.dataset.edges = numEdges;
+
+              badge.addEventListener('click', () => {
+                  activeEdgeFilters.has(numEdges) ? activeEdgeFilters.delete(numEdges) : activeEdgeFilters.add(numEdges);
+                  badge.classList.toggle('active');
+                  updateStats();
+                  exampleWordIndices = generateFilteredWordIndices();
+                  updateRender(STATE.isAnimated);
+              });
+              UI.breakdownContainer.appendChild(badge);
+          });
+          updateStats();
+      }
+
+      function updateStats() {
+          const currentEdgeCounts = {};
+          let totalValid = 0;
+
+          validGraphs.forEach((g, i) => {
+              if (!STATE.allowLoops && graphProperties[i].hasLoop) return;
+              totalValid++;
+              currentEdgeCounts[g.length] = (currentEdgeCounts[g.length] || 0) + 1;
+          });
+
+          document.querySelectorAll('.stat-badge').forEach(badge => {
+              const numEdges = parseInt(badge.dataset.edges, 10);
+              const count = currentEdgeCounts[numEdges] || 0;
+              badge.innerHTML = `${numEdges} edges<br>(${count})`;
+
+              if (count === 0) {
+                  badge.style.opacity = '0.3';
+                  badge.style.pointerEvents = 'none';
+                  if (activeEdgeFilters.has(numEdges)) {
+                      activeEdgeFilters.delete(numEdges);
+                      badge.classList.remove('active');
+                  }
+              } else {
+                  badge.style.opacity = '1';
+                  badge.style.pointerEvents = 'auto';
+              }
+          });
+
+          let visibleCount = 0;
+          validGraphs.forEach((g, i) => {
+              if (!STATE.allowLoops && graphProperties[i].hasLoop) return;
+              if (activeEdgeFilters.has(g.length)) visibleCount++;
+          });
+          UI.statsTotal.textContent = `Selecting ${visibleCount} of ${totalValid} possible configurations`;
+
+          if (STATE.showGlyphGrid) {
+              document.querySelectorAll('.glyph-card').forEach((card, i) => {
+                  const isValidEdge = activeEdgeFilters.has(validGraphs[i].length);
+                  const isValidLoop = STATE.allowLoops || !graphProperties[i].hasLoop;
+                  card.classList.toggle('hidden', !(isValidEdge && isValidLoop));
+              });
+          }
+      }
+
+      // 5. GEOMETRY PROCESSING
+      function simplifyCollinear(pts, isClosed) {
+          if (pts.length <= 2) return pts;
+          const n = pts.length;
+          return pts.filter((curr, i) => {
+              if (!isClosed && (i === 0 || i === n - 1)) return true;
+              const prev = isClosed ? pts[(i - 1 + n) % n] : pts[i - 1];
+              const next = isClosed ? pts[(i + 1) % n] : pts[i + 1];
+              const cross = (curr.x - prev.x) * (next.y - curr.y) - (curr.y - prev.y) * (next.x - curr.x);
+              const dot = (curr.x - prev.x) * (next.x - curr.x) + (curr.y - prev.y) * (next.y - curr.y);
+              return !(Math.abs(cross) < 1e-5 && dot > 0);
+          });
+      }
+
+      function runChaikin(pts, iterations, ratio = 0.25, isClosed) {
+          if (iterations <= 0 || pts.length < 3) return pts;
+          for (let it = 0; it < iterations; it++) {
+              const nextPts = [];
+              if (!isClosed) nextPts.push(pts[0]);
+              for (let i = 0; i < pts.length - (isClosed ? 0 : 1); i++) {
+                  const p0 = pts[i], p1 = pts[(i + 1) % pts.length];
+                  nextPts.push(
+                      { x: (1 - ratio) * p0.x + ratio * p1.x, y: (1 - ratio) * p0.y + ratio * p1.y },
+                      { x: ratio * p0.x + (1 - ratio) * p1.x, y: ratio * p0.y + (1 - ratio) * p1.y }
+                  );
+              }
+              if (!isClosed) nextPts.push(pts[pts.length - 1]);
+              pts = nextPts;
+          }
+          return pts;
+      }
+
+      // 6. GLOBAL GRAPH RENDERING LOGIC
+      function buildWordGraph(wordIndices, ext) {
+          const stepX = 150 + (2 * ext);
+          const globalPoints = [];
+          const globalEdges = [];
+          const deg = {};
+
+          wordIndices.forEach((graphIdx, i) => {
+              const offset = i * 9;
+              for (let j = 0; j < 9; j++) {
+                  globalPoints.push({ x: points[j].x + i * stepX, y: points[j].y });
+              }
+              validGraphs[graphIdx].forEach(edgeIdx => {
+                  const [u, v] = validEdges[edgeIdx];
+                  globalEdges.push([offset + u, offset + v]);
+                  deg[offset + u] = (deg[offset + u] || 0) + 1;
+                  deg[offset + v] = (deg[offset + v] || 0) + 1;
+              });
+          });
+
+          for (let i = 0; i < wordIndices.length - 1; i++) {
+              const leftOffset = i * 9;
+              const rightOffset = (i + 1) * 9;
+              [[2, 0], [5, 3], [8, 6]].forEach(([lNode, rNode]) => {
+                  const u = leftOffset + lNode;
+                  const v = rightOffset + rNode;
+                  if (deg[u] === 1 && deg[v] === 1) {
+                      globalEdges.push([u, v]);
+                      deg[u]++;
+                      deg[v]++;
+                  }
+              });
+          }
+          return { globalPoints, globalEdges };
+      }
+
+      function traceAndSmoothPaths(edges, pts, strokeWidth, iterations, animState, animate) {
+          const adj = {};
+          edges.forEach(([u, v]) => {
+              (adj[u] = adj[u] || []).push(v);
+              (adj[v] = adj[v] || []).push(u);
+          });
+
+          const visited = new Set();
+          const extractPath = (start) => {
+              let curr = parseInt(start, 10), path = [pts[curr]];
+              while (true) {
+                  const next = (adj[curr] || []).find(n => !visited.has([Math.min(curr, n), Math.max(curr, n)].join('-')));
+                  if (next === undefined) break;
+                  visited.add([Math.min(curr, next), Math.max(curr, next)].join('-'));
+                  path.push(pts[next]);
+                  curr = next;
+              }
+              return path;
+          };
+
+          const paths = [];
+          Object.keys(adj).filter(n => adj[n].length === 1).forEach(node => {
+              const p = extractPath(node);
+              if (p.length > 1) {
+                  if (p[0].x > p[p.length - 1].x || (p[0].x === p[p.length - 1].x && p[0].y > p[p.length - 1].y)) p.reverse();
+                  paths.push({ pts: p, closed: false });
+              }
+          });
+
+          Object.keys(adj).forEach(node => {
+              const p = extractPath(node);
+              if (p.length > 2) paths.push({ pts: p.slice(0, -1), closed: true });
+          });
+
+          paths.sort((a, b) => Math.min(...a.pts.map(p => p.x)) - Math.min(...b.pts.map(p => p.x)) || Math.min(...a.pts.map(p => p.y)) - Math.min(...b.pts.map(p => p.y)));
+
+          return paths.map(p => {
+              const finalPts = runChaikin(simplifyCollinear(p.pts, p.closed), iterations, 0.25, p.closed);
+
+              let len = 0;
+              for (let i = 0; i < finalPts.length - 1; i++) len += Math.hypot(finalPts[i + 1].x - finalPts[i].x, finalPts[i + 1].y - finalPts[i].y);
+              if (p.closed) len += Math.hypot(finalPts[0].x - finalPts[finalPts.length - 1].x, finalPts[0].y - finalPts[finalPts.length - 1].y);
+              len = Math.ceil(len);
+
+              const style = animate
+                  ? (() => { const d = Math.max(0.08, len / 600); const dl = animState.total; animState.total += d + 0.02; return `stroke-dasharray: ${len}; stroke-dashoffset: ${len}; animation-duration: ${d.toFixed(2)}s; animation-delay: ${dl.toFixed(2)}s;`; })()
+                  : `stroke-dasharray: none; stroke-dashoffset: 0; animation: none;`;
+
+              const d = `M ${finalPts[0].x} ${finalPts[0].y} ` + finalPts.slice(1).map(pt => `L ${pt.x} ${pt.y}`).join(' ') + (p.closed ? ' Z' : '');
+              return `<path class="draw-line" style="${style}" d="${d}" stroke="var(--accnt)" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`;
+          }).join('');
+      }
+
+function updateRender(animate = false) {
+    updateWordRender(animate);
+
+    if (STATE.showGlyphGrid) {
+        const sw = parseInt(UI.thicknessSlider.value, 10);
+        const iters = STATE.isSmoothed ? 4 : 0;
+
+        UI.gridContainer.innerHTML = validGraphs.map((g, i) => {
+            const localEdges = g.map(idx => validEdges[idx]);
+            return `
+            <div class="glyph-card" data-index="${i}" data-edges="${g.length}">
+                <div class="svg-container">
+                    <svg viewBox="0 25 300 200">
+                        ${traceAndSmoothPaths(localEdges, points, sw, iters, { total: 0 }, false)}
+                        <g class="node-dots ${STATE.showGridPoints ? '' : 'hidden'}">${points.map(p => `<circle cx="${p.x}" cy="${p.y}" r="6" fill="var(--panel)"/>`).join('')}</g>
+                    </svg>
+                </div>
+                <div class="glyph-id">#${i + 1}</div>
+            </div>
+        `}).join('');
+        updateStats();
+    }
+}
+
+function updateWordRender(animate = false) {
+    const sw = parseInt(UI.thicknessSlider.value, 10);
+    const ext = parseInt(UI.spacingSlider.value, 10);
+    UI.thicknessVal.textContent = sw;
+    UI.spacingVal.textContent = ext;
+
+    const iters = STATE.isSmoothed ? 4 : 0;
+    const stepX = 150 + (2 * ext);
+
+    const animState = { total: 0 };
+    const { globalPoints, globalEdges } = buildWordGraph(exampleWordIndices, ext);
+
+    const svgContent = traceAndSmoothPaths(globalEdges, globalPoints, sw, iters, animState, animate);
+    const dots = `<g class="node-dots ${STATE.showGridPoints ? '' : 'hidden'}">${globalPoints.map(p => `<circle cx="${p.x}" cy="${p.y}" r="6" fill="var(--panel)"/>`).join('')}</g>`;
+
+    const wLen = exampleWordIndices.length || UI.lengthSlider.value;
+
+    // Define viewBox strictly relative to grid point boundaries + fixed 40px padding
+    const padding = 75;
+    const minX = 75;
+    const maxX = 225 + (wLen - 1) * stepX;
+    const minY = 50;
+    const maxY = 200;
+
+    const vbX = minX - padding;
+    const vbY = minY - padding;
+    const vbW = (maxX - minX) + (padding * 2);
+    const vbH = (maxY - minY) + (padding * 2);
+
+    UI.wordContainer.innerHTML = `<svg viewBox="${vbX} ${vbY} ${vbW} ${vbH}">${svgContent}${dots}</svg>`;
+}
+
+      // 7. PNG EXPORTING
+      function downloadPNG() {
+          const svgEl = UI.wordContainer.querySelector('svg');
+          if (!svgEl) return;
+
+          const clone = svgEl.cloneNode(true);
+          clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+
+          const style = getComputedStyle(document.documentElement);
+          const bgColor = style.getPropertyValue('--bkgrd').trim();
+          const accntColor = style.getPropertyValue('--accnt').trim();
+          const panelColor = style.getPropertyValue('--panel').trim();
+
+          clone.querySelectorAll('.hidden').forEach(el => el.remove());
+
+          clone.querySelectorAll('.draw-line').forEach(path => {
+              path.style.animation = 'none';
+              path.style.strokeDashoffset = '0';
+              path.setAttribute('stroke', accntColor);
+          });
+
+          clone.querySelectorAll('.node-dots circle').forEach(circle => {
+              circle.setAttribute('fill', panelColor);
+          });
+
+          const viewBox = svgEl.getAttribute('viewBox').split(' ').map(Number);
+          const vbWidth = viewBox[2], vbHeight = viewBox[3];
+
+          const scale = 2;
+          const width = vbWidth * scale;
+          const height = vbHeight * scale;
+
+          clone.setAttribute('width', width);
+          clone.setAttribute('height', height);
+
+          const svgData = new XMLSerializer().serializeToString(clone);
+          const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+          const url = URL.createObjectURL(svgBlob);
+
+          const img = new Image();
+          img.onload = () => {
+              const canvas = document.createElement('canvas');
+              canvas.width = width;
+              canvas.height = height;
+              const ctx = canvas.getContext('2d');
+
+              ctx.fillStyle = bgColor;
+              ctx.fillRect(0, 0, width, height);
+
+              ctx.drawImage(img, 0, 0, width, height);
+              URL.revokeObjectURL(url);
+
+              const a = document.createElement('a');
+              a.download = 'nopke-asemic-word.png';
+              a.href = canvas.toDataURL('image/png');
+              a.click();
+          };
+          img.src = url;
+      }
+
+      // 8. EVENT LISTENERS
+      UI.spacingSlider.addEventListener('input', () => updateRender(false));
+      UI.thicknessSlider.addEventListener('input', () => updateRender(false));
+
+      UI.btnStyle.addEventListener('click', () => {
+          STATE.isSmoothed = !STATE.isSmoothed;
+          UI.btnStyle.classList.toggle('active', STATE.isSmoothed);
+          UI.btnStyle.innerHTML = `Smoothing<br>${STATE.isSmoothed ? 'ON' : 'OFF'}`;
+          updateRender(false);
+      });
+
+      UI.btnPoints.addEventListener('click', () => {
+          STATE.showGridPoints = !STATE.showGridPoints;
+          UI.btnPoints.classList.toggle('active', STATE.showGridPoints);
+          UI.btnPoints.innerHTML = `Grid<br>${STATE.showGridPoints ? 'ON' : 'OFF'}`;
+          document.querySelectorAll('.node-dots').forEach(g => g.classList.toggle('hidden', !STATE.showGridPoints));
+      });
+
+      UI.btnList.addEventListener('click', () => {
+          STATE.showGlyphGrid = !STATE.showGlyphGrid;
+          UI.btnList.classList.toggle('active', STATE.showGlyphGrid);
+          UI.btnList.innerHTML = `Cards<br>${STATE.showGlyphGrid ? 'ON' : 'OFF'}`;
+          UI.gridContainer.style.display = STATE.showGlyphGrid ? '' : 'none';
+          if (STATE.showGlyphGrid) updateRender(false);
+          else UI.gridContainer.innerHTML = '';
+      });
+
+      UI.btnLoops.addEventListener('click', () => {
+          STATE.allowLoops = !STATE.allowLoops;
+          UI.btnLoops.classList.toggle('active', STATE.allowLoops);
+          UI.btnLoops.innerHTML = `Loops<br>${STATE.allowLoops ? 'ON' : 'OFF'}`;
+          updateStats();
+          exampleWordIndices = generateFilteredWordIndices();
+          updateRender(STATE.isAnimated);
+      });
+
+      UI.btnAnim.addEventListener('click', () => {
+          STATE.isAnimated = !STATE.isAnimated;
+          UI.btnAnim.classList.toggle('active', STATE.isAnimated);
+          UI.btnAnim.innerHTML = `Animations<br>${STATE.isAnimated ? 'ON' : 'OFF'}`;
+          updateRender(STATE.isAnimated);
+      });
+
+      UI.btnDownload.addEventListener('click', downloadPNG);
+
+      UI.wordContainer.addEventListener('click', (e) => {
+          e.stopPropagation(); // Prevent the event from reaching document.body
+          exampleWordIndices = generateFilteredWordIndices();
+          replaceIndex = 0;
+          if (exampleWordIndices.length) updateRender(STATE.isAnimated);
+      });
+
+UI.gridContainer.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const card = e.target.closest('.glyph-card');
+    if (!card) return;
+    
+    const index = parseInt(card.dataset.index, 10);
+    if (!isNaN(index) && exampleWordIndices.length > 0) {
+        exampleWordIndices[replaceIndex] = index;
+        replaceIndex = (replaceIndex + 1) % exampleWordIndices.length;
+        updateWordRender(false); // <--- Fast update (only re-renders top canvas)
+    }
+});
+
+      document.body.addEventListener('click', (e) => {
+          if (!e.target.closest('.control-panel, .glyph-card, h2')) {
+              currentThemeIndex = (currentThemeIndex + 1) % THEMES.length;
+              applyTheme(currentThemeIndex);
+          }
+      });
+          
+UI.lengthSlider.addEventListener('input', () => {
+    const newLen = parseInt(UI.lengthSlider.value, 10);
+    UI.lengthVal.textContent = newLen;
+
+    const available = validGraphs.map((g, i) => {
+        if (!activeEdgeFilters.has(g.length)) return -1;
+        if (!STATE.allowLoops && graphProperties[i].hasLoop) return -1;
+        return i;
+    }).filter(i => i !== -1);
+
+    if (!available.length) return;
+
+    if (exampleWordIndices.length < newLen) {
+        while (exampleWordIndices.length < newLen) {
+            exampleWordIndices.push(available[Math.floor(Math.random() * available.length)]);
+        }
+    } else if (exampleWordIndices.length > newLen) {
+        exampleWordIndices = exampleWordIndices.slice(0, newLen);
+    }
+
+    replaceIndex = replaceIndex % exampleWordIndices.length;
+    updateWordRender(false);
+});
+
+      // 9. INIT
+      applyTheme(currentThemeIndex);
+      setupFilters();
+      updateRender(STATE.isAnimated);
+    </script>
+  </body>
+</html>
