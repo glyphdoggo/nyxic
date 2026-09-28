@@ -24,6 +24,7 @@
           font-family: monospace;
           font-size: var(--font-size);
           color: var(--accnt);
+          user-select: none;
       }
 
       body {
@@ -34,7 +35,6 @@
           flex-direction: column;
           align-items: center;
           min-height: 100vh;
-          cursor: pointer;
       }
 
       h2 {
@@ -58,6 +58,12 @@
           flex-direction: column;
           align-items: center;
           cursor: default;
+      }
+      
+      .glyph-card {
+          cursor: pointer;
+          content-visibility: auto;
+          contain-intrinsic-size: 100px 160px;
       }
 
       .control-panel {
@@ -151,14 +157,6 @@
           color: var(--accnt);
       }
 
-      .theme-hint {
-          color: var(--panel);
-          font-weight: 700;
-          margin-bottom: var(--gap);
-          text-align: center;
-          user-select: none;
-      }
-
       /* 4. SVG & Animations */
       .svg-container {
           display: flex;
@@ -179,10 +177,6 @@
           cursor: pointer;
       }
 
-      #example-word-container svg:active {
-          opacity: .7;
-      }
-
       @keyframes drawStroke {
           to { stroke-dashoffset: 0; }
       }
@@ -191,10 +185,7 @@
           animation-name: drawStroke;
           animation-timing-function: linear;
           animation-fill-mode: forwards;
-      }
-      
-      .glyph-card {
-          cursor: pointer;
+          stroke-width: var(--stroke-width, 14px);
       }
 
     </style>
@@ -204,7 +195,6 @@
 
     <div class="control-panel">
       <div class="svg-container" id="example-word-container"></div>
-      <div class="stats-title" id="svg-subtitle">Click canvas to generate random word</div>
     </div>
 
     <div class="control-panel">
@@ -213,56 +203,67 @@
             <button id="toggle-points-btn" type="button" class="toggle-btn">Grid<br>OFF</button>
             <button id="toggle-list-btn" type="button" class="toggle-btn">Cards<br>OFF</button>
             <button id="toggle-loops-btn" type="button" class="toggle-btn active">Loops<br>ON</button>
-            <button id="toggle-anim-btn" type="button" class="toggle-btn active">Animations<br>ON</button>
+            <button id="toggle-theme-btn" type="button" class="toggle-btn">Theme<br>1/9</button>
             <button id="download-png-btn" type="button" class="toggle-btn">Download<br>PNG</button>
         </div>
     </div>
+
     <div class="control-panel">
         <div class="stats-breakdown" id="stats-breakdown"></div>
         <div class="stats-title" id="stats-total"></div>
     </div>
     <div class="control-panel">
         <div class="controls-group">
-<div class="slider-container">
-  <label for="length-slider">Length:&nbsp;&nbsp;&nbsp;</label>
-  <input
-    type="range"
-    id="length-slider"
-    min="1"
-    max="20"
-    value="8"
-    step="1"
-  />
-  <span class="slider-value" id="length-val">8</span>
-</div>
+        <div class="slider-container">
+          <label for="length-slider">Length:&nbsp;&nbsp;&nbsp;</label>
+          <input
+            type="range"
+            id="length-slider"
+            min="1"
+            max="20"
+            value="7"
+            step="1"
+          />
+          <span class="slider-value" id="length-val">7</span>
+        </div>
         <div class="slider-container">
           <label for="thickness-slider">Thickness:</label>
           <input
             type="range"
             id="thickness-slider"
             min="1"
-            max="53"
-            value="20"
+            max="80"
+            value="14"
             step="1"
           />
-          <span class="slider-value" id="thickness-val">20</span>
+          <span class="slider-value" id="thickness-val">14</span>
         </div>
         <div class="slider-container">
           <label for="spacing-slider">Spacing:&nbsp;&nbsp;</label>
           <input
             type="range"
             id="spacing-slider"
-            min="1"
-            max="53"
-            value="20"
+            min="0"
+            max="50"
+            value="21"
             step="1"
           />
-          <span class="slider-value" id="spacing-val">20</span>
+          <span class="slider-value" id="spacing-val">21</span>
+        </div>
+        <div class="slider-container">
+          <label for="speed-slider">Speed:&nbsp;&nbsp;&nbsp;&nbsp;</label>
+          <input
+            type="range"
+            id="speed-slider"
+            min="0"
+            max="60"
+            value="14"
+            step="1"
+          />
+          <span class="slider-value" id="speed-val">14</span>
         </div>
       </div>
     </div>
-
-    <div class="theme-hint" id="theme-hint"></div>
 
     <div class="glyph-grid" id="glyph-grid" style="display: none;"></div>
 
@@ -275,18 +276,21 @@
           thicknessVal: document.getElementById('thickness-val'),
           spacingSlider: document.getElementById('spacing-slider'),
           spacingVal: document.getElementById('spacing-val'),
+          speedSlider: document.getElementById('speed-slider'),
+          speedVal: document.getElementById('speed-val'),
           btnStyle: document.getElementById('toggle-style-btn'),
           btnPoints: document.getElementById('toggle-points-btn'),
           btnList: document.getElementById('toggle-list-btn'),
           btnLoops: document.getElementById('toggle-loops-btn'),
-          btnAnim: document.getElementById('toggle-anim-btn'),
+          btnTheme: document.getElementById('toggle-theme-btn'),
           btnDownload: document.getElementById('download-png-btn'),
           gridContainer: document.getElementById('glyph-grid'),
           wordContainer: document.getElementById('example-word-container'),
           statsTotal: document.getElementById('stats-total'),
-          breakdownContainer: document.getElementById('stats-breakdown'),
-          themeHint: document.getElementById('theme-hint')
+          breakdownContainer: document.getElementById('stats-breakdown')
       };
+
+      document.documentElement.style.setProperty('--stroke-width', `${UI.thicknessSlider.value}px`);
 
       const THEMES = [
           { bkgrd: '#646E78', panel: '#8D98A7', accnt: '#DCCCBB' },
@@ -308,16 +312,19 @@
           root.setProperty('--bkgrd', theme.bkgrd);
           root.setProperty('--panel', theme.panel);
           root.setProperty('--accnt', theme.accnt);
-          UI.themeHint.textContent = `Click background to change theme (${index + 1}/${THEMES.length})`;
+          if(UI.btnTheme) {
+              UI.btnTheme.innerHTML = `Theme<br>${index + 1}/${THEMES.length}`;
+          }
       }
 
       const STATE = {
           showGridPoints: false,
           isSmoothed: true,
           showGlyphGrid: false,
-          allowLoops: true,
-          isAnimated: true
+          allowLoops: true
       };
+      
+      const isAnimated = () => parseInt(UI.speedSlider.value, 10) > 0;
       
       let replaceIndex = 0;
 
@@ -434,17 +441,17 @@
       });
 
       // 4. FILTERING AND SELECTING GLYPHS
-function generateFilteredWordIndices() {
-    const len = parseInt(UI.lengthSlider ? UI.lengthSlider.value : 8, 10);
-    const available = validGraphs.map((g, i) => {
-        if (!activeEdgeFilters.has(g.length)) return -1;
-        if (!STATE.allowLoops && graphProperties[i].hasLoop) return -1;
-        return i;
-    }).filter(i => i !== -1);
+      function generateFilteredWordIndices() {
+          const len = parseInt(UI.lengthSlider ? UI.lengthSlider.value : 7, 10);
+          const available = validGraphs.map((g, i) => {
+              if (!activeEdgeFilters.has(g.length)) return -1;
+              if (!STATE.allowLoops && graphProperties[i].hasLoop) return -1;
+              return i;
+          }).filter(i => i !== -1);
 
-    if (!available.length) return [];
-    return Array.from({ length: len }, () => available[Math.floor(Math.random() * available.length)]);
-}
+          if (!available.length) return [];
+          return Array.from({ length: len }, () => available[Math.floor(Math.random() * available.length)]);
+      }
 
       let exampleWordIndices = generateFilteredWordIndices();
 
@@ -460,7 +467,7 @@ function generateFilteredWordIndices() {
                   badge.classList.toggle('active');
                   updateStats();
                   exampleWordIndices = generateFilteredWordIndices();
-                  updateRender(STATE.isAnimated);
+                  updateRender(isAnimated());
               });
               UI.breakdownContainer.appendChild(badge);
           });
@@ -514,11 +521,20 @@ function generateFilteredWordIndices() {
       // 5. GEOMETRY PROCESSING
       function simplifyCollinear(pts, isClosed) {
           if (pts.length <= 2) return pts;
-          const n = pts.length;
-          return pts.filter((curr, i) => {
+
+          const uniquePts = pts.filter((p, i) => {
+              if (i === 0) return true;
+              const prev = pts[i - 1];
+              return !(Math.abs(p.x - prev.x) < 1e-5 && Math.abs(p.y - prev.y) < 1e-5);
+          });
+
+          if (uniquePts.length <= 2) return uniquePts;
+          const n = uniquePts.length;
+
+          return uniquePts.filter((curr, i) => {
               if (!isClosed && (i === 0 || i === n - 1)) return true;
-              const prev = isClosed ? pts[(i - 1 + n) % n] : pts[i - 1];
-              const next = isClosed ? pts[(i + 1) % n] : pts[i + 1];
+              const prev = isClosed ? uniquePts[(i - 1 + n) % n] : uniquePts[i - 1];
+              const next = isClosed ? uniquePts[(i + 1) % n] : uniquePts[i + 1];
               const cross = (curr.x - prev.x) * (next.y - curr.y) - (curr.y - prev.y) * (next.x - curr.x);
               const dot = (curr.x - prev.x) * (next.x - curr.x) + (curr.y - prev.y) * (next.y - curr.y);
               return !(Math.abs(cross) < 1e-5 && dot > 0);
@@ -579,7 +595,7 @@ function generateFilteredWordIndices() {
           return { globalPoints, globalEdges };
       }
 
-      function traceAndSmoothPaths(edges, pts, strokeWidth, iterations, animState, animate) {
+      function traceAndSmoothPaths(edges, pts, strokeWidth, iterations, animState, animate, speedFactor = 1) {
           const adj = {};
           edges.forEach(([u, v]) => {
               (adj[u] = adj[u] || []).push(v);
@@ -623,8 +639,13 @@ function generateFilteredWordIndices() {
               if (p.closed) len += Math.hypot(finalPts[0].x - finalPts[finalPts.length - 1].x, finalPts[0].y - finalPts[finalPts.length - 1].y);
               len = Math.ceil(len);
 
-              const style = animate
-                  ? (() => { const d = Math.max(0.08, len / 600); const dl = animState.total; animState.total += d + 0.02; return `stroke-dasharray: ${len}; stroke-dashoffset: ${len}; animation-duration: ${d.toFixed(2)}s; animation-delay: ${dl.toFixed(2)}s;`; })()
+              const style = animate && speedFactor > 0
+                  ? (() => { 
+                      const d = Math.max(0.08, len / 600) / speedFactor; 
+                      const dl = animState.total; 
+                      animState.total += d + (0.02 / speedFactor); 
+                      return `stroke-dasharray: ${len}; stroke-dashoffset: ${len}; animation-duration: ${d.toFixed(2)}s; animation-delay: ${dl.toFixed(2)}s;`; 
+                    })()
                   : `stroke-dasharray: none; stroke-dashoffset: 0; animation: none;`;
 
               const d = `M ${finalPts[0].x} ${finalPts[0].y} ` + finalPts.slice(1).map(pt => `L ${pt.x} ${pt.y}`).join(' ') + (p.closed ? ' Z' : '');
@@ -632,61 +653,69 @@ function generateFilteredWordIndices() {
           }).join('');
       }
 
-function updateRender(animate = false) {
-    updateWordRender(animate);
+      function renderCardGrid() {
+          if (!STATE.showGlyphGrid) return;
 
-    if (STATE.showGlyphGrid) {
-        const sw = parseInt(UI.thicknessSlider.value, 10);
-        const iters = STATE.isSmoothed ? 4 : 0;
+          const iters = STATE.isSmoothed ? 4 : 0;
 
-        UI.gridContainer.innerHTML = validGraphs.map((g, i) => {
-            const localEdges = g.map(idx => validEdges[idx]);
-            return `
-            <div class="glyph-card" data-index="${i}" data-edges="${g.length}">
-                <div class="svg-container">
-                    <svg viewBox="0 25 300 200">
-                        ${traceAndSmoothPaths(localEdges, points, sw, iters, { total: 0 }, false)}
-                        <g class="node-dots ${STATE.showGridPoints ? '' : 'hidden'}">${points.map(p => `<circle cx="${p.x}" cy="${p.y}" r="6" fill="var(--panel)"/>`).join('')}</g>
-                    </svg>
-                </div>
-                <div class="glyph-id">#${i + 1}</div>
-            </div>
-        `}).join('');
-        updateStats();
-    }
-}
+          UI.gridContainer.innerHTML = validGraphs.map((g, i) => {
+              const localEdges = g.map(idx => validEdges[idx]);
+              return `
+              <div class="glyph-card" data-index="${i}" data-edges="${g.length}">
+                  <div class="svg-container">
+                      <svg viewBox="0 25 300 200">
+                          ${traceAndSmoothPaths(localEdges, points, 'var(--stroke-width, 14px)', iters, { total: 0 }, false)}
+                          <g class="node-dots ${STATE.showGridPoints ? '' : 'hidden'}">${points.map(p => `<circle cx="${p.x}" cy="${p.y}" r="10" fill="var(--panel)"/>`).join('')}</g>
+                      </svg>
+                  </div>
+                  <div class="glyph-id">#${i + 1}</div>
+              </div>
+          `}).join('');
+          
+          updateStats(); 
+      }
 
-function updateWordRender(animate = false) {
-    const sw = parseInt(UI.thicknessSlider.value, 10);
-    const ext = parseInt(UI.spacingSlider.value, 10);
-    UI.thicknessVal.textContent = sw;
-    UI.spacingVal.textContent = ext;
+      function updateRender(animate = false) {
+          updateWordRender(animate);
 
-    const iters = STATE.isSmoothed ? 4 : 0;
-    const stepX = 150 + (2 * ext);
+          if (STATE.showGlyphGrid && UI.gridContainer.children.length === 0) {
+              renderCardGrid();
+          }
+      }
 
-    const animState = { total: 0 };
-    const { globalPoints, globalEdges } = buildWordGraph(exampleWordIndices, ext);
+      function updateWordRender(animate = false) {
+          const sw = parseInt(UI.thicknessSlider.value, 10);
+          const ext = parseInt(UI.spacingSlider.value, 10);
+          const speedFactor = parseInt(UI.speedSlider.value, 10) / 10;
+          
+          UI.thicknessVal.textContent = sw;
+          UI.spacingVal.textContent = ext;
+          UI.speedVal.textContent = UI.speedSlider.value;
 
-    const svgContent = traceAndSmoothPaths(globalEdges, globalPoints, sw, iters, animState, animate);
-    const dots = `<g class="node-dots ${STATE.showGridPoints ? '' : 'hidden'}">${globalPoints.map(p => `<circle cx="${p.x}" cy="${p.y}" r="6" fill="var(--panel)"/>`).join('')}</g>`;
+          const iters = STATE.isSmoothed ? 4 : 0;
+          const stepX = 150 + (2 * ext);
 
-    const wLen = exampleWordIndices.length || UI.lengthSlider.value;
+          const animState = { total: 0 };
+          const { globalPoints, globalEdges } = buildWordGraph(exampleWordIndices, ext);
 
-    // Define viewBox strictly relative to grid point boundaries + fixed 40px padding
-    const padding = 75;
-    const minX = 75;
-    const maxX = 225 + (wLen - 1) * stepX;
-    const minY = 50;
-    const maxY = 200;
+          const svgContent = traceAndSmoothPaths(globalEdges, globalPoints, sw, iters, animState, animate, speedFactor);
+          const dots = `<g class="node-dots ${STATE.showGridPoints ? '' : 'hidden'}">${globalPoints.map(p => `<circle cx="${p.x}" cy="${p.y}" r="10" fill="var(--panel)"/>`).join('')}</g>`;
 
-    const vbX = minX - padding;
-    const vbY = minY - padding;
-    const vbW = (maxX - minX) + (padding * 2);
-    const vbH = (maxY - minY) + (padding * 2);
+          const wLen = exampleWordIndices.length || UI.lengthSlider.value;
 
-    UI.wordContainer.innerHTML = `<svg viewBox="${vbX} ${vbY} ${vbW} ${vbH}">${svgContent}${dots}</svg>`;
-}
+          const padding = 75;
+          const minX = 75;
+          const maxX = 225 + (wLen - 1) * stepX;
+          const minY = 50;
+          const maxY = 200;
+
+          const vbX = minX - padding;
+          const vbY = minY - padding;
+          const vbW = (maxX - minX) + (padding * 2);
+          const vbH = (maxY - minY) + (padding * 2);
+
+          UI.wordContainer.innerHTML = `<svg viewBox="${vbX} ${vbY} ${vbW} ${vbH}">${svgContent}${dots}</svg>`;
+      }
 
       // 7. PNG EXPORTING
       function downloadPNG() {
@@ -749,13 +778,25 @@ function updateWordRender(animate = false) {
       }
 
       // 8. EVENT LISTENERS
-      UI.spacingSlider.addEventListener('input', () => updateRender(false));
-      UI.thicknessSlider.addEventListener('input', () => updateRender(false));
+      UI.spacingSlider.addEventListener('input', () => updateWordRender(false));
+      
+      UI.speedSlider.addEventListener('input', () => {
+          UI.speedVal.textContent = UI.speedSlider.value;
+          if (exampleWordIndices.length) updateWordRender(isAnimated());
+      });
 
+      UI.thicknessSlider.addEventListener('input', () => {
+          const sw = UI.thicknessSlider.value;
+          document.documentElement.style.setProperty('--stroke-width', `${sw}px`);
+          UI.thicknessVal.textContent = sw;
+      });
+          
       UI.btnStyle.addEventListener('click', () => {
           STATE.isSmoothed = !STATE.isSmoothed;
           UI.btnStyle.classList.toggle('active', STATE.isSmoothed);
           UI.btnStyle.innerHTML = `Smoothing<br>${STATE.isSmoothed ? 'ON' : 'OFF'}`;
+          
+          UI.gridContainer.innerHTML = ''; 
           updateRender(false);
       });
 
@@ -771,8 +812,8 @@ function updateWordRender(animate = false) {
           UI.btnList.classList.toggle('active', STATE.showGlyphGrid);
           UI.btnList.innerHTML = `Cards<br>${STATE.showGlyphGrid ? 'ON' : 'OFF'}`;
           UI.gridContainer.style.display = STATE.showGlyphGrid ? '' : 'none';
+          
           if (STATE.showGlyphGrid) updateRender(false);
-          else UI.gridContainer.innerHTML = '';
       });
 
       UI.btnLoops.addEventListener('click', () => {
@@ -781,73 +822,64 @@ function updateWordRender(animate = false) {
           UI.btnLoops.innerHTML = `Loops<br>${STATE.allowLoops ? 'ON' : 'OFF'}`;
           updateStats();
           exampleWordIndices = generateFilteredWordIndices();
-          updateRender(STATE.isAnimated);
+          updateRender(isAnimated());
       });
 
-      UI.btnAnim.addEventListener('click', () => {
-          STATE.isAnimated = !STATE.isAnimated;
-          UI.btnAnim.classList.toggle('active', STATE.isAnimated);
-          UI.btnAnim.innerHTML = `Animations<br>${STATE.isAnimated ? 'ON' : 'OFF'}`;
-          updateRender(STATE.isAnimated);
+      UI.btnTheme.addEventListener('click', () => {
+          currentThemeIndex = (currentThemeIndex + 1) % THEMES.length;
+          applyTheme(currentThemeIndex);
       });
 
       UI.btnDownload.addEventListener('click', downloadPNG);
 
       UI.wordContainer.addEventListener('click', (e) => {
-          e.stopPropagation(); // Prevent the event from reaching document.body
+          e.stopPropagation();
           exampleWordIndices = generateFilteredWordIndices();
           replaceIndex = 0;
-          if (exampleWordIndices.length) updateRender(STATE.isAnimated);
+          if (exampleWordIndices.length) updateRender(isAnimated());
       });
 
-UI.gridContainer.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const card = e.target.closest('.glyph-card');
-    if (!card) return;
-    
-    const index = parseInt(card.dataset.index, 10);
-    if (!isNaN(index) && exampleWordIndices.length > 0) {
-        exampleWordIndices[replaceIndex] = index;
-        replaceIndex = (replaceIndex + 1) % exampleWordIndices.length;
-        updateWordRender(false); // <--- Fast update (only re-renders top canvas)
-    }
-});
-
-      document.body.addEventListener('click', (e) => {
-          if (!e.target.closest('.control-panel, .glyph-card, h2')) {
-              currentThemeIndex = (currentThemeIndex + 1) % THEMES.length;
-              applyTheme(currentThemeIndex);
+      UI.gridContainer.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const card = e.target.closest('.glyph-card');
+          if (!card) return;
+          
+          const index = parseInt(card.dataset.index, 10);
+          if (!isNaN(index) && exampleWordIndices.length > 0) {
+              exampleWordIndices[replaceIndex] = index;
+              replaceIndex = (replaceIndex + 1) % exampleWordIndices.length;
+              updateWordRender(false);
           }
       });
           
-UI.lengthSlider.addEventListener('input', () => {
-    const newLen = parseInt(UI.lengthSlider.value, 10);
-    UI.lengthVal.textContent = newLen;
+      UI.lengthSlider.addEventListener('input', () => {
+          const newLen = parseInt(UI.lengthSlider.value, 10);
+          UI.lengthVal.textContent = newLen;
 
-    const available = validGraphs.map((g, i) => {
-        if (!activeEdgeFilters.has(g.length)) return -1;
-        if (!STATE.allowLoops && graphProperties[i].hasLoop) return -1;
-        return i;
-    }).filter(i => i !== -1);
+          const available = validGraphs.map((g, i) => {
+              if (!activeEdgeFilters.has(g.length)) return -1;
+              if (!STATE.allowLoops && graphProperties[i].hasLoop) return -1;
+              return i;
+          }).filter(i => i !== -1);
 
-    if (!available.length) return;
+          if (!available.length) return;
 
-    if (exampleWordIndices.length < newLen) {
-        while (exampleWordIndices.length < newLen) {
-            exampleWordIndices.push(available[Math.floor(Math.random() * available.length)]);
-        }
-    } else if (exampleWordIndices.length > newLen) {
-        exampleWordIndices = exampleWordIndices.slice(0, newLen);
-    }
+          if (exampleWordIndices.length < newLen) {
+              while (exampleWordIndices.length < newLen) {
+                  exampleWordIndices.push(available[Math.floor(Math.random() * available.length)]);
+              }
+          } else if (exampleWordIndices.length > newLen) {
+              exampleWordIndices = exampleWordIndices.slice(0, newLen);
+          }
 
-    replaceIndex = replaceIndex % exampleWordIndices.length;
-    updateWordRender(false);
-});
+          replaceIndex = replaceIndex % exampleWordIndices.length;
+          updateWordRender(false);
+      });
 
       // 9. INIT
       applyTheme(currentThemeIndex);
       setupFilters();
-      updateRender(STATE.isAnimated);
+      updateRender(isAnimated());
     </script>
   </body>
 </html>
